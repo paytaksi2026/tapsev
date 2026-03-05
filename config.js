@@ -1,4 +1,4 @@
 module.exports = {
-  TOKEN: "BOT_TOKEN_BURAYA_YAZ",
+  TOKEN: "8505556207:AAEpxgJT4l5rmBk57Fr6r-oAcDAVNzukwvU",
   ADMIN_ID: ""
 };
