@@ -1,133 +1,168 @@
 
 const TelegramBot = require('node-telegram-bot-api');
 const sqlite3 = require('sqlite3').verbose();
-const { TOKEN } = require('./config');
+const { TOKEN, ADMIN_ID } = require('./config');
 
 const bot = new TelegramBot(TOKEN, { polling: true });
-
 const db = new sqlite3.Database('./database.db');
 
 db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS users (
+  db.run(`CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY,
     name TEXT,
     age INTEGER,
     city TEXT,
-    gender TEXT
+    gender TEXT,
+    photo TEXT
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS likes (
+  db.run(`CREATE TABLE IF NOT EXISTS likes(
     from_id INTEGER,
     to_id INTEGER
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS matches(
+    user1 INTEGER,
+    user2 INTEGER
+  )`);
 });
 
-const userState = {};
+const state = {};
 
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  userState[chatId] = { step: 'name' };
-  bot.sendMessage(chatId, "❤️ TapSev-ə xoş gəldin!\nAdını yaz:");
+bot.onText(/\/start/, msg => {
+  const id = msg.chat.id;
+  state[id] = { step: "name" };
+  bot.sendMessage(id,"❤️ TapSev-ə xoş gəldin!\nAdını yaz:");
 });
 
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-  if (!userState[chatId]) return;
+bot.on("message", msg => {
+  const id = msg.chat.id;
+  if(!state[id]) return;
 
-  const state = userState[chatId];
+  const step = state[id].step;
 
-  if (state.step === 'name') {
-    state.name = msg.text;
-    state.step = 'age';
-    bot.sendMessage(chatId, "Yaşını yaz:");
-  } 
-  else if (state.step === 'age') {
-    state.age = msg.text;
-    state.step = 'city';
-    bot.sendMessage(chatId, "Şəhər:");
+  if(step==="name"){
+    state[id].name = msg.text;
+    state[id].step="age";
+    bot.sendMessage(id,"Yaşını yaz:");
+    return;
   }
-  else if (state.step === 'city') {
-    state.city = msg.text;
-    state.step = 'gender';
-    bot.sendMessage(chatId, "Cins (kişi / qadın):");
+
+  if(step==="age"){
+    state[id].age = msg.text;
+    state[id].step="city";
+    bot.sendMessage(id,"Şəhər:");
+    return;
   }
-  else if (state.step === 'gender') {
-    state.gender = msg.text;
+
+  if(step==="city"){
+    state[id].city = msg.text;
+    state[id].step="gender";
+    bot.sendMessage(id,"Cins (kişi / qadın):");
+    return;
+  }
+
+  if(step==="gender"){
+    state[id].gender = msg.text;
+    state[id].step="photo";
+    bot.sendMessage(id,"Profil şəklini göndər:");
+    return;
+  }
+
+  if(step==="photo" && msg.photo){
+    const photo = msg.photo[msg.photo.length-1].file_id;
 
     db.run(
-      "INSERT OR REPLACE INTO users(id,name,age,city,gender) VALUES(?,?,?,?,?)",
-      [chatId, state.name, state.age, state.city, state.gender]
+      "INSERT OR REPLACE INTO users(id,name,age,city,gender,photo) VALUES(?,?,?,?,?,?)",
+      [id,state[id].name,state[id].age,state[id].city,state[id].gender,photo]
     );
 
-    delete userState[chatId];
+    delete state[id];
 
-    bot.sendMessage(chatId, "✅ Profil yaradıldı!", {
-      reply_markup: {
-        keyboard: [
+    bot.sendMessage(id,"✅ Profil yaradıldı!",{
+      reply_markup:{
+        keyboard:[
           ["❤️ Tanış ol"],
           ["👤 Profilim"]
         ],
-        resize_keyboard: true
+        resize_keyboard:true
       }
     });
+
+    if(ADMIN_ID){
+      bot.sendMessage(ADMIN_ID,"Yeni istifadəçi: "+id);
+    }
   }
 });
 
-bot.onText(/❤️ Tanış ol/, (msg) => {
-  const chatId = msg.chat.id;
+bot.onText(/👤 Profilim/, msg => {
+  const id = msg.chat.id;
+  db.get("SELECT * FROM users WHERE id=?",[id],(e,row)=>{
+    if(!row){
+      bot.sendMessage(id,"Profil tapılmadı");
+      return;
+    }
+
+    bot.sendPhoto(id,row.photo,{
+      caption:`👤 ${row.name}\n🎂 ${row.age}\n📍 ${row.city}`
+    });
+  });
+});
+
+bot.onText(/❤️ Tanış ol/, msg => {
+  const id = msg.chat.id;
 
   db.get(
-    "SELECT * FROM users WHERE id != ? ORDER BY RANDOM() LIMIT 1",
-    [chatId],
-    (err, row) => {
-      if (!row) {
-        bot.sendMessage(chatId, "Hələ istifadəçi yoxdur.");
+    "SELECT * FROM users WHERE id!=? AND city=(SELECT city FROM users WHERE id=?) ORDER BY RANDOM() LIMIT 1",
+    [id,id],
+    (e,row)=>{
+
+      if(!row){
+        bot.sendMessage(id,"Şəhərində istifadəçi tapılmadı.");
         return;
       }
 
-      bot.sendMessage(
-        chatId,
-        `👤 ${row.name}\n🎂 ${row.age}\n📍 ${row.city}`,
-        {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                { text: "👍 Bəyən", callback_data: "like_" + row.id },
-                { text: "👎 Keç", callback_data: "skip" }
-              ]
-            ]
-          }
+      bot.sendPhoto(id,row.photo,{
+        caption:`👤 ${row.name}\n🎂 ${row.age}\n📍 ${row.city}`,
+        reply_markup:{
+          inline_keyboard:[[
+            {text:"👍 Bəyən",callback_data:"like_"+row.id},
+            {text:"👎 Keç",callback_data:"skip"}
+          ]]
         }
-      );
+      });
     }
   );
 });
 
-bot.on("callback_query", (query) => {
-  const data = query.data;
-  const fromId = query.message.chat.id;
+bot.on("callback_query", q=>{
+  const data = q.data;
+  const from = q.message.chat.id;
 
-  if (data.startsWith("like_")) {
-    const toId = data.split("_")[1];
+  if(data.startsWith("like_")){
+    const to = data.split("_")[1];
 
-    db.run("INSERT INTO likes(from_id,to_id) VALUES(?,?)", [fromId, toId]);
+    db.run("INSERT INTO likes(from_id,to_id) VALUES(?,?)",[from,to]);
 
     db.get(
       "SELECT * FROM likes WHERE from_id=? AND to_id=?",
-      [toId, fromId],
-      (err, row) => {
-        if (row) {
-          bot.sendMessage(fromId, "🎉 Match! Bir-birinizi bəyəndiniz.");
-          bot.sendMessage(toId, "🎉 Match! Bir-birinizi bəyəndiniz.");
+      [to,from],
+      (e,row)=>{
+        if(row){
+
+          db.run("INSERT INTO matches(user1,user2) VALUES(?,?)",[from,to]);
+
+          bot.sendMessage(from,"💘 Match! Artıq yazışa bilərsiniz.");
+          bot.sendMessage(to,"💘 Match! Artıq yazışa bilərsiniz.");
         }
       }
     );
 
-    bot.answerCallbackQuery(query.id, { text: "Bəyənildi ❤️" });
+    bot.answerCallbackQuery(q.id,{text:"Bəyənildi ❤️"});
   }
 
-  if (data === "skip") {
-    bot.answerCallbackQuery(query.id, { text: "Keçildi" });
+  if(data==="skip"){
+    bot.answerCallbackQuery(q.id,{text:"Keçildi"});
   }
 });
 

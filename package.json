@@ -1,7 +1,6 @@
 {
   "name": "tapsev-bot",
   "version": "1.0.0",
-  "description": "TapSev Telegram Dating Bot",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
