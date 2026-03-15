@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TikTok Live Wheel</title>
+<link rel="stylesheet" href="style.css">
+<script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+<div id="winnersPanel">
+<h3>Son Qaliblər</h3>
+<ul id="winnerList"></ul>
+</div>
+
+<div id="liveStatus">🔴 LIVE BAĞLI</div>
+<div id="wheelWrapper">
+<div id="pointer"></div>
+<canvas id="wheel" width="720" height="720"></canvas>
+
+<div class="centerCircle">
+<b>TikTok Çarxı</b>
+<div>100 jeton = 1 spin</div>
+<div>100 like = 1 spin</div>
+<div>@xeberx.az</div>
+</div>
+
+<div id="bigUser"></div>
+</div>
+
+<div id="result"></div>
+
+<script src="wheel.js"></script>
+</body>
+</html>
