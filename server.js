@@ -18,6 +18,8 @@ let likeCounter={};
 
 tiktok.connect().then(()=>{
 console.log("Connected to TikTok live:",username);
+  liveConnected = true;
+  io.emit("liveConnected");
   io.emit('liveConnected');
 }).catch(err=>console.error(err));
 
@@ -54,4 +56,11 @@ app.use(express.static("public"));
 
 server.listen(3000,()=>{
 console.log("Server running on port 3000");
+});
+
+
+io.on("connection",(socket)=>{
+  if(liveConnected){
+    socket.emit("liveConnected");
+  }
 });
