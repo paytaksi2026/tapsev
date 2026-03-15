@@ -18,7 +18,6 @@ const arc=(Math.PI*2)/total;
 let rotation=0;
 let spinning=false;
 
-/* easing for realistic slow down */
 function easeOutCubic(t){
  return 1-Math.pow(1-t,3);
 }
@@ -64,7 +63,6 @@ function showUser(user){
 }
 
 function addWinner(user,prize){
-
  if(!winnerList) return;
 
  const li=document.createElement("li");
@@ -80,7 +78,6 @@ function addWinner(user,prize){
 function spin(user="Manual"){
 
 if(spinning) return;
-
 spinning=true;
 
 showUser(user);
@@ -90,14 +87,20 @@ let prizeIndex=Math.floor(Math.random()*segments.length);
 
 let segAngle=360/total;
 
-/* pointer bottom center (90°) */
-let pointerAngle=90;
+/* center angle of chosen segment */
+let segmentCenter=(prizeIndex*segAngle)+(segAngle/2);
 
-/* rotate wheel so chosen segment lands under pointer */
-let finalAngle=360-(prizeIndex*segAngle)-(segAngle/2)+pointerAngle;
+/* pointer is at bottom -> 180° */
+let pointerAngle=180;
 
-/* several rotations first */
-let spinAngle=360*7+finalAngle;
+/* how much wheel must rotate so segment center aligns with pointer */
+let delta=pointerAngle-segmentCenter;
+
+/* normalize */
+let finalAngle=(360+delta)%360;
+
+/* add several spins */
+let spinAngle=360*6+finalAngle;
 
 let duration=15000;
 let start=null;
