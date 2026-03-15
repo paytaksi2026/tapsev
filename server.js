@@ -49,24 +49,27 @@ tiktok.on("gift",(data)=>{
 
 tiktok.on("like",(data)=>{
 
- const user=data.uniqueId;
+ const user = data.uniqueId;
+ const likes = data.likeCount || 1;
 
- if(!likeCounter[user]) likeCounter[user]=0;
+ if(!likeCounter[user]){
+   likeCounter[user] = 0;
+ }
 
- likeCounter[user]+=1;
+ likeCounter[user] += likes;
 
  io.emit("likeUpdate",{
    user,
-   total:likeCounter[user],
-   top:top5(likeCounter)
+   total: likeCounter[user],
+   top: top5(likeCounter)
  });
 
- if(likeCounter[user]>=100){
+ if(likeCounter[user] >= 100){
 
-   const spins=Math.floor(likeCounter[user]/100);
-   likeCounter[user]=likeCounter[user]%100;
+   const spins = Math.floor(likeCounter[user] / 100);
+   likeCounter[user] = likeCounter[user] % 100;
 
-   io.emit("spin",{user,spins});
+   io.emit("spin",{ user, spins });
 
  }
 
