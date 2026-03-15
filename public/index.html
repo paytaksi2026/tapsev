@@ -1,40 +1,26 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TikTok Wheel</title>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+body{background:#000;color:#fff;font-family:Arial;text-align:center}
+#liveStatus{position:absolute;top:20px;left:20px;background:#300;padding:8px;border-radius:6px}
+#likesPanel{position:absolute;right:20px;top:20px;background:#111;padding:10px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div id="liveStatus">🔴 LIVE BAĞLI</div>
+
 <div id="likesPanel">
 <h3>Son Bəyənənlər</h3>
 <ul id="likesList"></ul>
 </div>
 
-
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>TikTok Live Wheel</title>
-<link rel="stylesheet" href="style.css">
-<script src="/socket.io/socket.io.js"></script>
-</head>
-<body>
-
-<div id="winnersPanel">
-<h3>Son Qaliblər</h3>
-<ul id="winnerList"></ul>
-</div>
-
-<div id="liveStatus">🔴 LIVE BAĞLI</div>
-<div id="wheelWrapper">
-<div id="pointer"></div>
-<canvas id="wheel" width="720" height="720"></canvas>
-
-<div class="centerCircle">
-<b>TikTok Çarxı</b>
-<div>100 jeton = 1 spin</div>
-<div>100 like = 1 spin</div>
-</div>
-
-<div id="bigUser"></div>
-</div>
-
-<div id="result"></div>
+<h1>TikTok Çarxı</h1>
 
 <script src="wheel.js"></script>
 </body>
