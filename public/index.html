@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TikTok Çarxı</title>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+
+body{background:#000;color:#fff;font-family:Arial;text-align:center}
+
+#wheel{
+width:500px;height:500px;border-radius:50%;
+margin:40px auto;border:10px solid #333;
+background:conic-gradient(red,orange,yellow,green,cyan,blue,purple,red);
+}
+
+#pointer{
+width:0;height:0;margin:auto;
+border-left:20px solid transparent;
+border-right:20px solid transparent;
+border-bottom:40px solid red;
+}
+
+.panel{
+position:absolute;background:#111;padding:10px;border-radius:8px;width:200px
+}
+
+#likes{right:20px;top:80px}
+#gifts{right:20px;top:300px}
+#tops{left:20px;top:80px}
+
+#live{position:absolute;left:20px;top:20px;background:#400;padding:6px 12px;border-radius:6px}
+
+</style>
+</head>
+
+<body>
+
+<div id="live">🔴 LIVE BAĞLI</div>
+
+<h1>TikTok Çarxı</h1>
+
+<div id="pointer"></div>
+<div id="wheel"></div>
+
+<div id="likes" class="panel">
+<h3>Son Bəyənənlər</h3>
+<ul id="likesList"></ul>
+</div>
+
+<div id="gifts" class="panel">
+<h3>Top Gift</h3>
+<ul id="giftList"></ul>
+</div>
+
+<div id="tops" class="panel">
+<h3>Top Bəyənən</h3>
+<ul id="topLikes"></ul>
+</div>
+
+<script src="wheel.js"></script>
+
+</body>
+</html>

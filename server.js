@@ -15,47 +15,65 @@ const tiktok = new WebcastPushConnection(username,{
 });
 
 let likeCounter = {};
+let giftCounter = {};
 let winners = [];
 
+function top5(obj){
+ return Object.entries(obj)
+   .sort((a,b)=>b[1]-a[1])
+   .slice(0,5);
+}
+
 tiktok.connect().then(()=>{
-  console.log("Connected to TikTok live:",username);
-  io.emit("liveConnected");
+ console.log("Connected to TikTok live:",username);
+ io.emit("liveConnected");
 }).catch(err=>console.error(err));
 
 tiktok.on("gift",(data)=>{
 
-  const coins = data.diamondCount || 0;
-  const spins = Math.floor(coins/100);
+ const user=data.uniqueId;
+ const coins=data.diamondCount || 0;
 
-  if(spins>0){
-    io.emit("spin",{user:data.uniqueId, spins:spins});
-  }
+ if(!giftCounter[user]) giftCounter[user]=0;
+ giftCounter[user]+=coins;
+
+ io.emit("giftUpdate",{user,total:giftCounter[user],top:top5(giftCounter)});
+
+ const spins=Math.floor(coins/100);
+
+ if(spins>0){
+   io.emit("spin",{user,spins});
+ }
 
 });
 
 tiktok.on("like",(data)=>{
 
-  const user=data.uniqueId;
+ const user=data.uniqueId;
 
-  if(!likeCounter[user]) likeCounter[user]=0;
+ if(!likeCounter[user]) likeCounter[user]=0;
 
-  likeCounter[user]+=1;
+ likeCounter[user]+=1;
 
-  io.emit("likeUpdate",{user:user,total:likeCounter[user]});
+ io.emit("likeUpdate",{
+   user,
+   total:likeCounter[user],
+   top:top5(likeCounter)
+ });
 
-  if(likeCounter[user]>=100){
+ if(likeCounter[user]>=100){
 
-    let spins=Math.floor(likeCounter[user]/100);
-    likeCounter[user]%=100;
+   const spins=Math.floor(likeCounter[user]/100);
+   likeCounter[user]=likeCounter[user]%100;
 
-    io.emit("spin",{user:user,spins:spins});
+   io.emit("spin",{user,spins});
 
-  }
+ }
 
 });
 
 app.use(express.static("public"));
 
 server.listen(3000,()=>{
-  console.log("Server running on port 3000");
+ console.log("Server running on port 3000");
 });
