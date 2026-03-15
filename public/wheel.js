@@ -1,4 +1,6 @@
 
+// PRO TikTok Wheel Engine
+
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 const spinBtn=document.getElementById("spinBtn");
@@ -18,8 +20,28 @@ const arc=(Math.PI*2)/total;
 let rotation=0;
 let spinning=false;
 
+/* easing */
 function easeOutCubic(t){
  return 1-Math.pow(1-t,3);
+}
+
+/* click sound like real wheel */
+let audioCtx=null;
+function clickSound(){
+ if(!audioCtx){
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+ }
+ const osc=audioCtx.createOscillator();
+ const gain=audioCtx.createGain();
+
+ osc.frequency.value=1200;
+ gain.gain.value=0.04;
+
+ osc.connect(gain);
+ gain.connect(audioCtx.destination);
+
+ osc.start();
+ osc.stop(audioCtx.currentTime+0.02);
 }
 
 function drawWheel(){
@@ -63,6 +85,7 @@ function showUser(user){
 }
 
 function addWinner(user,prize){
+
  if(!winnerList) return;
 
  const li=document.createElement("li");
@@ -82,28 +105,24 @@ spinning=true;
 
 showUser(user);
 
-/* choose prize first */
+/* pick prize first */
 let prizeIndex=Math.floor(Math.random()*segments.length);
 
 let segAngle=360/total;
-
-/* center angle of chosen segment */
 let segmentCenter=(prizeIndex*segAngle)+(segAngle/2);
 
-/* pointer is at bottom -> 180° */
+/* pointer bottom */
 let pointerAngle=180;
 
-/* how much wheel must rotate so segment center aligns with pointer */
 let delta=pointerAngle-segmentCenter;
-
-/* normalize */
 let finalAngle=(360+delta)%360;
 
-/* add several spins */
-let spinAngle=360*6+finalAngle;
+/* total spin */
+let spinAngle=360*7+finalAngle;
 
 let duration=15000;
 let start=null;
+let lastTick=0;
 
 function animate(t){
 
@@ -117,6 +136,12 @@ function animate(t){
  let angle=spinAngle*eased;
 
  canvas.style.transform=`rotate(${rotation+angle}deg)`;
+
+/* clicking sound */
+ if(t-lastTick>70){
+  clickSound();
+  lastTick=t;
+ }
 
  if(progress<1){
 
@@ -160,3 +185,11 @@ requestAnimationFrame(animate);
 }
 
 spinBtn.onclick=()=>spin("Manual");
+
+/* TikTok auto spin (server emits event) */
+if(typeof io!=="undefined"){
+ const socket=io();
+ socket.on("tiktokGift",(data)=>{
+   spin("@"+data.user);
+ });
+}
