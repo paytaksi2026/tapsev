@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<style>
+body{background:#111;color:white;text-align:center;font-family:Arial}
+input{width:60px;font-size:18px;margin:5px}
+button{padding:10px 20px;font-size:18px}
+</style>
+</head>
+<body>
+
+<h2>Admin Panel</h2>
+
+<div id="inputs"></div>
+
+<button onclick="save()">Yadda saxla</button>
+
+<br><br>
+
+<a href="index.html">Oyuna qayıt</a>
+
+<script>
+
+let prizes = JSON.parse(localStorage.getItem("prizes")||"[0,1,0,1,2,0,1,2,0,3,2,3,0,1,0,1,0,2,0,5]")
+
+let box=document.getElementById("inputs")
+
+prizes.forEach((p,i)=>{
+
+let input=document.createElement("input")
+input.value=p
+input.id="p"+i
+box.appendChild(input)
+
+})
+
+function save(){
+
+let arr=[]
+
+for(let i=0;i<20;i++){
+arr.push(Number(document.getElementById("p"+i).value))
+}
+
+localStorage.setItem("prizes",JSON.stringify(arr))
+
+alert("Yadda saxlandı")
+
+}
+
+</script>
+
+</body>
+</html>
