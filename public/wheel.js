@@ -98,18 +98,8 @@ function spin(user){
 spinning=true;
 showUser(user);
 
-let prizeIndex=Math.floor(Math.random()*segments.length);
-
-let segAngle=360/total;
-let segmentCenter=(prizeIndex*segAngle)+(segAngle/2);
-
-/* pointer now pointing DOWN so angle changed */
-let pointerAngle=90;
-
-let delta=pointerAngle-segmentCenter;
-let finalAngle=(360+delta)%360;
-
-let spinAngle=360*7+finalAngle;
+/* random spin only for animation */
+let spinAngle=360*(7 + Math.random()*2);
 
 let duration=15000;
 let start=null;
@@ -132,7 +122,23 @@ requestAnimationFrame(animate);
 rotation+=spinAngle;
 spinning=false;
 
-let prize=segments[prizeIndex];
+/* ===== REAL PRIZE CALCULATION FROM POINTER ===== */
+
+/* normalize rotation */
+let deg = ((rotation % 360) + 360) % 360;
+
+/* pointer is pointing DOWN (90deg) */
+let pointerAngle = 90;
+
+/* segment angle */
+let seg = 360/total;
+
+/* calculate index under pointer */
+let index = Math.floor(((360 - deg + pointerAngle) % 360) / seg);
+
+let prize = segments[index];
+
+/* ===== RESULT ===== */
 
 if(prize==="JACKPOT"){
 result.innerHTML="🔥 MEGA JACKPOT 5 AZN";
@@ -143,6 +149,9 @@ addWinner(user,prize);
 }
 
 bigUser.innerText=user+" qazandı "+prize+" AZN";
+
+/* notify server for leaderboard */
+socket.emit("recordWin",{user:user,prize:prize==="JACKPOT"?5:prize});
 
 runQueue();
 }
