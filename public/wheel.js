@@ -1,9 +1,10 @@
+
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
-const result=document.getElementById("result");
 const spinBtn=document.getElementById("spinBtn");
-const userBig=document.getElementById("userBig");
+const result=document.getElementById("result");
 const winnerList=document.getElementById("winnerList");
+const userBig=document.getElementById("userBig");
 
 const segments=[
 "0","0","0","0","0","0","0","0","0","0",
@@ -19,13 +20,13 @@ let spinning=false;
 
 function drawWheel(){
 
-ctx.clearRect(0,0,700,700);
+ctx.clearRect(0,0,720,720);
 
 for(let i=0;i<total;i++){
 
 ctx.beginPath();
-ctx.moveTo(350,350);
-ctx.arc(350,350,350,i*arc,(i+1)*arc);
+ctx.moveTo(360,360);
+ctx.arc(360,360,360,i*arc,(i+1)*arc);
 
 if(segments[i]==="JACKPOT"){
 ctx.fillStyle="#FFD700";
@@ -36,13 +37,13 @@ ctx.fillStyle=`hsl(${i*12},85%,55%)`;
 ctx.fill();
 
 ctx.save();
-ctx.translate(350,350);
+ctx.translate(360,360);
 ctx.rotate(i*arc+arc/2);
 
 ctx.fillStyle="#000";
 ctx.font="bold 36px Arial";
 ctx.textAlign="center";
-ctx.fillText(segments[i],250,10);
+ctx.fillText(segments[i],260,10);
 
 ctx.restore();
 }
@@ -53,10 +54,7 @@ drawWheel();
 function showUser(user){
 userBig.innerText=user;
 userBig.style.opacity=1;
-
-setTimeout(()=>{
-userBig.style.opacity=0;
-},2000);
+setTimeout(()=>{userBig.style.opacity=0;},2000);
 }
 
 function addWinner(user,prize){
@@ -80,7 +78,12 @@ spinning=true;
 
 showUser(user);
 
-let spinAngle=Math.random()*360+2000;
+let prizeIndex = Math.floor(Math.random()*segments.length);
+
+let finalAngle = 360 - (prizeIndex * (360/total)) - (360/(total*2));
+
+let spinAngle = 360*6 + finalAngle;
+
 let duration=15000;
 let start=null;
 
@@ -101,26 +104,9 @@ requestAnimationFrame(animate);
 }else{
 
 rotation+=spinAngle;
-
 spinning=false;
 
-showResult(user);
-
-}
-
-}
-
-requestAnimationFrame(animate);
-
-}
-
-function showResult(user){
-
-let normalized=(rotation%360);
-
-let index=Math.floor((360-normalized)/(360/total))%total;
-
-let prize=segments[index];
+let prize=segments[prizeIndex];
 
 if(prize==="JACKPOT"){
 
@@ -147,6 +133,12 @@ origin:{y:0.6}
 addWinner(user,prize);
 
 }
+
+}
+
+}
+
+requestAnimationFrame(animate);
 
 }
 
