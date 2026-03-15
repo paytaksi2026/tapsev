@@ -1,47 +1,75 @@
 
-const socket = io();
-
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
 const segments=44;
+const values=[
+...Array(37).fill("0 AZN"),
+...Array(4).fill("1 AZN"),
+...Array(2).fill("2 AZN"),
+"3 AZN"
+];
+
 let angle=0;
 
-function drawWheel(){
- const r=250;
- ctx.clearRect(0,0,500,500);
+function draw(){
 
- for(let i=0;i<segments;i++){
-   const a=(i*(Math.PI*2)/segments)+angle;
+const cx=300;
+const cy=300;
+const r=280;
 
-   ctx.beginPath();
-   ctx.moveTo(250,250);
-   ctx.arc(250,250,r,a,a+(Math.PI*2)/segments);
-   ctx.fillStyle=i%2?"#444":"#666";
-   ctx.fill();
- }
+ctx.clearRect(0,0,600,600);
+
+for(let i=0;i<segments;i++){
+
+let start=(i*(Math.PI*2)/segments)+angle;
+let end=start+(Math.PI*2)/segments;
+
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.arc(cx,cy,r,start,end);
+
+ctx.fillStyle=i%2?"#d4af37":"#222";
+ctx.fill();
+
+ctx.save();
+
+ctx.translate(cx,cy);
+ctx.rotate(start+(Math.PI/segments));
+
+ctx.fillStyle="white";
+ctx.font="14px Arial";
+ctx.fillText(values[i],180,5);
+
+ctx.restore();
 
 }
 
-drawWheel();
+}
 
-socket.on("spinStart",(data)=>{
- spin();
-});
+draw();
 
 function spin(){
- let duration=15000;
- let start=Date.now();
 
- function animate(){
-   let t=(Date.now()-start)/duration;
+let duration=15000;
+let start=Date.now();
 
-   if(t<1){
-     angle+=0.3*(1-t);
-     drawWheel();
-     requestAnimationFrame(animate);
-   }
- }
+function frame(){
 
- animate();
+let t=(Date.now()-start)/duration;
+
+if(t<1){
+
+angle+=0.35*(1-t);
+draw();
+requestAnimationFrame(frame);
+
 }
+
+}
+
+frame();
+
+}
+
+window.spin=spin;

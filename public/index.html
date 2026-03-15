@@ -3,26 +3,33 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>TikTok Live Wheel</title>
+<title>TikTok Çarxı</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="leftPanel">TOP LIKE</div>
-
-<div id="wheelContainer">
-  <div id="pointer">▼</div>
-  <canvas id="wheel" width="500" height="500"></canvas>
-  <div id="centerText">
-  🎡 ÇARX QAYDALARI<br>
-  ❤️100 Like = 1 Spin<br>
-  🎁100 Gift = 1 Spin
-  </div>
+<div id="leftPanel">
+<h2>❤️ TOP LIKE</h2>
+<div id="topLike">-</div>
 </div>
 
-<div id="rightPanel">TOP GIFT</div>
+<div id="wheelContainer">
+<div id="pointer">▼</div>
+<canvas id="wheel" width="600" height="600"></canvas>
 
-<script src="/socket.io/socket.io.js"></script>
+<div id="centerText">
+<h2>🎡 TikTok Çarxı</h2>
+<p>❤️ 100 Like = 1 Spin</p>
+<p>🎁 100 Gift = 1 Spin</p>
+</div>
+
+</div>
+
+<div id="rightPanel">
+<h2>🎁 TOP GIFT</h2>
+<div id="topGift">-</div>
+</div>
+
 <script src="wheel.js"></script>
 </body>
 </html>
