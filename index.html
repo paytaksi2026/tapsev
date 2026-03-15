@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Şans Çarxı</title>
+<style>
+body{
+background:#000;
+color:white;
+text-align:center;
+font-family:Arial;
+margin-top:40px;
+}
+#wheel{
+width:500px;
+transition: transform 10s cubic-bezier(.17,.67,.12,.99);
+cursor:pointer;
+}
+#result{
+font-size:70px;
+margin-top:30px;
+color:#FFD700;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Dəstək olanlar üçün</h2>
+
+<img id="wheel" src="wheel.png">
+
+<div id="result"></div>
+
+<script>
+
+const prizes = [
+0,1,0,1,2,0,1,2,0,3,
+2,3,0,1,0,1,0,2,0,5
+]
+
+let spinning=false
+
+document.getElementById("wheel").onclick = function(){
+
+if(spinning) return
+spinning=true
+
+let wheel=document.getElementById("wheel")
+
+let spinAngle=3600 + Math.random()*360
+
+wheel.style.transform="rotate("+spinAngle+"deg)"
+
+setTimeout(()=>{
+
+let deg = spinAngle % 360
+let index = Math.floor((360-deg)/18)
+
+let win = prizes[index]
+
+document.getElementById("result").innerHTML =
+win + " AZN"
+
+spinning=false
+
+},10000)
+
+}
+
+</script>
+
+</body>
+</html>
