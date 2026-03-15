@@ -87,3 +87,17 @@ transition:opacity .3s;
 margin-top:20px;
 font-size:36px;
 }
+
+
+#liveStatus{
+position:absolute;
+top:20px;
+right:20px;
+background:#300;
+padding:8px 14px;
+border-radius:6px;
+font-weight:bold;
+color:white;
+box-shadow:0 0 10px red;
+z-index:999;
+}

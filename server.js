@@ -18,6 +18,7 @@ let likeCounter={};
 
 tiktok.connect().then(()=>{
 console.log("Connected to TikTok live:",username);
+  io.emit('liveConnected');
 }).catch(err=>console.error(err));
 
 tiktok.on("gift",data=>{

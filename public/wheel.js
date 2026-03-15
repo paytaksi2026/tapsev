@@ -135,3 +135,13 @@ spinQueue.push({user:data.user});
 }
 runQueue();
 });
+
+
+const liveStatus = document.getElementById("liveStatus");
+
+socket.on("liveConnected", () => {
+  if(liveStatus){
+    liveStatus.innerHTML = "🟢 LIVE QOŞULDU";
+    liveStatus.style.background = "#030";
+  }
+});
