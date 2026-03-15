@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TikTok Live Wheel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="leftPanel">TOP LIKE</div>
+
+<div id="wheelContainer">
+  <div id="pointer">▼</div>
+  <canvas id="wheel" width="500" height="500"></canvas>
+  <div id="centerText">
+  🎡 ÇARX QAYDALARI<br>
+  ❤️100 Like = 1 Spin<br>
+  🎁100 Gift = 1 Spin
+  </div>
+</div>
+
+<div id="rightPanel">TOP GIFT</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="wheel.js"></script>
+</body>
+</html>
