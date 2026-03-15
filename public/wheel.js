@@ -127,3 +127,18 @@ el.innerText="";
 }
 
 window.spin=spin;
+
+/* SOCKET SUPPORT */
+const socket = io();
+
+socket.on("spinStart",(data)=>{
+  spin(data.user);
+});
+
+socket.on("spinResult",(data)=>{
+  console.log("Winner:",data.user,data.result);
+});
+
+socket.on("queueUpdate",(q)=>{
+  console.log("Queue:",q);
+});
