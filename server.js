@@ -8,8 +8,11 @@ const app=express();
 const server=http.createServer(app);
 const io=new Server(server);
 
-const username="xeberx.az";
-const tiktok=new WebcastPushConnection(username);
+const username = "xeberx.az";
+
+const tiktok = new WebcastPushConnection(username, {
+    sessionId: "523796739a77f70cfc3e3e018481cf9a"
+});
 
 let likeCounter={};
 
