@@ -8,9 +8,9 @@ const app=express();
 const server=http.createServer(app);
 const io=new Server(server);
 
-const tiktok = new WebcastPushConnection(username,{
-  sessionId: process.env.TT_SESSION || ""
-});
+const username="xeberx.az";
+
+const tiktok=new WebcastPushConnection(username);
 
 let likeCounter={};
 let likeStats={};
