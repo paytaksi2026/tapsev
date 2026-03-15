@@ -134,8 +134,7 @@ let pointerAngle = 0;
 let seg = 360/total;
 
 /* calculate index under pointer */
-let index = Math.floor(((360 - deg + pointerAngle) % 360) / seg);
-
+let index = Math.floor((((360 - deg + pointerAngle) % 360) + seg/2) / seg) % total;
 let prize = segments[index];
 
 /* ===== RESULT ===== */
