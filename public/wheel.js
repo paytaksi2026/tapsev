@@ -1,65 +1,107 @@
 
-const canvas = document.getElementById("wheel");
-const ctx = canvas.getContext("2d");
-const spinBtn = document.getElementById("spinBtn");
-const resultDiv = document.getElementById("result");
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+const result=document.getElementById("result");
+const spinBtn=document.getElementById("spinBtn");
 
-const socket = io();
-
-const segments = [
+const segments=[
 "0","0","0","0","0","0","0","0","0","0",
 "0","0","0","0","0","0","0","0","0","0",
 "0","0","0","0","1","1","1","2","3","JACKPOT"
 ];
 
-let angle = 0;
-let spinning = false;
+const total=segments.length;
+const arc=(Math.PI*2)/total;
+
+let rotation=0;
+let spinning=false;
 
 function drawWheel(){
-const arc = Math.PI*2/segments.length;
-for(let i=0;i<segments.length;i++){
+
+ctx.clearRect(0,0,600,600);
+
+for(let i=0;i<total;i++){
+
 ctx.beginPath();
-ctx.fillStyle = `hsl(${i*12},80%,50%)`;
-ctx.moveTo(250,250);
-ctx.arc(250,250,250,i*arc,(i+1)*arc);
+ctx.moveTo(300,300);
+ctx.arc(300,300,300,i*arc,(i+1)*arc);
+ctx.fillStyle=`hsl(${i*12},80%,55%)`;
 ctx.fill();
 
 ctx.save();
-ctx.translate(250,250);
+ctx.translate(300,300);
 ctx.rotate(i*arc+arc/2);
-ctx.fillStyle="white";
-ctx.fillText(segments[i],150,0);
+
+ctx.fillStyle="black";
+ctx.font="bold 28px Arial";
+ctx.textAlign="center";
+ctx.fillText(segments[i],200,10);
+
 ctx.restore();
 }
+
 }
 
 drawWheel();
 
-function spin(user=""){
+function spin(){
+
 if(spinning) return;
+
 spinning=true;
 
-let spinTime=15000;
-let start=Date.now();
+let spinAngle=Math.random()*360+1800;
+let duration=15000;
+let start=null;
 
-let spinInterval=setInterval(()=>{
-angle+=0.3;
-canvas.style.transform=`rotate(${angle}rad)`;
+function animate(t){
 
-if(Date.now()-start>spinTime){
-clearInterval(spinInterval);
+if(!start) start=t;
+
+let progress=t-start;
+
+let angle=spinAngle*(progress/duration);
+
+canvas.style.transform=`rotate(${rotation+angle}deg)`;
+
+if(progress<duration){
+
+requestAnimationFrame(animate);
+
+}else{
+
+rotation+=spinAngle;
+
 spinning=false;
 
-let index = Math.floor(Math.random()*segments.length);
-let prize = segments[index];
+showResult();
 
-resultDiv.innerHTML = user + " qazandı: " + prize + " AZN";
-}
-},30);
 }
 
-spinBtn.onclick=()=>spin("Manual");
+}
 
-socket.on("spin", data=>{
-spin("@"+data.user);
-});
+requestAnimationFrame(animate);
+
+}
+
+function showResult(){
+
+let normalized=(rotation%360);
+
+let index=Math.floor((360-normalized)/(360/total))%total;
+
+let prize=segments[index];
+
+if(prize==="JACKPOT"){
+
+result.innerHTML="🔥 MEGA JACKPOT 5 AZN";
+
+}else{
+
+result.innerHTML="QAZANDI: "+prize+" AZN";
+
+}
+
+}
+
+spinBtn.onclick=spin;
