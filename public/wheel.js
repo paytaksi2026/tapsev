@@ -1,12 +1,9 @@
+
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
-const spinBtn=document.getElementById("spinBtn");
 const result=document.getElementById("result");
+const spinBtn=document.getElementById("spinBtn");
 const spinSound=document.getElementById("spinSound");
-const userOverlay=document.getElementById("userOverlay");
-const giftOverlay=document.getElementById("giftOverlay");
-
-const socket = typeof io !== "undefined" ? io() : null;
 
 const segments=[
 "0","0","0","0","0","0","0","0","0","0",
@@ -22,63 +19,46 @@ let spinning=false;
 
 function drawWheel(){
 
-ctx.clearRect(0,0,650,650);
+ctx.clearRect(0,0,700,700);
 
 for(let i=0;i<total;i++){
 
 ctx.beginPath();
-ctx.moveTo(325,325);
-ctx.arc(325,325,325,i*arc,(i+1)*arc);
+ctx.moveTo(350,350);
+ctx.arc(350,350,350,i*arc,(i+1)*arc);
 
 if(segments[i]==="JACKPOT"){
 ctx.fillStyle="#FFD700";
 }else{
-ctx.fillStyle=`hsl(${i*12},80%,55%)`;
+ctx.fillStyle=`hsl(${i*12},85%,55%)`;
 }
 
 ctx.fill();
 
 ctx.save();
-ctx.translate(325,325);
+ctx.translate(350,350);
 ctx.rotate(i*arc+arc/2);
 
-ctx.fillStyle="black";
-ctx.font="bold 34px Arial";
+ctx.fillStyle="#000";
+ctx.font="bold 36px Arial";
 ctx.textAlign="center";
-ctx.fillText(segments[i],230,10);
+ctx.fillText(segments[i],250,10);
 
 ctx.restore();
+
 }
 }
 
 drawWheel();
 
-function showUser(user){
-
-userOverlay.innerText=user;
-userOverlay.style.opacity=1;
-
-giftOverlay.style.opacity=1;
-
-setTimeout(()=>{
-userOverlay.style.opacity=0;
-giftOverlay.style.opacity=0;
-},2000);
-
-}
-
-function spin(user=""){
+function spin(){
 
 if(spinning) return;
 
 spinning=true;
-spinSound.play();
+if(spinSound) spinSound.play();
 
-if(user){
-showUser(user+" göndərdi 🎁");
-}
-
-let spinAngle=Math.random()*360+1800;
+let spinAngle=Math.random()*360+2000;
 let duration=15000;
 let start=null;
 
@@ -102,7 +82,7 @@ rotation+=spinAngle;
 
 spinning=false;
 
-showResult(user);
+showResult();
 
 }
 
@@ -112,7 +92,7 @@ requestAnimationFrame(animate);
 
 }
 
-function showResult(user){
+function showResult(){
 
 let normalized=(rotation%360);
 
@@ -132,11 +112,11 @@ origin:{y:0.6}
 
 }else{
 
-result.innerHTML=(user?user+" ":"")+"QAZANDI: "+prize+" AZN";
+result.innerHTML="QAZANDI: "+prize+" AZN";
 
 confetti({
 particleCount:120,
-spread:90,
+spread:80,
 origin:{y:0.6}
 });
 
@@ -144,10 +124,4 @@ origin:{y:0.6}
 
 }
 
-spinBtn.onclick=()=>spin("Manual");
-
-if(socket){
-socket.on("spin",(data)=>{
-spin("@"+data.user);
-});
-}
+spinBtn.onclick=spin;

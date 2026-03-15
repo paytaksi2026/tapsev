@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,21 +9,19 @@
 </head>
 <body>
 
-<div class="title">
-<h1>TikTok Çarxı</h1>
+<div id="wheelWrapper">
+
+<div id="pointer"></div>
+
+<canvas id="wheel" width="700" height="700"></canvas>
+
+<div class="centerCircle">
+<h2>TikTok Çarxı</h2>
 <p>Dəstək olanlar üçün</p>
-<p><b>100 jeton dəstək = 1 fırlatma</b></p>
+<p><b>100 jeton dəstək</b></p>
+<p>= 1 fırlatma</p>
 <p>təşəkkür oyunudur.</p>
 </div>
-
-<div id="wheelWrapper">
-<div id="pointer"></div>
-<canvas id="wheel" width="650" height="650"></canvas>
-
-<div class="centerCircle">TikTok<br>Çarxı</div>
-
-<div id="userOverlay"></div>
-<div id="giftOverlay">🎁</div>
 
 </div>
 
@@ -32,7 +31,6 @@
 
 <audio id="spinSound" src="spin.mp3"></audio>
 
-<script src="/socket.io/socket.io.js"></script>
 <script src="wheel.js"></script>
 
 </body>
