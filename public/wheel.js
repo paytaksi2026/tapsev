@@ -128,7 +128,7 @@ spinning=false;
 let deg = ((rotation % 360) + 360) % 360;
 
 /* pointer is pointing DOWN (90deg) */
-let pointerAngle = 90;
+let pointerAngle = 0;
 
 /* segment angle */
 let seg = 360/total;
