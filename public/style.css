@@ -1,32 +1,41 @@
 
 body{
-background:#111;
+background:#0b0b0b;
 color:white;
-text-align:center;
 font-family:Arial;
+text-align:center;
 }
 
-#wheelContainer{
+#wheelWrapper{
 position:relative;
 display:inline-block;
+margin-top:20px;
 }
 
 #pointer{
 position:absolute;
-top:-10px;
+top:-5px;
 left:50%;
 transform:translateX(-50%);
-font-size:30px;
-color:red;
+width:0;
+height:0;
+border-left:15px solid transparent;
+border-right:15px solid transparent;
+border-bottom:30px solid red;
+z-index:10;
+}
+
+canvas{
+border-radius:50%;
 }
 
 button{
 margin-top:20px;
-padding:10px 30px;
+padding:12px 40px;
 font-size:20px;
 }
 
 #result{
-font-size:28px;
+font-size:30px;
 margin-top:20px;
 }
