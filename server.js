@@ -10,8 +10,8 @@ const io=new Server(server);
 
 const username = "xeberx.az";
 
-const tiktok = new WebcastPushConnection(username, {
-    sessionId: "523796739a77f70cfc3e3e018481cf9a"
+const tiktok = new WebcastPushConnection(username,{
+  sessionId: process.env.TT_SESSION || ""
 });
 
 let likeCounter={};
