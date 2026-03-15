@@ -1,9 +1,9 @@
-
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 const result=document.getElementById("result");
 const spinBtn=document.getElementById("spinBtn");
-const spinSound=document.getElementById("spinSound");
+const userBig=document.getElementById("userBig");
+const winnerList=document.getElementById("winnerList");
 
 const segments=[
 "0","0","0","0","0","0","0","0","0","0",
@@ -45,18 +45,40 @@ ctx.textAlign="center";
 ctx.fillText(segments[i],250,10);
 
 ctx.restore();
-
 }
 }
 
 drawWheel();
 
-function spin(){
+function showUser(user){
+userBig.innerText=user;
+userBig.style.opacity=1;
+
+setTimeout(()=>{
+userBig.style.opacity=0;
+},2000);
+}
+
+function addWinner(user,prize){
+
+const li=document.createElement("li");
+li.innerText=user+" → "+prize+" AZN";
+
+winnerList.prepend(li);
+
+if(winnerList.children.length>10){
+winnerList.removeChild(winnerList.lastChild);
+}
+
+}
+
+function spin(user="Manual"){
 
 if(spinning) return;
 
 spinning=true;
-if(spinSound) spinSound.play();
+
+showUser(user);
 
 let spinAngle=Math.random()*360+2000;
 let duration=15000;
@@ -82,7 +104,7 @@ rotation+=spinAngle;
 
 spinning=false;
 
-showResult();
+showResult(user);
 
 }
 
@@ -92,7 +114,7 @@ requestAnimationFrame(animate);
 
 }
 
-function showResult(){
+function showResult(user){
 
 let normalized=(rotation%360);
 
@@ -110,18 +132,22 @@ spread:120,
 origin:{y:0.6}
 });
 
+addWinner(user,"JACKPOT");
+
 }else{
 
-result.innerHTML="QAZANDI: "+prize+" AZN";
+result.innerHTML=user+" qazandı "+prize+" AZN";
 
 confetti({
 particleCount:120,
-spread:80,
+spread:90,
 origin:{y:0.6}
 });
 
-}
+addWinner(user,prize);
 
 }
 
-spinBtn.onclick=spin;
+}
+
+spinBtn.onclick=()=>spin("Manual");
