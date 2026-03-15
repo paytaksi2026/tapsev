@@ -1,4 +1,3 @@
-
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 const result=document.getElementById("result");
@@ -18,28 +17,27 @@ let spinning=false;
 
 function drawWheel(){
 
-ctx.clearRect(0,0,600,600);
+ctx.clearRect(0,0,650,650);
 
 for(let i=0;i<total;i++){
 
 ctx.beginPath();
-ctx.moveTo(300,300);
-ctx.arc(300,300,300,i*arc,(i+1)*arc);
+ctx.moveTo(325,325);
+ctx.arc(325,325,325,i*arc,(i+1)*arc);
 ctx.fillStyle=`hsl(${i*12},80%,55%)`;
 ctx.fill();
 
 ctx.save();
-ctx.translate(300,300);
+ctx.translate(325,325);
 ctx.rotate(i*arc+arc/2);
 
 ctx.fillStyle="black";
-ctx.font="bold 28px Arial";
+ctx.font="bold 34px Arial";
 ctx.textAlign="center";
-ctx.fillText(segments[i],200,10);
+ctx.fillText(segments[i],220,10);
 
 ctx.restore();
 }
-
 }
 
 drawWheel();
@@ -93,13 +91,9 @@ let index=Math.floor((360-normalized)/(360/total))%total;
 let prize=segments[index];
 
 if(prize==="JACKPOT"){
-
 result.innerHTML="🔥 MEGA JACKPOT 5 AZN";
-
 }else{
-
 result.innerHTML="QAZANDI: "+prize+" AZN";
-
 }
 
 }
