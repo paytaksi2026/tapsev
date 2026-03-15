@@ -4,7 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Şans Çarxı</title>
+
 <style>
+
 body{
 background:#000;
 margin:0;
@@ -15,39 +17,42 @@ color:white;
 
 #wheelContainer{
 position:relative;
-display:inline-block;
-margin-top:40px;
+width:600px;
+margin:40px auto;
 }
 
 #wheel{
-width:600px;
+width:100%;
+display:block;
+transform-origin:center center;
 }
 
 #pointer{
 position:absolute;
-top:-20px;
+top:-30px;
 left:50%;
 transform:translateX(-50%);
 width:0;
 height:0;
-border-left:25px solid transparent;
-border-right:25px solid transparent;
-border-bottom:50px solid red;
+border-left:30px solid transparent;
+border-right:30px solid transparent;
+border-top:60px solid red;
 z-index:10;
 }
 
 #result{
 font-size:70px;
-margin-top:20px;
+margin-top:10px;
 color:#FFD700;
 opacity:0;
-transition:0.5s;
+transition:0.4s;
 }
 
 button{
 padding:10px 18px;
 font-size:18px;
 margin:10px;
+cursor:pointer;
 }
 
 canvas{
@@ -56,6 +61,7 @@ top:0;
 left:0;
 pointer-events:none;
 }
+
 </style>
 </head>
 
@@ -68,20 +74,17 @@ pointer-events:none;
 
 <div id="wheelContainer">
 <div id="pointer"></div>
-<img id="wheel" src="wheel_no_pointer.png">
+<img id="wheel" src="wheel_clean.png">
 </div>
 
 <div id="result"></div>
 <canvas id="confetti"></canvas>
-
-<audio id="tick" src="tick.wav"></audio>
 
 <script>
 
 let prizes = JSON.parse(localStorage.getItem("prizes")||"[0,1,0,1,2,0,1,2,0,3,2,3,0,1,0,1,0,2,0,5]")
 
 let wheel=document.getElementById("wheel")
-let tick=document.getElementById("tick")
 
 let spinning=false
 let velocity=0
@@ -111,9 +114,6 @@ velocity*=friction
 angle+=velocity
 
 wheel.style.transform="rotate("+angle+"rad)"
-
-tick.currentTime=0
-tick.play()
 
 if(velocity<0.002){
 
