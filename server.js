@@ -10,55 +10,48 @@ const io = new Server(server);
 
 const username = "xeberx.az";
 
-const tiktok = new WebcastPushConnection(username, {
+const tiktok = new WebcastPushConnection(username,{
   sessionId: process.env.TT_SESSION || ""
 });
 
 let likeCounter = {};
-let liveConnected = false;
+let winners = [];
 
 tiktok.connect().then(()=>{
-  console.log("Connected to TikTok live:", username);
-  liveConnected = true;
+  console.log("Connected to TikTok live:",username);
   io.emit("liveConnected");
 }).catch(err=>console.error(err));
 
 tiktok.on("gift",(data)=>{
+
   const coins = data.diamondCount || 0;
   const spins = Math.floor(coins/100);
 
   if(spins>0){
-    io.emit("giftSpin",{ user:data.uniqueId, spins:spins });
+    io.emit("spin",{user:data.uniqueId, spins:spins});
   }
+
 });
 
 tiktok.on("like",(data)=>{
 
   const user=data.uniqueId;
 
-  if(!likeCounter[user]){
-    likeCounter[user]=0;
-  }
+  if(!likeCounter[user]) likeCounter[user]=0;
 
   likeCounter[user]+=1;
 
-  io.emit("likeUpdate",{ user:user, total:likeCounter[user] });
+  io.emit("likeUpdate",{user:user,total:likeCounter[user]});
 
   if(likeCounter[user]>=100){
 
     let spins=Math.floor(likeCounter[user]/100);
-    likeCounter[user]=likeCounter[user]%100;
+    likeCounter[user]%=100;
 
-    io.emit("giftSpin",{ user:user, spins:spins });
+    io.emit("spin",{user:user,spins:spins});
 
   }
 
-});
-
-io.on("connection",(socket)=>{
-  if(liveConnected){
-    socket.emit("liveConnected");
-  }
 });
 
 app.use(express.static("public"));
