@@ -1,32 +1,23 @@
 
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const { WebcastPushConnection } = require("tiktok-live-connector");
+const express=require("express");
+const http=require("http");
+const {Server}=require("socket.io");
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
+const app=express();
+const server=http.createServer(app);
+const io=new Server(server);
 
 app.use(express.static("public"));
 
-const tiktokUsername = "xeberx.az";
-const tiktok = new WebcastPushConnection(tiktokUsername);
-
-tiktok.connect().then(() => {
-  console.log("Connected to TikTok live:", tiktokUsername);
-}).catch(err => console.error(err));
-
-tiktok.on("gift", data => {
-  if(data.diamondCount >= 100){
-    io.emit("spin", {user: data.uniqueId});
-  }
+io.on("connection",(socket)=>{
+console.log("client connected");
 });
 
-io.on("connection", socket => {
-  console.log("Client connected");
-});
+/* DEMO: simulate TikTok gift every 20 sec */
+setInterval(()=>{
+io.emit("tiktokGift",{user:"demo_user"});
+},20000);
 
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
+server.listen(3000,()=>{
+console.log("server running");
 });
