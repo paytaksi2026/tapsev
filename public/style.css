@@ -18,13 +18,25 @@ box-shadow:0 0 20px cyan;
 text-align:left;
 }
 
-#winnersPanel ul{
+#leaderboards{
+position:absolute;
+right:20px;
+top:20px;
+width:240px;
+background:#111;
+padding:10px;
+border-radius:10px;
+box-shadow:0 0 20px cyan;
+text-align:left;
+}
+
+#winnersPanel ul,#leaderboards ul{
 list-style:none;
 padding:0;
 margin:0;
 }
 
-#winnersPanel li{
+#winnersPanel li,#leaderboards li{
 padding:4px;
 border-bottom:1px solid #333;
 font-size:14px;
@@ -41,14 +53,15 @@ border-radius:50%;
 box-shadow:0 0 40px rgba(0,255,255,0.4),0 0 120px rgba(0,255,255,0.2);
 }
 
+/* Arrow reversed so the TIP points toward the wheel numbers */
 #pointer{
 position:absolute;
-top:-25px;
+top:-30px;
 left:50%;
 transform:translateX(-50%);
 border-left:28px solid transparent;
 border-right:28px solid transparent;
-border-bottom:60px solid #e63946;
+border-top:60px solid #e63946;
 filter:drop-shadow(0 0 10px red);
 z-index:10;
 }
@@ -72,27 +85,24 @@ box-shadow:0 0 30px cyan,0 0 60px cyan;
 
 #bigUser{
 position:absolute;
-top:10%;
+top:8%;
 left:50%;
 transform:translateX(-50%);
-font-size:48px;
+font-size:46px;
 font-weight:bold;
 color:#00ffff;
 text-shadow:0 0 20px cyan;
-opacity:0;
-transition:opacity .3s;
 }
 
 #result{
 margin-top:20px;
-font-size:36px;
+font-size:34px;
 }
-
 
 #liveStatus{
 position:absolute;
 top:20px;
-right:20px;
+right:280px;
 background:#300;
 padding:8px 14px;
 border-radius:6px;

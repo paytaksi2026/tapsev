@@ -7,6 +7,10 @@ const result=document.getElementById("result");
 const bigUser=document.getElementById("bigUser");
 const winnerList=document.getElementById("winnerList");
 
+const topWinners=document.getElementById("topWinners");
+const topLikes=document.getElementById("topLikes");
+const topGifts=document.getElementById("topGifts");
+
 const segments=[
 "0","0","0","0","0","0","0","0","0","0",
 "0","0","0","0","0","0","0","0","0","0",
@@ -55,9 +59,7 @@ return 1-Math.pow(1-t,3);
 }
 
 function showUser(user){
-bigUser.innerText=user;
-bigUser.style.opacity=1;
-setTimeout(()=>{bigUser.style.opacity=0},2000);
+bigUser.innerText=user+" üçün çarx fırlanır";
 }
 
 function addWinner(user,prize){
@@ -70,6 +72,21 @@ winnerList.removeChild(winnerList.lastChild);
 }
 }
 
+function updateList(el,data,label){
+el.innerHTML="";
+data.forEach(d=>{
+const li=document.createElement("li");
+li.innerText=d.user+" — "+d.value+" "+label;
+el.appendChild(li);
+});
+}
+
+socket.on("leaderboards",(data)=>{
+updateList(topWinners,data.winners,"AZN");
+updateList(topLikes,data.likes,"like");
+updateList(topGifts,data.gifts,"diamond");
+});
+
 function runQueue(){
 if(spinning || spinQueue.length===0) return;
 const job=spinQueue.shift();
@@ -77,6 +94,7 @@ spin(job.user);
 }
 
 function spin(user){
+
 spinning=true;
 showUser(user);
 
@@ -85,7 +103,9 @@ let prizeIndex=Math.floor(Math.random()*segments.length);
 let segAngle=360/total;
 let segmentCenter=(prizeIndex*segAngle)+(segAngle/2);
 
-let pointerAngle=270;
+/* pointer now pointing DOWN so angle changed */
+let pointerAngle=90;
+
 let delta=pointerAngle-segmentCenter;
 let finalAngle=(360+delta)%360;
 
@@ -122,6 +142,8 @@ result.innerHTML=user+" qazandı "+prize+" AZN";
 addWinner(user,prize);
 }
 
+bigUser.innerText=user+" qazandı "+prize+" AZN";
+
 runQueue();
 }
 }
@@ -135,7 +157,6 @@ spinQueue.push({user:data.user});
 }
 runQueue();
 });
-
 
 const liveStatus = document.getElementById("liveStatus");
 
