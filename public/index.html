@@ -10,10 +10,11 @@
 
 <div id="leftPanel">
 <h2>❤️ TOP LIKE</h2>
-<div id="topLike">-</div>
+<div id="topLike">No data</div>
 </div>
 
 <div id="wheelContainer">
+
 <div id="pointer">▼</div>
 <canvas id="wheel" width="600" height="600"></canvas>
 
@@ -23,12 +24,19 @@
 <p>🎁 100 Gift = 1 Spin</p>
 </div>
 
+<div id="spinInfo"></div>
+<div id="countdown"></div>
+<div id="result"></div>
+
 </div>
 
 <div id="rightPanel">
 <h2>🎁 TOP GIFT</h2>
-<div id="topGift">-</div>
+<div id="topGift">No data</div>
 </div>
+
+<audio id="spinSound" src="https://cdn.jsdelivr.net/gh/jshawl/AudioFX/spin.mp3"></audio>
+<audio id="winSound" src="https://cdn.jsdelivr.net/gh/jshawl/AudioFX/success.mp3"></audio>
 
 <script src="wheel.js"></script>
 </body>

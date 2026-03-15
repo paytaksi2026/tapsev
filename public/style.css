@@ -17,7 +17,7 @@ text-align:center;
 
 #pointer{
 position:absolute;
-top:-10px;
+top:-15px;
 left:50%;
 transform:translateX(-50%);
 font-size:40px;
@@ -34,7 +34,32 @@ background:rgba(0,0,0,0.7);
 padding:20px;
 border-radius:15px;
 border:2px solid gold;
-text-align:center;
+}
+
+#spinInfo{
+position:absolute;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+font-size:22px;
+color:gold;
+}
+
+#countdown{
+position:absolute;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+font-size:28px;
+}
+
+#result{
+position:absolute;
+bottom:80px;
+left:50%;
+transform:translateX(-50%);
+font-size:30px;
+color:gold;
 }
 
 #leftPanel,#rightPanel{
