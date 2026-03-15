@@ -18,6 +18,30 @@ const arc=(Math.PI*2)/total;
 let rotation=0;
 let spinning=false;
 
+/* easing for realistic slow down */
+function easeOutCubic(t){
+return 1-Math.pow(1-t,3);
+}
+
+/* simple wheel tick sound using WebAudio */
+let audioCtx=null;
+function tick(){
+if(!audioCtx){
+audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+}
+const osc=audioCtx.createOscillator();
+const gain=audioCtx.createGain();
+
+osc.frequency.value=900;
+gain.gain.value=0.05;
+
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+osc.start();
+osc.stop(audioCtx.currentTime+0.03);
+}
+
 function drawWheel(){
 
 ctx.clearRect(0,0,720,720);
@@ -67,7 +91,6 @@ winnerList.prepend(li);
 if(winnerList.children.length>10){
 winnerList.removeChild(winnerList.lastChild);
 }
-
 }
 
 function spin(user="Manual"){
@@ -75,29 +98,42 @@ function spin(user="Manual"){
 if(spinning) return;
 
 spinning=true;
-
 showUser(user);
 
-let prizeIndex = Math.floor(Math.random()*segments.length);
+/* choose prize first */
+let prizeIndex=Math.floor(Math.random()*segments.length);
 
-let finalAngle = 360 - (prizeIndex * (360/total)) - (360/(total*2));
+/* angle where pointer should stop */
+let finalAngle=360-(prizeIndex*(360/total))-(360/(total*2));
 
-let spinAngle = 360*6 + finalAngle;
+/* spin several rotations */
+let spinAngle=360*7+finalAngle;
 
 let duration=15000;
 let start=null;
+let lastTick=0;
 
 function animate(t){
 
 if(!start) start=t;
 
-let progress=t-start;
+let progress=(t-start)/duration;
+if(progress>1) progress=1;
 
-let angle=spinAngle*(progress/duration);
+/* easing for natural slow down */
+let eased=easeOutCubic(progress);
+
+let angle=spinAngle*eased;
 
 canvas.style.transform=`rotate(${rotation+angle}deg)`;
 
-if(progress<duration){
+/* play tick sound while spinning */
+if(t-lastTick>60){
+tick();
+lastTick=t;
+}
+
+if(progress<1){
 
 requestAnimationFrame(animate);
 
@@ -131,15 +167,11 @@ origin:{y:0.6}
 });
 
 addWinner(user,prize);
-
 }
-
 }
-
 }
 
 requestAnimationFrame(animate);
-
 }
 
 spinBtn.onclick=()=>spin("Manual");
