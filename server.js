@@ -34,20 +34,7 @@ io.emit("giftSpin",{user:data.uniqueId,spins:spins});
 
 });
 
-tiktok.on("like",data=>{
 
-const user=data.uniqueId;
-const likes=data.likeCount||1;
-
-if(!likeCounter[user]) likeCounter[user]=0;
-
-likeCounter[user]+=likes;
-
-let spins=Math.floor(likeCounter[user]/100);
-
-if(spins>0){
-likeCounter[user]%=100;
-io.emit("giftSpin",{user:user,spins:spins});
 }
 
 });
@@ -63,4 +50,33 @@ io.on("connection",(socket)=>{
   if(liveConnected){
     socket.emit("liveConnected");
   }
+});
+
+tiktok.on("like",(data)=>{
+
+const user=data.uniqueId;
+
+if(!likeCounter[user]){
+likeCounter[user]=0;
+}
+
+likeCounter[user]+=1;
+
+io.emit("likeUpdate",{
+user:user,
+total:likeCounter[user]
+});
+
+if(likeCounter[user] >= 100){
+
+let spins=Math.floor(likeCounter[user]/100);
+likeCounter[user]%=100;
+
+io.emit("giftSpin",{
+user:user,
+spins:spins
+});
+
+}
+
 });

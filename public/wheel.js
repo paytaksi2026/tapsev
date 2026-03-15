@@ -145,3 +145,19 @@ socket.on("liveConnected", () => {
     liveStatus.style.background = "#030";
   }
 });
+
+
+const likesList=document.getElementById("likesList");
+
+socket.on("likeUpdate",(data)=>{
+
+const li=document.createElement("li");
+li.innerText=data.user+" ❤️ "+data.total;
+
+likesList.prepend(li);
+
+while(likesList.children.length>10){
+likesList.removeChild(likesList.lastChild);
+}
+
+});

@@ -101,3 +101,28 @@ color:white;
 box-shadow:0 0 10px red;
 z-index:999;
 }
+
+
+#likesPanel{
+position:absolute;
+right:20px;
+top:20px;
+width:240px;
+background:#111;
+padding:10px;
+border-radius:10px;
+box-shadow:0 0 20px #00ffff;
+text-align:left;
+}
+
+#likesPanel ul{
+list-style:none;
+padding:0;
+margin:0;
+}
+
+#likesPanel li{
+padding:4px;
+border-bottom:1px solid #333;
+font-size:14px;
+}
