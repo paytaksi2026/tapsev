@@ -128,7 +128,6 @@ el.innerText="";
 
 window.spin=spin;
 
-/* SOCKET SUPPORT */
 const socket = io();
 
 socket.on("spinStart",(data)=>{
@@ -141,4 +140,18 @@ socket.on("spinResult",(data)=>{
 
 socket.on("queueUpdate",(q)=>{
   console.log("Queue:",q);
+});
+
+socket.on("tiktokStatus",(status)=>{
+
+const el=document.getElementById("tiktokStatus");
+
+if(status==="connected"){
+el.innerText="🟢 TikTok LIVE qoşuldu";
+}
+
+if(status==="failed"){
+el.innerText="🔴 TikTok qoşulmadı";
+}
+
 });

@@ -25,6 +25,19 @@ color:red;
 z-index:10;
 }
 
+#tiktokStatus{
+position:absolute;
+top:60px;
+left:50%;
+transform:translateX(-50%);
+font-size:18px;
+color:#ffcc00;
+background:#111;
+padding:6px 12px;
+border-radius:6px;
+border:1px solid #444;
+}
+
 #centerText{
 position:absolute;
 top:50%;
