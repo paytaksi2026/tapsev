@@ -10,9 +10,7 @@ const io=new Server(server);
 
 const username="xeberx.az";
 
-const tiktok = new WebcastPushConnection(username,{
-  sessionId: process.env.TT_SESSION || ""
-});
+const tiktok = new WebcastPushConnection(username);
 
 let likeCounter={};
 let likeStats={};
