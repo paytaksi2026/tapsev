@@ -87,7 +87,7 @@ broadcast();
 
 });
 
-app.use(express.static("."));
+app.use(express.static("public"));
 
 server.listen(3000,()=>{
 console.log("Server running on port 3000");
