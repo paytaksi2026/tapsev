@@ -6,11 +6,6 @@ font-family:Arial;
 text-align:center;
 }
 
-#overlay{
-width:100%;
-height:100%;
-}
-
 #winnersPanel{
 position:absolute;
 left:20px;
@@ -85,6 +80,7 @@ font-weight:bold;
 color:#00ffff;
 text-shadow:0 0 20px cyan;
 opacity:0;
+transition:opacity .3s;
 }
 
 #result{

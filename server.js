@@ -9,30 +9,39 @@ const server=http.createServer(app);
 const io=new Server(server);
 
 const username="xeberx.az";
-
 const tiktok=new WebcastPushConnection(username);
 
-tiktok.connect().then(state=>{
-console.log("Connected to TikTok live:",state.roomId);
-}).catch(err=>{
-console.error("TikTok connection failed",err);
-});
+let likeCounter={};
+
+tiktok.connect().then(()=>{
+console.log("Connected to TikTok live:",username);
+}).catch(err=>console.error(err));
 
 tiktok.on("gift",data=>{
 
-let coins=data.diamondCount || 0;
-
-let spins=Math.floor(coins/100);
+const coins=data.diamondCount||0;
+const spins=Math.floor(coins/100);
 
 if(spins>0){
+io.emit("giftSpin",{user:data.uniqueId,spins:spins});
+}
 
-io.emit("giftSpin",{
-user:data.uniqueId,
-spins:spins
 });
 
-console.log(data.uniqueId,"sent",coins,"coins →",spins,"spins");
+tiktok.on("like",data=>{
 
+const user=data.uniqueId;
+const likes=data.likeCount||1;
+
+if(!likeCounter[user]) likeCounter[user]=0;
+
+likeCounter[user]+=likes;
+
+let spins=Math.floor(likeCounter[user]/100);
+
+if(spins>0){
+likeCounter[user]%=100;
+io.emit("giftSpin",{user:user,spins:spins});
 }
 
 });
@@ -40,5 +49,5 @@ console.log(data.uniqueId,"sent",coins,"coins →",spins,"spins");
 app.use(express.static("public"));
 
 server.listen(3000,()=>{
-console.log("Server running");
+console.log("Server running on port 3000");
 });

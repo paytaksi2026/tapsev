@@ -8,9 +8,9 @@ const bigUser=document.getElementById("bigUser");
 const winnerList=document.getElementById("winnerList");
 
 const segments=[
-"1","0","0","0","0","2","0","0","0","0",
-"1","0","0","0","1","0","0","0","1","0",
-"0","0","2","0","0","0","0","0","1","3"
+"0","0","0","0","0","0","0","0","0","0",
+"0","0","0","0","0","0","0","0","0","0",
+"0","0","1","1","1","1","2","2","3","JACKPOT"
 ];
 
 const total=segments.length;
@@ -61,10 +61,8 @@ setTimeout(()=>{bigUser.style.opacity=0},2000);
 }
 
 function addWinner(user,prize){
-
 const li=document.createElement("li");
 li.innerText=user+" → "+prize+" AZN";
-
 winnerList.prepend(li);
 
 while(winnerList.children.length>5){
@@ -74,15 +72,12 @@ winnerList.removeChild(winnerList.lastChild);
 
 function runQueue(){
 if(spinning || spinQueue.length===0) return;
-
 const job=spinQueue.shift();
 spin(job.user);
 }
 
 function spin(user){
-
 spinning=true;
-
 showUser(user);
 
 let prizeIndex=Math.floor(Math.random()*segments.length);
@@ -91,7 +86,6 @@ let segAngle=360/total;
 let segmentCenter=(prizeIndex*segAngle)+(segAngle/2);
 
 let pointerAngle=270;
-
 let delta=pointerAngle-segmentCenter;
 let finalAngle=(360+delta)%360;
 
@@ -101,14 +95,12 @@ let duration=15000;
 let start=null;
 
 function animate(t){
-
 if(!start) start=t;
 
 let progress=(t-start)/duration;
 if(progress>1) progress=1;
 
 let eased=easeOut(progress);
-
 let angle=spinAngle*eased;
 
 canvas.style.transform=`rotate(${rotation+angle}deg)`;
@@ -137,15 +129,9 @@ runQueue();
 requestAnimationFrame(animate);
 }
 
-/* receive gift from server */
 socket.on("giftSpin",(data)=>{
-
-let spins=data.spins;
-
-for(let i=0;i<spins;i++){
+for(let i=0;i<data.spins;i++){
 spinQueue.push({user:data.user});
 }
-
 runQueue();
-
 });
