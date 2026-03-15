@@ -8,9 +8,9 @@ const bigUser=document.getElementById("bigUser");
 const winnerList=document.getElementById("winnerList");
 
 const segments=[
-"0","0","0","0","0","0","0","0","0","0",
-"0","0","0","0","0","0","0","0","0","0",
-"0","0","0","0","1","1","1","2","3","JACKPOT"
+"1","0","0","0","0","2","0","0","0","0",
+"1","0","0","0","1","0","0","0","1","0",
+"0","0","2","0","0","0","0","0","1","3"
 ];
 
 const total=segments.length;
