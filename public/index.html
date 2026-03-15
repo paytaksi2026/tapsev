@@ -1,15 +1,17 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>TikTok Çarxı</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
-<div class="centerText">
+<div class="title">
 <h1>TikTok Çarxı</h1>
-<p>Dəstək olanlar üçün,</p>
+<p>Dəstək olanlar üçün</p>
 <p><b>100 jeton dəstək = 1 fırlatma</b></p>
 <p>təşəkkür oyunudur.</p>
 </div>
@@ -17,12 +19,17 @@
 <div id="wheelWrapper">
 <div id="pointer"></div>
 <canvas id="wheel" width="650" height="650"></canvas>
+<div class="centerCircle">TikTok<br>Çarxı</div>
 </div>
 
 <button id="spinBtn">FIRLAT</button>
 
 <div id="result"></div>
 
+<audio id="spinSound" src="spin.mp3"></audio>
+
+<script src="/socket.io/socket.io.js"></script>
 <script src="wheel.js"></script>
+
 </body>
 </html>

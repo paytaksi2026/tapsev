@@ -1,11 +1,12 @@
+
 body{
-background:#0b0b0b;
+background:#050505;
 color:white;
 font-family:Arial;
 text-align:center;
 }
 
-.centerText{
+.title{
 margin-top:10px;
 line-height:1.4;
 }
@@ -23,27 +24,41 @@ left:50%;
 transform:translateX(-50%);
 width:0;
 height:0;
-border-left:18px solid transparent;
-border-right:18px solid transparent;
-border-bottom:35px solid red;
-z-index:10;
+border-left:20px solid transparent;
+border-right:20px solid transparent;
+border-bottom:40px solid red;
+z-index:20;
+}
+
+.centerCircle{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:160px;
+height:160px;
+border-radius:50%;
+background:black;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+font-weight:bold;
+box-shadow:0 0 20px #00ffff,0 0 40px #00ffff;
 }
 
 canvas{
 border-radius:50%;
-box-shadow:0 0 25px rgba(255,255,255,0.3);
 }
 
 button{
 margin-top:25px;
-padding:14px 50px;
-font-size:22px;
-background:#ffffff;
-border:none;
+padding:15px 60px;
+font-size:24px;
 cursor:pointer;
 }
 
 #result{
-font-size:34px;
+font-size:36px;
 margin-top:25px;
 }
