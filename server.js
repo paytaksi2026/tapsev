@@ -55,81 +55,61 @@ function processQueue(){
 
 }
 
-/* SOCKET TEST SUPPORT */
-
-io.on("connection",(socket)=>{
-
-  socket.on("addLike",(user)=>{
-    likeCounter[user] = (likeCounter[user]||0)+1;
-
-    if(likeCounter[user] >= 100){
-      likeCounter[user] = 0;
-      queue.push(user);
-      io.emit("queueUpdate",queue);
-      processQueue();
-    }
-  });
-
-  socket.on("addGift",(user)=>{
-    giftCounter[user] = (giftCounter[user]||0)+1;
-
-    if(giftCounter[user] >= 100){
-      giftCounter[user] = 0;
-      queue.push(user);
-      io.emit("queueUpdate",queue);
-      processQueue();
-    }
-  });
-
-});
-
-/* TIKTOK LIVE CONNECTOR */
-
 const tiktokLiveConnection = new WebcastPushConnection(TIKTOK_USERNAME);
 
-tiktokLiveConnection.connect().then(state => {
-    console.log("Connected to TikTok LIVE:", state.roomId);
-}).catch(err => {
-    console.error("TikTok connection failed", err);
+tiktokLiveConnection.connect()
+.then(state => {
+
+console.log("Connected to TikTok LIVE:", state.roomId);
+
+io.emit("tiktokStatus","connected");
+
+})
+.catch(err => {
+
+console.error("TikTok connection failed", err);
+
+io.emit("tiktokStatus","failed");
+
 });
 
 tiktokLiveConnection.on("like", data => {
 
-  const user = data.uniqueId;
+const user = data.uniqueId;
 
-  likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
+likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
 
-  if(likeCounter[user] >= 100){
+if(likeCounter[user] >= 100){
 
-    likeCounter[user] = 0;
+likeCounter[user] = 0;
 
-    queue.push(user);
+queue.push(user);
 
-    io.emit("queueUpdate", queue);
+io.emit("queueUpdate", queue);
 
-    processQueue();
+processQueue();
 
-  }
+}
 
 });
 
 tiktokLiveConnection.on("gift", data => {
 
-  const user = data.uniqueId;
+const user = data.uniqueId;
 
-  giftCounter[user] = (giftCounter[user]||0) + 1;
+giftCounter[user] = (giftCounter[user]||0) + 1;
 
-  if(giftCounter[user] >= 100){
+if(giftCounter[user] >= 100){
 
-    giftCounter[user] = 0;
+giftCounter[user] = 0;
 
-    queue.push(user);
+queue.push(user);
 
-    io.emit("queueUpdate", queue);
+io.emit("queueUpdate", queue);
 
-    processQueue();
+processQueue();
 
-  }
+}
 
 });
 
