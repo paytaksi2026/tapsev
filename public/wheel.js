@@ -1,9 +1,10 @@
-
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 const spinBtn=document.getElementById("spinBtn");
 const result=document.getElementById("result");
 const spinSound=document.getElementById("spinSound");
+const userOverlay=document.getElementById("userOverlay");
+const giftOverlay=document.getElementById("giftOverlay");
 
 const socket = typeof io !== "undefined" ? io() : null;
 
@@ -52,12 +53,30 @@ ctx.restore();
 
 drawWheel();
 
+function showUser(user){
+
+userOverlay.innerText=user;
+userOverlay.style.opacity=1;
+
+giftOverlay.style.opacity=1;
+
+setTimeout(()=>{
+userOverlay.style.opacity=0;
+giftOverlay.style.opacity=0;
+},2000);
+
+}
+
 function spin(user=""){
 
 if(spinning) return;
 
 spinning=true;
 spinSound.play();
+
+if(user){
+showUser(user+" göndərdi 🎁");
+}
 
 let spinAngle=Math.random()*360+1800;
 let duration=15000;

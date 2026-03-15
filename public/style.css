@@ -1,4 +1,3 @@
-
 body{
 background:#050505;
 color:white;
@@ -45,6 +44,29 @@ justify-content:center;
 text-align:center;
 font-weight:bold;
 box-shadow:0 0 20px #00ffff,0 0 40px #00ffff;
+}
+
+#userOverlay{
+position:absolute;
+top:40%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:48px;
+font-weight:bold;
+color:#00ffea;
+text-shadow:0 0 20px #00ffea;
+opacity:0;
+transition:opacity 0.4s;
+}
+
+#giftOverlay{
+position:absolute;
+top:20%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:70px;
+opacity:0;
+animation-duration:1s;
 }
 
 canvas{
