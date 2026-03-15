@@ -2,6 +2,9 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const { WebcastPushConnection } = require("tiktok-live-connector");
+
+const TIKTOK_USERNAME = "xeberx.az";
 
 const app = express();
 const server = http.createServer(app);
@@ -13,9 +16,46 @@ app.use("/admin", express.static("admin"));
 let queue = [];
 let spinning = false;
 
-// demo like/gift counters
 let likeCounter = {};
 let giftCounter = {};
+
+function getRandomSegment(){
+  const segments=[
+    ...Array(37).fill(0),
+    ...Array(4).fill(1),
+    ...Array(2).fill(2),
+    3
+  ];
+  return segments[Math.floor(Math.random()*segments.length)];
+}
+
+function processQueue(){
+
+  if(spinning) return;
+  if(queue.length === 0) return;
+
+  spinning = true;
+
+  const user = queue.shift();
+  io.emit("queueUpdate", queue);
+
+  const result = getRandomSegment();
+
+  io.emit("spinStart",{user,result});
+
+  setTimeout(()=>{
+
+    io.emit("spinResult",{user,result});
+
+    spinning = false;
+
+    setTimeout(processQueue,10000);
+
+  },15000);
+
+}
+
+/* SOCKET TEST SUPPORT */
 
 io.on("connection",(socket)=>{
 
@@ -43,45 +83,56 @@ io.on("connection",(socket)=>{
 
 });
 
-function processQueue(){
+/* TIKTOK LIVE CONNECTOR */
 
-  if(spinning) return;
-  if(queue.length === 0) return;
+const tiktokLiveConnection = new WebcastPushConnection(TIKTOK_USERNAME);
 
-  spinning = true;
+tiktokLiveConnection.connect().then(state => {
+    console.log("Connected to TikTok LIVE:", state.roomId);
+}).catch(err => {
+    console.error("TikTok connection failed", err);
+});
 
-  const user = queue.shift();
-  io.emit("queueUpdate",queue);
+tiktokLiveConnection.on("like", data => {
 
-  const result = getRandomSegment();
+  const user = data.uniqueId;
 
-  io.emit("spinStart",{user,result});
+  likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
 
-  setTimeout(()=>{
+  if(likeCounter[user] >= 100){
 
-    io.emit("spinResult",{user,result});
+    likeCounter[user] = 0;
 
-    spinning = false;
+    queue.push(user);
 
-    setTimeout(processQueue,10000);
+    io.emit("queueUpdate", queue);
 
-  },15000);
+    processQueue();
 
-}
+  }
 
-function getRandomSegment(){
+});
 
-  const segments=[
-    ...Array(37).fill(0),
-    ...Array(4).fill(1),
-    ...Array(2).fill(2),
-    3
-  ];
+tiktokLiveConnection.on("gift", data => {
 
-  return segments[Math.floor(Math.random()*segments.length)];
+  const user = data.uniqueId;
 
-}
+  giftCounter[user] = (giftCounter[user]||0) + 1;
+
+  if(giftCounter[user] >= 100){
+
+    giftCounter[user] = 0;
+
+    queue.push(user);
+
+    io.emit("queueUpdate", queue);
+
+    processQueue();
+
+  }
+
+});
 
 server.listen(3000,()=>{
- console.log("Stage3 server running");
+ console.log("Server running with TikTok connector");
 });
