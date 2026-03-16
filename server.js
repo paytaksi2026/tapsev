@@ -24,6 +24,7 @@ let queue=[];
 let spinning=false;
 
 async function initDB(){
+
  await pool.query(`CREATE TABLE IF NOT EXISTS queue(
   id SERIAL PRIMARY KEY,
   username TEXT,
@@ -37,15 +38,19 @@ async function initDB(){
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )`);
 
- await pool.query(`CREATE TABLE IF NOT EXISTS likes(
-  username TEXT PRIMARY KEY,
-  count INT DEFAULT 0
+ await pool.query(`CREATE TABLE IF NOT EXISTS sectors(
+  id SERIAL PRIMARY KEY,
+  value INT
  )`);
 
- await pool.query(`CREATE TABLE IF NOT EXISTS gifts(
-  username TEXT PRIMARY KEY,
-  count INT DEFAULT 0
- )`);
+ const check=await pool.query("SELECT COUNT(*) FROM sectors");
+ if(parseInt(check.rows[0].count)===0){
+  const defaultValues=[...Array(37).fill(0),...Array(4).fill(1),...Array(2).fill(2),3];
+  for(const v of defaultValues){
+   await pool.query("INSERT INTO sectors(value) VALUES($1)",[v]);
+  }
+ }
+
 }
 
 async function loadQueue(){
@@ -61,9 +66,13 @@ async function pushQueue(user){
 
 async function popQueue(){
  if(queue.length===0) return null;
+
  const user=queue.shift();
+
  await pool.query("DELETE FROM queue WHERE id IN (SELECT id FROM queue ORDER BY id LIMIT 1)");
+
  io.emit("queueUpdate",queue);
+
  return user;
 }
 
@@ -76,39 +85,28 @@ async function getWinners(){
  return r.rows;
 }
 
-async function addLike(user,count){
- await pool.query(`INSERT INTO likes(username,count) VALUES($1,$2)
- ON CONFLICT(username) DO UPDATE SET count=likes.count+$2`,[user,count]);
+async function getSectors(){
+ const r=await pool.query("SELECT value FROM sectors ORDER BY id");
+ return r.rows.map(x=>x.value);
 }
 
-async function addGift(user,count){
- await pool.query(`INSERT INTO gifts(username,count) VALUES($1,$2)
- ON CONFLICT(username) DO UPDATE SET count=gifts.count+$2`,[user,count]);
-}
+async function randomPrize(){
 
-async function topLikes(){
- const r=await pool.query("SELECT * FROM likes ORDER BY count DESC LIMIT 5");
- return r.rows;
-}
+ const sectors=await getSectors();
 
-async function topGifts(){
- const r=await pool.query("SELECT * FROM gifts ORDER BY count DESC LIMIT 5");
- return r.rows;
-}
+ return sectors[Math.floor(Math.random()*sectors.length)];
 
-function randomPrize(){
- const arr=[...Array(37).fill(0),...Array(4).fill(1),...Array(2).fill(2),3];
- return arr[Math.floor(Math.random()*arr.length)];
 }
 
 async function processQueue(){
+
  if(spinning) return;
  if(queue.length===0) return;
 
  spinning=true;
 
  const user=await popQueue();
- const result=randomPrize();
+ const result=await randomPrize();
 
  io.emit("spinStart",{user,result});
 
@@ -117,53 +115,86 @@ async function processQueue(){
   await addWinner(user,result);
 
   const winners=await getWinners();
-  const likes=await topLikes();
-  const gifts=await topGifts();
 
   io.emit("lastWinners",winners);
-  io.emit("topLikes",likes);
-  io.emit("topGifts",gifts);
 
   spinning=false;
 
   setTimeout(processQueue,5000);
 
  },8000);
+
 }
 
 function connectTikTok(){
+
  const tiktok=new WebcastPushConnection(TIKTOK_USERNAME);
 
  tiktok.connect().then(()=>{
+
   console.log("TikTok connected");
+
  }).catch(e=>{
+
   console.log("TikTok error:",e.message);
   setTimeout(connectTikTok,10000);
+
  });
 
  tiktok.on("like",async data=>{
-  await addLike(data.uniqueId,data.likeCount);
+
   if(data.likeCount>=1000){
+
    await pushQueue(data.uniqueId);
    processQueue();
+
   }
+
  });
 
  tiktok.on("gift",async data=>{
-  await addGift(data.uniqueId,data.repeatCount||1);
+
   await pushQueue(data.uniqueId);
   processQueue();
+
  });
 
  tiktok.on("disconnected",()=>{
+
   console.log("TikTok reconnect...");
   setTimeout(connectTikTok,10000);
+
  });
+
 }
 
+app.get("/api/sectors",async(req,res)=>{
+
+ const s=await getSectors();
+ res.json(s);
+
+});
+
+app.post("/api/sectors",async(req,res)=>{
+
+ const arr=req.body;
+
+ await pool.query("DELETE FROM sectors");
+
+ for(const v of arr){
+  await pool.query("INSERT INTO sectors(value) VALUES($1)",[v]);
+ }
+
+ res.json({ok:true});
+
+});
+
 server.listen(PORT,async()=>{
+
  await initDB();
  await loadQueue();
  connectTikTok();
- console.log("TikTok Wheel PRO v8 running",PORT);
+
+ console.log("TikTok Wheel PRO v9 running",PORT);
+
 });
