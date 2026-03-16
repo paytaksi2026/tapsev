@@ -105,3 +105,61 @@ animation:cameraShake 0.5s;
 80%{transform:translate(6px,-2px) rotate(1deg);}
 100%{transform:translate(0px,0px) rotate(0deg);}
 }
+
+
+
+/* WIN POPUP */
+#winPopup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:none;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,0.6);
+z-index:9998;
+}
+
+#winBox{
+background:#111;
+border:3px solid gold;
+padding:40px 60px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 0 40px gold;
+animation:popupScale 0.5s ease;
+}
+
+.winTitle{
+font-size:42px;
+color:gold;
+margin-bottom:10px;
+}
+
+#winAmount{
+font-size:56px;
+color:#ffd700;
+text-shadow:0 0 20px gold;
+}
+
+@keyframes popupScale{
+0%{transform:scale(0.5)}
+100%{transform:scale(1)}
+}
+
+/* CONFETTI */
+.confetti{
+position:fixed;
+top:-10px;
+font-size:20px;
+pointer-events:none;
+z-index:9999;
+animation:confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall{
+0%{transform:translateY(0) rotate(0)}
+100%{transform:translateY(110vh) rotate(720deg)}
+}

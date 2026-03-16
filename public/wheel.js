@@ -1,4 +1,33 @@
 
+function showWinPopup(amount){
+const popup=document.getElementById("winPopup");
+const amt=document.getElementById("winAmount");
+if(!popup||!amt)return;
+
+amt.innerText=amount;
+popup.style.display="flex";
+
+setTimeout(()=>{
+popup.style.display="none";
+},3000);
+}
+
+function confettiRain(){
+for(let i=0;i<40;i++){
+let c=document.createElement("div");
+c.className="confetti";
+c.innerText="🎉";
+c.style.left=Math.random()*100+"vw";
+c.style.fontSize=(14+Math.random()*20)+"px";
+document.body.appendChild(c);
+
+setTimeout(()=>{
+c.remove();
+},3000);
+}
+}
+
+
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
@@ -238,6 +267,8 @@ document.getElementById("result").innerText="😢 Uduzdunuz";
 }else{
 winSound.play();
 document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
+showWinPopup(resultText);
+confettiRain();
 
 }
 
