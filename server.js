@@ -117,11 +117,10 @@ async function processQueue(){
   await addWinner(user,result);
 
   const winners=await getWinners();
-  io.emit("lastWinners",winners);
-
   const likes=await topLikes();
   const gifts=await topGifts();
 
+  io.emit("lastWinners",winners);
   io.emit("topLikes",likes);
   io.emit("topGifts",gifts);
 
@@ -143,23 +142,18 @@ function connectTikTok(){
  });
 
  tiktok.on("like",async data=>{
-
   await addLike(data.uniqueId,data.likeCount);
 
   if(data.likeCount>=1000){
    await pushQueue(data.uniqueId);
    processQueue();
   }
-
  });
 
  tiktok.on("gift",async data=>{
-
   await addGift(data.uniqueId,data.repeatCount||1);
-
   await pushQueue(data.uniqueId);
   processQueue();
-
  });
 
  tiktok.on("disconnected",()=>{
@@ -168,24 +162,9 @@ function connectTikTok(){
  });
 }
 
-app.get("/api/queue",(req,res)=>{
- res.json(queue);
-});
-
-app.get("/api/winners",async (req,res)=>{
- res.json(await getWinners());
-});
-
-app.post("/api/queue/clear",async (req,res)=>{
- await pool.query("DELETE FROM queue");
- queue=[];
- io.emit("queueUpdate",queue);
- res.json({ok:true});
-});
-
 server.listen(PORT,async()=>{
  await initDB();
  await loadQueue();
  connectTikTok();
- console.log("TikTok Wheel PRO v6 running",PORT);
+ console.log("TikTok Wheel PRO v7 running",PORT);
 });

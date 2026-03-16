@@ -3,28 +3,33 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>TikTok Wheel PRO v6</title>
+<title>TikTok Wheel PRO v7</title>
 <style>
 body{background:#000;color:#fff;font-family:Arial;text-align:center}
-.panel{position:absolute;top:20px;width:200px}
-#left{left:10px}
-#right{right:10px}
+#left,#right{position:absolute;top:80px;width:200px}
+#left{left:20px}
+#right{right:20px}
+#queue,#winners{white-space:pre-wrap;font-size:14px}
 </style>
 </head>
 <body>
 
-<h1>🎡 TikTok Wheel PRO v6</h1>
+<h1>🎡 TikTok Wheel PRO v7</h1>
 
-<div id="left" class="panel">
+<div id="left">
+<h3>QUEUE</h3>
+<pre id="queue"></pre>
 <h3>TOP LIKE</h3>
 <pre id="likes"></pre>
 </div>
 
 <canvas id="wheel" width="500" height="500"></canvas>
 
-<div id="right" class="panel">
+<div id="right">
 <h3>TOP GIFT</h3>
 <pre id="gifts"></pre>
+<h3>WINNERS</h3>
+<pre id="winners"></pre>
 </div>
 
 <h2 id="result"></h2>

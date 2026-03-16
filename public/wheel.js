@@ -59,6 +59,14 @@ if(t<1){
 anim();
 });
 
+socket.on("queueUpdate",(data)=>{
+document.getElementById("queue").textContent=JSON.stringify(data,null,2)
+});
+
+socket.on("lastWinners",(data)=>{
+document.getElementById("winners").textContent=JSON.stringify(data,null,2)
+});
+
 socket.on("topLikes",(data)=>{
 document.getElementById("likes").textContent=JSON.stringify(data,null,2)
 });
