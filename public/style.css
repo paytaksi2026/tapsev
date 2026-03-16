@@ -17,12 +17,25 @@ text-align:center;
 
 #pointer{
 position:absolute;
-top:-20px;
+top:-15px;
 left:50%;
 transform:translateX(-50%);
-font-size:50px;
+font-size:40px;
 color:red;
 z-index:10;
+}
+
+#tiktokStatus{
+position:absolute;
+top:60px;
+left:50%;
+transform:translateX(-50%);
+font-size:18px;
+color:#ffcc00;
+background:#111;
+padding:6px 12px;
+border-radius:6px;
+border:1px solid #444;
 }
 
 #centerText{
@@ -30,9 +43,9 @@ position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.7);
 padding:20px;
-border-radius:20px;
+border-radius:15px;
 border:2px solid gold;
 }
 
@@ -41,9 +54,8 @@ position:absolute;
 top:20px;
 left:50%;
 transform:translateX(-50%);
-font-size:28px;
-color:#ffd700;
-font-weight:bold;
+font-size:22px;
+color:gold;
 }
 
 #countdown{
@@ -51,28 +63,19 @@ position:absolute;
 bottom:20px;
 left:50%;
 transform:translateX(-50%);
-font-size:32px;
-color:#fff;
+font-size:28px;
 }
 
 #result{
 position:absolute;
-bottom:90px;
+bottom:80px;
 left:50%;
 transform:translateX(-50%);
-font-size:40px;
-color:#ffd700;
-font-weight:bold;
-background:#000;
-padding:10px 20px;
-border-radius:10px;
+font-size:30px;
+color:gold;
 }
 
 #leftPanel,#rightPanel{
-width:240px;
+width:220px;
 padding:20px;
-}
-
-h2{
-color:#ffd700;
 }
