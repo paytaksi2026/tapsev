@@ -1,7 +1,7 @@
 
 {
-"name":"tiktok-wheel-pro-v5",
-"version":"5.0.0",
+"name":"tiktok-wheel-pro-v6",
+"version":"6.0.0",
 "main":"server.js",
 "scripts":{"start":"node server.js"},
 "dependencies":{

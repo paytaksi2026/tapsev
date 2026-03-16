@@ -3,16 +3,30 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>TikTok Wheel PRO v5</title>
+<title>TikTok Wheel PRO v6</title>
 <style>
 body{background:#000;color:#fff;font-family:Arial;text-align:center}
-canvas{margin-top:40px}
+.panel{position:absolute;top:20px;width:200px}
+#left{left:10px}
+#right{right:10px}
 </style>
 </head>
 <body>
 
-<h1>🎡 TikTok Wheel PRO v5</h1>
+<h1>🎡 TikTok Wheel PRO v6</h1>
+
+<div id="left" class="panel">
+<h3>TOP LIKE</h3>
+<pre id="likes"></pre>
+</div>
+
 <canvas id="wheel" width="500" height="500"></canvas>
+
+<div id="right" class="panel">
+<h3>TOP GIFT</h3>
+<pre id="gifts"></pre>
+</div>
+
 <h2 id="result"></h2>
 
 <script src="/socket.io/socket.io.js"></script>

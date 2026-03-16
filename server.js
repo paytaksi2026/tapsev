@@ -36,6 +36,16 @@ async function initDB(){
   prize INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )`);
+
+ await pool.query(`CREATE TABLE IF NOT EXISTS likes(
+  username TEXT PRIMARY KEY,
+  count INT DEFAULT 0
+ )`);
+
+ await pool.query(`CREATE TABLE IF NOT EXISTS gifts(
+  username TEXT PRIMARY KEY,
+  count INT DEFAULT 0
+ )`);
 }
 
 async function loadQueue(){
@@ -66,6 +76,26 @@ async function getWinners(){
  return r.rows;
 }
 
+async function addLike(user,count){
+ await pool.query(`INSERT INTO likes(username,count) VALUES($1,$2)
+ ON CONFLICT(username) DO UPDATE SET count=likes.count+$2`,[user,count]);
+}
+
+async function addGift(user,count){
+ await pool.query(`INSERT INTO gifts(username,count) VALUES($1,$2)
+ ON CONFLICT(username) DO UPDATE SET count=gifts.count+$2`,[user,count]);
+}
+
+async function topLikes(){
+ const r=await pool.query("SELECT * FROM likes ORDER BY count DESC LIMIT 5");
+ return r.rows;
+}
+
+async function topGifts(){
+ const r=await pool.query("SELECT * FROM gifts ORDER BY count DESC LIMIT 5");
+ return r.rows;
+}
+
 function randomPrize(){
  const arr=[...Array(37).fill(0),...Array(4).fill(1),...Array(2).fill(2),3];
  return arr[Math.floor(Math.random()*arr.length)];
@@ -83,11 +113,22 @@ async function processQueue(){
  io.emit("spinStart",{user,result});
 
  setTimeout(async()=>{
+
   await addWinner(user,result);
+
   const winners=await getWinners();
   io.emit("lastWinners",winners);
+
+  const likes=await topLikes();
+  const gifts=await topGifts();
+
+  io.emit("topLikes",likes);
+  io.emit("topGifts",gifts);
+
   spinning=false;
+
   setTimeout(processQueue,5000);
+
  },8000);
 }
 
@@ -102,15 +143,23 @@ function connectTikTok(){
  });
 
  tiktok.on("like",async data=>{
+
+  await addLike(data.uniqueId,data.likeCount);
+
   if(data.likeCount>=1000){
    await pushQueue(data.uniqueId);
    processQueue();
   }
+
  });
 
  tiktok.on("gift",async data=>{
+
+  await addGift(data.uniqueId,data.repeatCount||1);
+
   await pushQueue(data.uniqueId);
   processQueue();
+
  });
 
  tiktok.on("disconnected",()=>{
@@ -119,15 +168,12 @@ function connectTikTok(){
  });
 }
 
-/* ADMIN API */
-
 app.get("/api/queue",(req,res)=>{
  res.json(queue);
 });
 
 app.get("/api/winners",async (req,res)=>{
- const w=await getWinners();
- res.json(w);
+ res.json(await getWinners());
 });
 
 app.post("/api/queue/clear",async (req,res)=>{
@@ -141,5 +187,5 @@ server.listen(PORT,async()=>{
  await initDB();
  await loadQueue();
  connectTikTok();
- console.log("TikTok Wheel PRO v5 running",PORT);
+ console.log("TikTok Wheel PRO v6 running",PORT);
 });

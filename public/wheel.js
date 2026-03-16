@@ -1,5 +1,6 @@
 
 const socket=io();
+
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
@@ -43,7 +44,6 @@ let duration=4000;
 let startTime=Date.now();
 
 function anim(){
-
 let t=(Date.now()-startTime)/duration;
 
 if(t<1){
@@ -57,4 +57,12 @@ if(t<1){
 }
 
 anim();
+});
+
+socket.on("topLikes",(data)=>{
+document.getElementById("likes").textContent=JSON.stringify(data,null,2)
+});
+
+socket.on("topGifts",(data)=>{
+document.getElementById("gifts").textContent=JSON.stringify(data,null,2)
 });
