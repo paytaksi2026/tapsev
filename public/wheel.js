@@ -2,11 +2,7 @@
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
-const spinSound=document.getElementById("spinSound");
-const winSound=document.getElementById("winSound");
-
 const segments=44;
-
 const values=["0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","2 AZN","0 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","0 AZN","0 AZN","3 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","2 AZN","0 AZN","0 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN"];
 
 const segmentAngle=(Math.PI*2)/segments;
@@ -43,20 +39,15 @@ ctx.font="14px Arial";
 ctx.fillText(values[i],180,5);
 
 ctx.restore();
-
 }
 }
 
 draw();
 
-function spinTo(user,result){
+function spinTo(user,result,avatar){
 
 if(spinning) return;
 spinning=true;
-
-document.getElementById("spinInfo").innerText="🎡 Çarx "+user+" üçün fırlanır";
-
-spinSound.play();
 
 let resultText=result+" AZN";
 
@@ -91,7 +82,7 @@ requestAnimationFrame(frame);
 angle=target;
 draw();
 
-finish(result);
+finish(user,result,avatar);
 
 spinning=false;
 
@@ -103,46 +94,26 @@ frame();
 
 }
 
-function finish(result){
+function finish(user,result,avatar){
 
-spinSound.pause();
+let popup=document.getElementById("winnerPopup");
 
-let resultText=result+" AZN";
+document.getElementById("winnerAvatar").src=avatar||"";
+document.getElementById("winnerName").innerText=user;
+document.getElementById("winnerPrize").innerText=result+" AZN";
 
-if(resultText==="0 AZN"){
-document.getElementById("result").innerText="😢 Uduzdunuz";
-}else{
-winSound.play();
-document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
-}
+popup.style.display="block";
 
-countdown();
-
-}
-
-function countdown(){
-
-let t=10;
-let el=document.getElementById("countdown");
-
-let i=setInterval(()=>{
-
-el.innerText="Növbəti spin "+t;
-t--;
-
-if(t<0){
-clearInterval(i);
-el.innerText="";
-}
-
-},1000);
+setTimeout(()=>{
+popup.style.display="none";
+},4000);
 
 }
 
 const socket=io();
 
 socket.on("spinStart",(data)=>{
- spinTo(data.user,data.result);
+ spinTo(data.user,data.result,data.avatar);
 });
 
 socket.on("queueUpdate",(q)=>{
