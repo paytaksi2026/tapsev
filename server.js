@@ -108,7 +108,7 @@ broadcastTop();
 
 likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
 
-if(likeCounter[user] >= 1000){
+if(likeCounter[user] >= 10){
 
 likeCounter[user] = 0;
 
