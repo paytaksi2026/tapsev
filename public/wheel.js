@@ -1,20 +1,23 @@
 
-const canvas=document.getElementById("wheel");
-const ctx=canvas.getContext("2d");
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
 
-const spinSound=document.getElementById("spinSound");
-const winSound=document.getElementById("winSound");
+const spinSound = document.getElementById("spinSound");
+const winSound = document.getElementById("winSound");
 
-const segments=44;
-const values=[
+const segments = 44;
+
+const values = [
 ...Array(37).fill("0 AZN"),
 ...Array(4).fill("1 AZN"),
 ...Array(2).fill("2 AZN"),
 "3 AZN"
 ];
 
-let angle=0;
-let serverResult=null;
+const segmentAngle = (Math.PI * 2) / segments;
+
+let angle = 0;
+let spinning = false;
 
 function draw(){
 
@@ -53,29 +56,59 @@ ctx.restore();
 
 draw();
 
-function spin(user="User"){
+
+function spinToResult(user, result){
+
+if(spinning) return;
+
+spinning = true;
 
 document.getElementById("spinInfo").innerText="🎡 Çarx "+user+" üçün fırlanır";
 
 spinSound.play();
 
-let duration=15000;
-let start=Date.now();
+let resultText = result + " AZN";
+
+# find all matching indexes
+let indexes = [];
+
+for(let i=0;i<values.length;i++){
+ if(values[i] === resultText) indexes.push(i);
+}
+
+# pick random sector with that value
+let index = indexes[Math.floor(Math.random()*indexes.length)];
+
+# calculate target angle
+let target = (segments - index) * segmentAngle;
+
+# add extra rotations
+target += Math.PI * 8;
+
+let startAngle = angle;
+let startTime = Date.now();
+let duration = 5000;
 
 function frame(){
 
-let t=(Date.now()-start)/duration;
+let t = (Date.now()-startTime)/duration;
 
-if(t<1){
+if(t < 1){
 
-angle+=0.35*(1-t);
+angle = startAngle + (target-startAngle)*easeOut(t);
+
 draw();
+
 requestAnimationFrame(frame);
 
 }else{
 
-spinSound.pause();
-finish();
+angle = target;
+draw();
+
+finish(result);
+
+spinning = false;
 
 }
 
@@ -85,17 +118,26 @@ frame();
 
 }
 
-function finish(){
 
-let resultText = (serverResult ?? 0) + " AZN";
+function easeOut(t){
+return 1-Math.pow(1-t,3);
+}
 
-if(resultText==="0 AZN"){
+
+function finish(result){
+
+spinSound.pause();
+
+let resultText = result + " AZN";
+
+if(resultText === "0 AZN"){
 
 document.getElementById("result").innerText="😢 Uduzdunuz";
 
 }else{
 
 winSound.play();
+
 document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
 
 }
@@ -103,6 +145,7 @@ document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
 countdown();
 
 }
+
 
 function countdown(){
 
@@ -127,17 +170,16 @@ el.innerText="";
 
 }
 
-window.spin=spin;
 
 const socket = io();
 
+
 socket.on("spinStart",(data)=>{
-  spin(data.user);
+
+spinToResult(data.user, data.result);
+
 });
 
-socket.on("spinResult",(data)=>{
-  serverResult = data.result;
-});
 
 socket.on("queueUpdate",(q)=>{
 
@@ -151,6 +193,7 @@ document.getElementById("queuePanel").innerHTML = html || "Empty";
 
 });
 
+
 socket.on("lastWinners",(list)=>{
 
 let html="";
@@ -163,9 +206,11 @@ document.getElementById("winnersPanel").innerHTML = html || "No winners yet";
 
 });
 
+
 socket.on("topLike",(list)=>{
 
 let html="";
+
 list.forEach((u,i)=>{
  html += (i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
@@ -174,9 +219,11 @@ document.getElementById("topLike").innerHTML = html || "No data";
 
 });
 
+
 socket.on("topGift",(list)=>{
 
 let html="";
+
 list.forEach((u,i)=>{
  html += (i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
