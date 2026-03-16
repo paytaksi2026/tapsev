@@ -216,6 +216,39 @@ ctx.restore();
 
 }
 
+
+// MONEY RAIN EFFECT
+function moneyRain(){
+
+const container=document.body;
+
+for(let i=0;i<25;i++){
+
+let m=document.createElement("div");
+m.innerText="💰";
+m.style.position="fixed";
+m.style.left=Math.random()*100+"vw";
+m.style.top="-50px";
+m.style.fontSize=(20+Math.random()*30)+"px";
+m.style.pointerEvents="none";
+m.style.zIndex="9999";
+m.style.transition="transform 3s linear, opacity 3s";
+
+container.appendChild(m);
+
+setTimeout(()=>{
+m.style.transform="translateY(110vh) rotate("+Math.random()*360+"deg)";
+m.style.opacity="0.2";
+},50);
+
+setTimeout(()=>{
+m.remove();
+},3000);
+
+}
+
+}
+
 function finish(result){
 
 // CAMERA SHAKE
@@ -237,6 +270,7 @@ document.getElementById("result").innerText="😢 Uduzdunuz";
 }else{
 winSound.play();
 document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
+moneyRain();
 }
 
 zoomWinner();
