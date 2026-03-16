@@ -1,11 +1,20 @@
 
-TikTok Live Wheel System
+TikTok Wheel PRO v3
 
-Run:
+Deploy (Render):
 
-npm install
-npm start
+1. Upload project to GitHub
+2. Create Render Web Service
+3. Create PostgreSQL database
+4. Add ENV variables:
 
-Open:
+DATABASE_URL=postgres://...
+TIKTOK_USERNAME=your_tiktok
 
-http://localhost:3000
+Deploy.
+
+Features:
+- PostgreSQL persistent queue
+- Auto DB table creation
+- TikTok auto reconnect
+- Queue spin system
