@@ -175,6 +175,47 @@ frame();
 
 }
 
+
+let zoomScale = 1;
+let zooming = false;
+
+function zoomWinner(){
+  zooming = true;
+  let start = Date.now();
+  let duration = 1200;
+
+  function zframe(){
+    let t=(Date.now()-start)/duration;
+    if(t<1){
+      zoomScale = 1 + t*1.8;
+      drawZoom();
+      requestAnimationFrame(zframe);
+    }else{
+      zoomScale = 2.8;
+      drawZoom();
+    }
+  }
+  zframe();
+}
+
+function drawZoom(){
+
+const cx=300;
+const cy=300;
+
+ctx.save();
+ctx.clearRect(0,0,600,600);
+
+ctx.translate(cx,cy);
+ctx.scale(zoomScale,zoomScale);
+ctx.translate(-cx,-cy);
+
+draw();
+
+ctx.restore();
+
+}
+
 function finish(result){
 
 // CAMERA SHAKE
@@ -198,6 +239,7 @@ winSound.play();
 document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
 }
 
+zoomWinner();
 countdown();
 
 }
