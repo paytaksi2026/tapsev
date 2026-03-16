@@ -177,6 +177,16 @@ frame();
 
 function finish(result){
 
+// CAMERA SHAKE
+const wheelBox=document.getElementById("wheelContainer");
+if(wheelBox){
+wheelBox.classList.add("shake");
+setTimeout(()=>{
+wheelBox.classList.remove("shake");
+},500);
+}
+
+
 spinSound.pause();
 
 let resultText=result+" AZN";
