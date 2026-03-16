@@ -2,15 +2,6 @@
 function showWinPopup(amount){
 const popup=document.getElementById("winPopup");
 const amt=document.getElementById("winAmount");
-const userEl=document.getElementById("winUser");
-if(!popup||!amt)return;
-
-if(userEl){
-userEl.innerText=lastWinnerUser || "";
-}
-
-const popup=document.getElementById("winPopup");
-const amt=document.getElementById("winAmount");
 if(!popup||!amt)return;
 
 amt.innerText=amount;
@@ -54,9 +45,7 @@ let angle=0;
 let spinning=false;
 
 let ledOffset=0; // LED animation
-let winnerIndex=null;
-lastWinnerUser=user; // highlight winner
-let lastWinnerUser=null;
+let winnerIndex=null; // highlight winner
 
 function draw(){
 
@@ -158,7 +147,6 @@ if(spinning) return;
 spinning=true;
 
 winnerIndex=null;
-lastWinnerUser=user;
 
 document.getElementById("spinInfo").innerText="🎡 Çarx "+user+" üçün fırlanır";
 
