@@ -3,13 +3,22 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>TikTok Wheel PRO v3</title>
+<title>TikTok Wheel PRO v4</title>
 <style>
-body{background:#000;color:#fff;font-family:Arial;text-align:center;margin-top:100px}
+body{background:#000;color:#fff;font-family:Arial;text-align:center}
+#wheel{margin-top:40px}
 </style>
 </head>
 <body>
-<h1>🎡 TikTok Wheel PRO v3</h1>
-<p>Server is running.</p>
+
+<h1>🎡 TikTok Wheel PRO v4</h1>
+
+<canvas id="wheel" width="500" height="500"></canvas>
+
+<h2 id="result"></h2>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="wheel.js"></script>
+
 </body>
 </html>

@@ -1,163 +1,67 @@
 
+const socket=io();
+
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
 const segments=44;
-const values=["0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","2 AZN","0 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","0 AZN","0 AZN","3 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","2 AZN","0 AZN","0 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN"];
+const prizes=[...Array(37).fill(0),...Array(4).fill(1),...Array(2).fill(2),3];
+const angle=2*Math.PI/segments;
 
-const segmentAngle=(Math.PI*2)/segments;
-
-let angle=0;
-let spinning=false;
+let rotation=0;
 
 function draw(){
-const cx=300;
-const cy=300;
-const r=280;
 
-ctx.clearRect(0,0,600,600);
+ctx.clearRect(0,0,500,500);
 
 for(let i=0;i<segments;i++){
 
-let start=(i*segmentAngle)+angle;
-let end=start+segmentAngle;
+let start=i*angle+rotation;
+let end=start+angle;
 
 ctx.beginPath();
-ctx.moveTo(cx,cy);
-ctx.arc(cx,cy,r,start,end);
-
+ctx.moveTo(250,250);
+ctx.arc(250,250,240,start,end);
 ctx.fillStyle=i%2?"#d4af37":"#222";
 ctx.fill();
 
 ctx.save();
-
-ctx.translate(cx,cy);
-ctx.rotate(start+(segmentAngle/2));
-
+ctx.translate(250,250);
+ctx.rotate(start+angle/2);
 ctx.fillStyle="white";
-ctx.font="14px Arial";
-ctx.fillText(values[i],180,5);
-
+ctx.fillText(prizes[i]+" AZN",150,5);
 ctx.restore();
 }
+
 }
 
 draw();
-
-function spinTo(user,result,avatar){
-
-if(spinning) return;
-spinning=true;
-
-let resultText=result+" AZN";
-
-let indexes=[];
-
-for(let i=0;i<values.length;i++){
- if(values[i]===resultText) indexes.push(i);
-}
-
-let index=indexes[Math.floor(Math.random()*indexes.length)];
-
-let target=(segments-index)*segmentAngle - Math.PI/2;
-target+=Math.PI*6;
-
-let startAngle=angle;
-let start=Date.now();
-let duration=5000;
-
-function frame(){
-
-let t=(Date.now()-start)/duration;
-
-if(t<1){
-
-angle=startAngle+(target-startAngle)*(1-Math.pow(1-t,3));
-
-draw();
-requestAnimationFrame(frame);
-
-}else{
-
-angle=target;
-draw();
-
-finish(user,result,avatar);
-
-spinning=false;
-
-}
-
-}
-
-frame();
-
-}
-
-function finish(user,result,avatar){
-
-let popup=document.getElementById("winnerPopup");
-
-document.getElementById("winnerAvatar").src=avatar||"";
-document.getElementById("winnerName").innerText=user;
-document.getElementById("winnerPrize").innerText=result+" AZN";
-
-popup.style.display="block";
-
-setTimeout(()=>{
-popup.style.display="none";
-},4000);
-
-}
-
-const socket=io();
 
 socket.on("spinStart",(data)=>{
- spinTo(data.user,data.result,data.avatar);
-});
 
-socket.on("queueUpdate",(q)=>{
+document.getElementById("result").innerText="🎡 "+data.user+" üçün fırlanır";
 
-let html="";
+let target=Math.random()*Math.PI*10;
 
-q.forEach((u,i)=>{
- html+=(i+1)+". "+u+"<br>";
-});
+let start=rotation;
+let duration=4000;
+let startTime=Date.now();
 
-document.getElementById("queuePanel").innerHTML=html||"Empty";
+function anim(){
 
-});
+let t=(Date.now()-startTime)/duration;
 
-socket.on("lastWinners",(list)=>{
+if(t<1){
+ rotation=start+(target-start)*t;
+ draw();
+ requestAnimationFrame(anim);
+}else{
+ draw();
+ document.getElementById("result").innerText="🎉 "+data.user+" qazandı: "+data.result+" AZN";
+}
 
-let html="";
+}
 
-list.forEach((w,i)=>{
- html+=(i+1)+". "+w.user+" — "+w.result+" AZN<br>";
-});
-
-document.getElementById("winnersPanel").innerHTML=html||"No winners yet";
-
-});
-
-socket.on("topLike",(list)=>{
-
-let html="";
-list.forEach((u,i)=>{
- html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
-});
-
-document.getElementById("topLike").innerHTML=html||"No data";
-
-});
-
-socket.on("topGift",(list)=>{
-
-let html="";
-list.forEach((u,i)=>{
- html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
-});
-
-document.getElementById("topGift").innerHTML=html||"No data";
+anim();
 
 });
