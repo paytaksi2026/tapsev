@@ -2,12 +2,13 @@
 body{
 background:#000;
 color:white;
-font-family:Arial;
+font-family:Arial,Helvetica,sans-serif;
 display:flex;
 justify-content:space-between;
 align-items:center;
 height:100vh;
 margin:0;
+overflow:hidden;
 }
 
 #wheelContainer{
@@ -15,14 +16,19 @@ position:relative;
 text-align:center;
 }
 
+#wheel{
+filter:drop-shadow(0 0 25px gold);
+}
+
 #pointer{
 position:absolute;
-top:-15px;
+top:-22px;
 left:50%;
 transform:translateX(-50%);
-font-size:40px;
-color:red;
+font-size:48px;
+color:#ff3b3b;
 z-index:10;
+text-shadow:0 0 10px red,0 0 20px red;
 }
 
 #centerText{
@@ -30,19 +36,26 @@ position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-background:rgba(0,0,0,0.7);
-padding:20px;
-border-radius:15px;
-border:2px solid gold;
+background:rgba(0,0,0,0.75);
+padding:22px;
+border-radius:18px;
+border:3px solid gold;
+box-shadow:0 0 20px rgba(255,215,0,0.7);
+}
+
+#centerText h2{
+margin:0;
+color:gold;
 }
 
 #spinInfo{
 position:absolute;
-top:20px;
+top:15px;
 left:50%;
 transform:translateX(-50%);
-font-size:22px;
+font-size:24px;
 color:gold;
+text-shadow:0 0 10px gold;
 }
 
 #countdown{
@@ -50,7 +63,8 @@ position:absolute;
 bottom:20px;
 left:50%;
 transform:translateX(-50%);
-font-size:28px;
+font-size:30px;
+color:#fff;
 }
 
 #result{
@@ -58,20 +72,22 @@ position:absolute;
 bottom:80px;
 left:50%;
 transform:translateX(-50%);
-font-size:30px;
+font-size:34px;
 color:gold;
+text-shadow:0 0 10px gold,0 0 20px orange;
 }
 
 #leftPanel,#rightPanel{
-width:240px;
+width:260px;
 padding:20px;
 }
 
 #queuePanel,#winnersPanel{
 background:#111;
-border:1px solid #333;
-padding:10px;
+border:1px solid #444;
+padding:12px;
 margin-top:10px;
-border-radius:8px;
-min-height:80px;
+border-radius:10px;
+min-height:90px;
+box-shadow:0 0 10px rgba(255,215,0,0.2);
 }

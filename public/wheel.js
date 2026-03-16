@@ -15,12 +15,35 @@ let angle=0;
 let spinning=false;
 
 function draw(){
+
 const cx=300;
 const cy=300;
-const r=280;
+const r=250;
 
 ctx.clearRect(0,0,600,600);
 
+/* OUTER GOLD RING */
+ctx.beginPath();
+ctx.arc(cx,cy,280,0,Math.PI*2);
+ctx.fillStyle="#d4af37";
+ctx.fill();
+
+/* METAL TEETH */
+for(let i=0;i<segments;i++){
+
+let a=i*segmentAngle+angle;
+
+let x=cx+Math.cos(a)*285;
+let y=cy+Math.sin(a)*285;
+
+ctx.beginPath();
+ctx.arc(x,y,6,0,Math.PI*2);
+ctx.fillStyle="#bbb";
+ctx.fill();
+
+}
+
+/* SEGMENTS */
 for(let i=0;i<segments;i++){
 
 let start=(i*segmentAngle)+angle;
@@ -30,7 +53,11 @@ ctx.beginPath();
 ctx.moveTo(cx,cy);
 ctx.arc(cx,cy,r,start,end);
 
-ctx.fillStyle=i%2?"#d4af37":"#222";
+let grad=ctx.createLinearGradient(0,0,600,600);
+grad.addColorStop(0,i%2?"#111":"#d4af37");
+grad.addColorStop(1,i%2?"#333":"#ffd700");
+
+ctx.fillStyle=grad;
 ctx.fill();
 
 ctx.save();
@@ -39,12 +66,23 @@ ctx.translate(cx,cy);
 ctx.rotate(start+(segmentAngle/2));
 
 ctx.fillStyle="white";
-ctx.font="14px Arial";
-ctx.fillText(values[i],180,5);
+ctx.font="bold 20px Arial";
+ctx.textAlign="center";
+ctx.fillText(values[i],170,8);
 
 ctx.restore();
 
 }
+
+/* CENTER HUB */
+ctx.beginPath();
+ctx.arc(cx,cy,60,0,Math.PI*2);
+ctx.fillStyle="#111";
+ctx.fill();
+ctx.lineWidth=4;
+ctx.strokeStyle="gold";
+ctx.stroke();
+
 }
 
 draw();
@@ -69,11 +107,11 @@ for(let i=0;i<values.length;i++){
 let index=indexes[Math.floor(Math.random()*indexes.length)];
 
 let target=(segments-index)*segmentAngle - Math.PI/2;
-target+=Math.PI*6;
+target+=Math.PI*8;
 
 let startAngle=angle;
 let start=Date.now();
-let duration=5000;
+let duration=7000;
 
 function frame(){
 
@@ -81,7 +119,7 @@ let t=(Date.now()-start)/duration;
 
 if(t<1){
 
-angle=startAngle+(target-startAngle)*(1-Math.pow(1-t,3));
+angle=startAngle+(target-startAngle)*(1-Math.pow(1-t,4));
 
 draw();
 requestAnimationFrame(frame);
