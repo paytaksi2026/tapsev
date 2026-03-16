@@ -134,25 +134,27 @@ socket.on("spinStart",(data)=>{
   spin(data.user);
 });
 
-socket.on("spinResult",(data)=>{
-  console.log("Winner:",data.user,data.result);
-});
-
 socket.on("queueUpdate",(q)=>{
-  console.log("Queue:",q);
+
+let html="";
+
+q.forEach((u,i)=>{
+ html += (i+1)+". "+u+"<br>";
 });
 
-socket.on("tiktokStatus",(status)=>{
+document.getElementById("queuePanel").innerHTML = html || "Empty";
 
-const el=document.getElementById("tiktokStatus");
+});
 
-if(status==="connected"){
-el.innerText="🟢 TikTok LIVE qoşuldu";
-}
+socket.on("lastWinners",(list)=>{
 
-if(status==="failed"){
-el.innerText="🔴 TikTok qoşulmadı";
-}
+let html="";
+
+list.forEach((w,i)=>{
+ html += (i+1)+". "+w.user+" — "+w.result+" AZN<br>";
+});
+
+document.getElementById("winnersPanel").innerHTML = html || "No winners yet";
 
 });
 
