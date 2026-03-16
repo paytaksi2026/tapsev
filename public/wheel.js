@@ -14,6 +14,7 @@ const values=[
 ];
 
 let angle=0;
+let serverResult=null;
 
 function draw(){
 
@@ -86,16 +87,16 @@ frame();
 
 function finish(){
 
-let result=values[Math.floor(Math.random()*values.length)];
+let resultText = (serverResult ?? 0) + " AZN";
 
-if(result==="0 AZN"){
+if(resultText==="0 AZN"){
 
 document.getElementById("result").innerText="😢 Uduzdunuz";
 
 }else{
 
 winSound.play();
-document.getElementById("result").innerText="🎉 Qazandınız: "+result;
+document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
 
 }
 
@@ -132,6 +133,10 @@ const socket = io();
 
 socket.on("spinStart",(data)=>{
   spin(data.user);
+});
+
+socket.on("spinResult",(data)=>{
+  serverResult = data.result;
 });
 
 socket.on("queueUpdate",(q)=>{
