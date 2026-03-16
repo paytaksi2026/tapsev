@@ -155,3 +155,25 @@ el.innerText="🔴 TikTok qoşulmadı";
 }
 
 });
+
+socket.on("topLike",(list)=>{
+
+let html="";
+list.forEach((u,i)=>{
+ html += (i+1)+". "+u[0]+" "+u[1]+"<br>";
+});
+
+document.getElementById("topLike").innerHTML = html || "No data";
+
+});
+
+socket.on("topGift",(list)=>{
+
+let html="";
+list.forEach((u,i)=>{
+ html += (i+1)+". "+u[0]+" "+u[1]+"<br>";
+});
+
+document.getElementById("topGift").innerHTML = html || "No data";
+
+});
