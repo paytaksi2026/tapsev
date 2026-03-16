@@ -4,6 +4,7 @@ const ctx=canvas.getContext("2d");
 
 const spinSound=document.getElementById("spinSound");
 const winSound=document.getElementById("winSound");
+const tickSound=document.getElementById("tickSound"); // NEW
 
 const segments=44;
 
@@ -14,6 +15,9 @@ const segmentAngle=(Math.PI*2)/segments;
 let angle=0;
 let spinning=false;
 
+let ledOffset=0; // LED animation
+let winnerIndex=null; // highlight winner
+
 function draw(){
 
 const cx=300;
@@ -21,6 +25,18 @@ const cy=300;
 const r=250;
 
 ctx.clearRect(0,0,600,600);
+
+/* LED RING */
+for(let i=0;i<segments;i++){
+let a=i*segmentAngle;
+let x=cx+Math.cos(a)*290;
+let y=cy+Math.sin(a)*290;
+
+ctx.beginPath();
+ctx.arc(x,y,6,0,Math.PI*2);
+ctx.fillStyle=(i+ledOffset)%2 ? "#fff200" : "#444";
+ctx.fill();
+}
 
 /* OUTER GOLD RING */
 ctx.beginPath();
@@ -60,6 +76,15 @@ grad.addColorStop(1,i%2?"#333":"#ffd700");
 ctx.fillStyle=grad;
 ctx.fill();
 
+/* WINNER GLOW */
+if(i===winnerIndex){
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.arc(cx,cy,r,start,end);
+ctx.fillStyle="rgba(255,255,255,0.35)";
+ctx.fill();
+}
+
 ctx.save();
 
 ctx.translate(cx,cy);
@@ -92,6 +117,8 @@ function spinTo(user,result){
 if(spinning) return;
 spinning=true;
 
+winnerIndex=null;
+
 document.getElementById("spinInfo").innerText="🎡 Çarx "+user+" üçün fırlanır";
 
 spinSound.play();
@@ -121,12 +148,19 @@ if(t<1){
 
 angle=startAngle+(target-startAngle)*(1-Math.pow(1-t,4));
 
+// tick sound when passing segments
+if(tickSound && Math.random()<0.2){
+try{ tickSound.currentTime=0; tickSound.play(); }catch(e){}
+}
+
 draw();
 requestAnimationFrame(frame);
 
 }else{
 
 angle=target;
+winnerIndex=index;
+
 draw();
 
 finish(result);
@@ -228,3 +262,9 @@ list.forEach((u,i)=>{
 document.getElementById("topGift").innerHTML=html||"No data";
 
 });
+
+// LED animation loop
+setInterval(()=>{
+ledOffset++;
+draw();
+},200);
