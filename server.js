@@ -1,200 +1,148 @@
 
-const express=require("express");
-const http=require("http");
-const {Server}=require("socket.io");
-const {WebcastPushConnection}=require("tiktok-live-connector");
-const {Pool}=require("pg");
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const { WebcastPushConnection } = require("tiktok-live-connector");
 
-const app=express();
-const server=http.createServer(app);
-const io=new Server(server);
+const TIKTOK_USERNAME = "xeberx.az";
 
-const PORT=process.env.PORT||3000;
-const TIKTOK_USERNAME=process.env.TIKTOK_USERNAME||"xeberx.az";
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-const pool=new Pool({
- connectionString:process.env.DATABASE_URL,
- ssl:{rejectUnauthorized:false}
-});
-
-app.use(express.json());
 app.use(express.static("public"));
+app.use("/admin", express.static("admin"));
 
-let queue=[];
-let spinning=false;
+let queue = [];
+let spinning = false;
 
-async function initDB(){
+let likeCounter = {};
+let giftCounter = {};
 
- await pool.query(`CREATE TABLE IF NOT EXISTS queue(
-  id SERIAL PRIMARY KEY,
-  username TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
- )`);
+let likeTotals = {};
+let giftTotals = {};
 
- await pool.query(`CREATE TABLE IF NOT EXISTS winners(
-  id SERIAL PRIMARY KEY,
-  username TEXT,
-  prize INT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
- )`);
+let lastWinners = [];
 
- await pool.query(`CREATE TABLE IF NOT EXISTS sectors(
-  id SERIAL PRIMARY KEY,
-  value INT
- )`);
+function topList(obj){
+  return Object.entries(obj)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10);
+}
 
- const check=await pool.query("SELECT COUNT(*) FROM sectors");
- if(parseInt(check.rows[0].count)===0){
-  const defaultValues=[...Array(37).fill(0),...Array(4).fill(1),...Array(2).fill(2),3];
-  for(const v of defaultValues){
-   await pool.query("INSERT INTO sectors(value) VALUES($1)",[v]);
-  }
- }
+function broadcastTop(){
+  io.emit("topLike", topList(likeTotals));
+  io.emit("topGift", topList(giftTotals));
+}
+
+function broadcastQueue(){
+  io.emit("queueUpdate", queue);
+}
+
+function broadcastWinners(){
+  io.emit("lastWinners", lastWinners);
+}
+
+function getRandomSegment(){
+  const segments=[
+    ...Array(37).fill(0),
+    ...Array(4).fill(1),
+    ...Array(2).fill(2),
+    3
+  ];
+  return segments[Math.floor(Math.random()*segments.length)];
+}
+
+function processQueue(){
+
+  if(spinning) return;
+  if(queue.length === 0) return;
+
+  spinning = true;
+
+  const user = queue.shift();
+  broadcastQueue();
+
+  const result = getRandomSegment();
+
+  io.emit("spinStart",{user,result});
+
+  setTimeout(()=>{
+
+    io.emit("spinResult",{user,result});
+
+    lastWinners.unshift({user,result});
+    lastWinners = lastWinners.slice(0,10);
+    broadcastWinners();
+
+    spinning = false;
+
+    setTimeout(processQueue,10000);
+
+  },15000);
 
 }
 
-async function loadQueue(){
- const r=await pool.query("SELECT username FROM queue ORDER BY id");
- queue=r.rows.map(x=>x.username);
-}
+const tiktokLiveConnection = new WebcastPushConnection(TIKTOK_USERNAME);
 
-async function pushQueue(user){
- await pool.query("INSERT INTO queue(username) VALUES($1)",[user]);
- queue.push(user);
- io.emit("queueUpdate",queue);
-}
+tiktokLiveConnection.connect()
+.then(state => {
 
-async function popQueue(){
- if(queue.length===0) return null;
+console.log("Connected to TikTok LIVE:", state.roomId);
+io.emit("tiktokStatus","connected");
 
- const user=queue.shift();
+})
+.catch(err => {
 
- await pool.query("DELETE FROM queue WHERE id IN (SELECT id FROM queue ORDER BY id LIMIT 1)");
-
- io.emit("queueUpdate",queue);
-
- return user;
-}
-
-async function addWinner(user,prize){
- await pool.query("INSERT INTO winners(username,prize) VALUES($1,$2)",[user,prize]);
-}
-
-async function getWinners(){
- const r=await pool.query("SELECT username,prize FROM winners ORDER BY id DESC LIMIT 10");
- return r.rows;
-}
-
-async function getSectors(){
- const r=await pool.query("SELECT value FROM sectors ORDER BY id");
- return r.rows.map(x=>x.value);
-}
-
-async function randomPrize(){
-
- const sectors=await getSectors();
-
- return sectors[Math.floor(Math.random()*sectors.length)];
-
-}
-
-async function processQueue(){
-
- if(spinning) return;
- if(queue.length===0) return;
-
- spinning=true;
-
- const user=await popQueue();
- const result=await randomPrize();
-
- io.emit("spinStart",{user,result});
-
- setTimeout(async()=>{
-
-  await addWinner(user,result);
-
-  const winners=await getWinners();
-
-  io.emit("lastWinners",winners);
-
-  spinning=false;
-
-  setTimeout(processQueue,5000);
-
- },8000);
-
-}
-
-function connectTikTok(){
-
- const tiktok=new WebcastPushConnection(TIKTOK_USERNAME);
-
- tiktok.connect().then(()=>{
-
-  console.log("TikTok connected");
-
- }).catch(e=>{
-
-  console.log("TikTok error:",e.message);
-  setTimeout(connectTikTok,10000);
-
- });
-
- tiktok.on("like",async data=>{
-
-  if(data.likeCount>=1000){
-
-   await pushQueue(data.uniqueId);
-   processQueue();
-
-  }
-
- });
-
- tiktok.on("gift",async data=>{
-
-  await pushQueue(data.uniqueId);
-  processQueue();
-
- });
-
- tiktok.on("disconnected",()=>{
-
-  console.log("TikTok reconnect...");
-  setTimeout(connectTikTok,10000);
-
- });
-
-}
-
-app.get("/api/sectors",async(req,res)=>{
-
- const s=await getSectors();
- res.json(s);
+console.error("TikTok connection failed", err);
+io.emit("tiktokStatus","failed");
 
 });
 
-app.post("/api/sectors",async(req,res)=>{
+tiktokLiveConnection.on("like", data => {
 
- const arr=req.body;
+const user = data.uniqueId;
 
- await pool.query("DELETE FROM sectors");
+likeTotals[user] = (likeTotals[user]||0) + data.likeCount;
+broadcastTop();
 
- for(const v of arr){
-  await pool.query("INSERT INTO sectors(value) VALUES($1)",[v]);
- }
+likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
 
- res.json({ok:true});
+if(likeCounter[user] >= 10){
+
+likeCounter[user] = 0;
+
+queue.push(user);
+broadcastQueue();
+
+processQueue();
+
+}
 
 });
 
-server.listen(PORT,async()=>{
+tiktokLiveConnection.on("gift", data => {
 
- await initDB();
- await loadQueue();
- connectTikTok();
+const user = data.uniqueId;
 
- console.log("TikTok Wheel PRO v9 running",PORT);
+giftTotals[user] = (giftTotals[user]||0) + 1;
+broadcastTop();
 
+giftCounter[user] = (giftCounter[user]||0) + 1;
+
+if(giftCounter[user] >= 100){
+
+giftCounter[user] = 0;
+
+queue.push(user);
+broadcastQueue();
+
+processQueue();
+
+}
+
+});
+
+server.listen(3000,()=>{
+ console.log("Server running with TikTok connector + TOP panels + Queue + Winners");
 });
