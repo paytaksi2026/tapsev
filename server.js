@@ -22,6 +22,8 @@ let giftCounter = {};
 let likeTotals = {};
 let giftTotals = {};
 
+let lastWinners = [];
+
 function topList(obj){
   return Object.entries(obj)
     .sort((a,b)=>b[1]-a[1])
@@ -31,6 +33,14 @@ function topList(obj){
 function broadcastTop(){
   io.emit("topLike", topList(likeTotals));
   io.emit("topGift", topList(giftTotals));
+}
+
+function broadcastQueue(){
+  io.emit("queueUpdate", queue);
+}
+
+function broadcastWinners(){
+  io.emit("lastWinners", lastWinners);
 }
 
 function getRandomSegment(){
@@ -51,7 +61,7 @@ function processQueue(){
   spinning = true;
 
   const user = queue.shift();
-  io.emit("queueUpdate", queue);
+  broadcastQueue();
 
   const result = getRandomSegment();
 
@@ -60,6 +70,10 @@ function processQueue(){
   setTimeout(()=>{
 
     io.emit("spinResult",{user,result});
+
+    lastWinners.unshift({user,result});
+    lastWinners = lastWinners.slice(0,10);
+    broadcastWinners();
 
     spinning = false;
 
@@ -99,8 +113,7 @@ if(likeCounter[user] >= 1000){
 likeCounter[user] = 0;
 
 queue.push(user);
-
-io.emit("queueUpdate", queue);
+broadcastQueue();
 
 processQueue();
 
@@ -122,8 +135,7 @@ if(giftCounter[user] >= 100){
 giftCounter[user] = 0;
 
 queue.push(user);
-
-io.emit("queueUpdate", queue);
+broadcastQueue();
 
 processQueue();
 
@@ -132,5 +144,5 @@ processQueue();
 });
 
 server.listen(3000,()=>{
- console.log("Server running with TikTok connector + TOP panels");
+ console.log("Server running with TikTok connector + TOP panels + Queue + Winners");
 });
