@@ -163,11 +163,11 @@ for(let i=0;i<values.length;i++){
 let index=indexes[Math.floor(Math.random()*indexes.length)];
 
 let target=(segments-index)*segmentAngle - Math.PI/2;
-target+=Math.PI*8;
+target+=Math.PI*10;
 
 let startAngle=angle;
 let start=Date.now();
-let duration=7000;
+let duration=10000;
 
 function frame(){
 
@@ -178,7 +178,7 @@ if(t<1){
 angle=startAngle+(target-startAngle)*(1-Math.pow(1-t,4));
 
 // tick sound when passing segments
-if(tickSound && Math.random()<0.2){
+if(tickSound && Math.random()<0.35){
 try{ tickSound.currentTime=0; tickSound.play(); }catch(e){}
 }
 
