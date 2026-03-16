@@ -17,6 +17,9 @@ const pool=new Pool({
  ssl:{rejectUnauthorized:false}
 });
 
+app.use(express.json());
+app.use(express.static("public"));
+
 let queue=[];
 let spinning=false;
 
@@ -80,14 +83,11 @@ async function processQueue(){
  io.emit("spinStart",{user,result});
 
  setTimeout(async()=>{
-
   await addWinner(user,result);
   const winners=await getWinners();
   io.emit("lastWinners",winners);
-
   spinning=false;
   setTimeout(processQueue,5000);
-
  },8000);
 }
 
@@ -119,11 +119,27 @@ function connectTikTok(){
  });
 }
 
-app.use(express.static("public"));
+/* ADMIN API */
+
+app.get("/api/queue",(req,res)=>{
+ res.json(queue);
+});
+
+app.get("/api/winners",async (req,res)=>{
+ const w=await getWinners();
+ res.json(w);
+});
+
+app.post("/api/queue/clear",async (req,res)=>{
+ await pool.query("DELETE FROM queue");
+ queue=[];
+ io.emit("queueUpdate",queue);
+ res.json({ok:true});
+});
 
 server.listen(PORT,async()=>{
  await initDB();
  await loadQueue();
  connectTikTok();
- console.log("TikTok Wheel PRO v4 running on",PORT);
+ console.log("TikTok Wheel PRO v5 running",PORT);
 });

@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+<style>
+body{background:#111;color:#fff;font-family:Arial}
+</style>
+</head>
+<body>
+
+<h1>Admin Panel</h1>
+
+<h2>Queue</h2>
+<pre id="queue"></pre>
+
+<h2>Winners</h2>
+<pre id="winners"></pre>
+
+<button onclick="clearQueue()">Clear Queue</button>
+
+<script>
+
+async function load(){
+
+let q=await fetch('/api/queue').then(r=>r.json())
+document.getElementById('queue').textContent=JSON.stringify(q,null,2)
+
+let w=await fetch('/api/winners').then(r=>r.json())
+document.getElementById('winners').textContent=JSON.stringify(w,null,2)
+
+}
+
+async function clearQueue(){
+await fetch('/api/queue/clear',{method:'POST'})
+load()
+}
+
+load()
+
+</script>
+
+</body>
+</html>

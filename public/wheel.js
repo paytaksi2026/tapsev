@@ -1,6 +1,5 @@
 
 const socket=io();
-
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
@@ -11,30 +10,26 @@ const angle=2*Math.PI/segments;
 let rotation=0;
 
 function draw(){
-
 ctx.clearRect(0,0,500,500);
 
 for(let i=0;i<segments;i++){
+ let start=i*angle+rotation;
+ let end=start+angle;
 
-let start=i*angle+rotation;
-let end=start+angle;
+ ctx.beginPath();
+ ctx.moveTo(250,250);
+ ctx.arc(250,250,240,start,end);
+ ctx.fillStyle=i%2?"#d4af37":"#222";
+ ctx.fill();
 
-ctx.beginPath();
-ctx.moveTo(250,250);
-ctx.arc(250,250,240,start,end);
-ctx.fillStyle=i%2?"#d4af37":"#222";
-ctx.fill();
-
-ctx.save();
-ctx.translate(250,250);
-ctx.rotate(start+angle/2);
-ctx.fillStyle="white";
-ctx.fillText(prizes[i]+" AZN",150,5);
-ctx.restore();
+ ctx.save();
+ ctx.translate(250,250);
+ ctx.rotate(start+angle/2);
+ ctx.fillStyle="white";
+ ctx.fillText(prizes[i]+" AZN",150,5);
+ ctx.restore();
 }
-
 }
-
 draw();
 
 socket.on("spinStart",(data)=>{
@@ -59,9 +54,7 @@ if(t<1){
  draw();
  document.getElementById("result").innerText="🎉 "+data.user+" qazandı: "+data.result+" AZN";
 }
-
 }
 
 anim();
-
 });
