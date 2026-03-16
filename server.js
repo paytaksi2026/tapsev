@@ -19,6 +19,20 @@ let spinning = false;
 let likeCounter = {};
 let giftCounter = {};
 
+let likeTotals = {};
+let giftTotals = {};
+
+function topList(obj){
+  return Object.entries(obj)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10);
+}
+
+function broadcastTop(){
+  io.emit("topLike", topList(likeTotals));
+  io.emit("topGift", topList(giftTotals));
+}
+
 function getRandomSegment(){
   const segments=[
     ...Array(37).fill(0),
@@ -61,14 +75,12 @@ tiktokLiveConnection.connect()
 .then(state => {
 
 console.log("Connected to TikTok LIVE:", state.roomId);
-
 io.emit("tiktokStatus","connected");
 
 })
 .catch(err => {
 
 console.error("TikTok connection failed", err);
-
 io.emit("tiktokStatus","failed");
 
 });
@@ -76,6 +88,9 @@ io.emit("tiktokStatus","failed");
 tiktokLiveConnection.on("like", data => {
 
 const user = data.uniqueId;
+
+likeTotals[user] = (likeTotals[user]||0) + data.likeCount;
+broadcastTop();
 
 likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
 
@@ -97,6 +112,9 @@ tiktokLiveConnection.on("gift", data => {
 
 const user = data.uniqueId;
 
+giftTotals[user] = (giftTotals[user]||0) + 1;
+broadcastTop();
+
 giftCounter[user] = (giftCounter[user]||0) + 1;
 
 if(giftCounter[user] >= 100){
@@ -114,5 +132,5 @@ processQueue();
 });
 
 server.listen(3000,()=>{
- console.log("Server running with TikTok connector");
+ console.log("Server running with TikTok connector + TOP panels");
 });
