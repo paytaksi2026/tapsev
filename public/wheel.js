@@ -68,8 +68,7 @@ for(let i=0;i<values.length;i++){
 
 let index=indexes[Math.floor(Math.random()*indexes.length)];
 
-let target=(segments-index)*segmentAngle;
-
+let target=(segments-index)*segmentAngle - Math.PI/2;
 target+=Math.PI*6;
 
 let startAngle=angle;
