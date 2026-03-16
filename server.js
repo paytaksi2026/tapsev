@@ -143,7 +143,6 @@ function connectTikTok(){
 
  tiktok.on("like",async data=>{
   await addLike(data.uniqueId,data.likeCount);
-
   if(data.likeCount>=1000){
    await pushQueue(data.uniqueId);
    processQueue();
@@ -166,5 +165,5 @@ server.listen(PORT,async()=>{
  await initDB();
  await loadQueue();
  connectTikTok();
- console.log("TikTok Wheel PRO v7 running",PORT);
+ console.log("TikTok Wheel PRO v8 running",PORT);
 });

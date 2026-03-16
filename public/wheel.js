@@ -1,6 +1,5 @@
 
 const socket=io();
-
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
@@ -51,26 +50,19 @@ if(t<1){
  draw();
  requestAnimationFrame(anim);
 }else{
- draw();
+
+ document.getElementById("winnerPopup").style.display="block";
+ document.getElementById("winnerName").innerText=data.user;
+ document.getElementById("winnerPrize").innerText=data.result+" AZN";
+
+ setTimeout(()=>{
+  document.getElementById("winnerPopup").style.display="none";
+ },4000);
+
  document.getElementById("result").innerText="🎉 "+data.user+" qazandı: "+data.result+" AZN";
 }
 }
 
 anim();
-});
 
-socket.on("queueUpdate",(data)=>{
-document.getElementById("queue").textContent=JSON.stringify(data,null,2)
-});
-
-socket.on("lastWinners",(data)=>{
-document.getElementById("winners").textContent=JSON.stringify(data,null,2)
-});
-
-socket.on("topLikes",(data)=>{
-document.getElementById("likes").textContent=JSON.stringify(data,null,2)
-});
-
-socket.on("topGifts",(data)=>{
-document.getElementById("gifts").textContent=JSON.stringify(data,null,2)
 });
