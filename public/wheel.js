@@ -163,11 +163,11 @@ for(let i=0;i<values.length;i++){
 let index=indexes[Math.floor(Math.random()*indexes.length)];
 
 let target=(segments-index)*segmentAngle - Math.PI/2;
-target+=Math.PI*10;
+target+=Math.PI*8;
 
 let startAngle=angle;
 let start=Date.now();
-let duration=10000;
+let duration=7000;
 
 function frame(){
 
@@ -178,7 +178,7 @@ if(t<1){
 angle=startAngle+(target-startAngle)*(1-Math.pow(1-t,4));
 
 // tick sound when passing segments
-if(tickSound && Math.random()<0.35){
+if(tickSound && Math.random()<0.2){
 try{ tickSound.currentTime=0; tickSound.play(); }catch(e){}
 }
 
@@ -205,57 +205,8 @@ frame();
 }
 
 
-let zoomScale = 1;
-let zooming = false;
-
-function zoomWinner(){
-  zooming = true;
-  let start = Date.now();
-  let duration = 1200;
-
-  function zframe(){
-    let t=(Date.now()-start)/duration;
-    if(t<1){
-      zoomScale = 1 + t*1.8;
-      drawZoom();
-      requestAnimationFrame(zframe);
-    }else{
-      zoomScale = 2.8;
-      drawZoom();
-    }
-  }
-  zframe();
-}
-
-function drawZoom(){
-
-const cx=300;
-const cy=300;
-
-ctx.save();
-ctx.clearRect(0,0,600,600);
-
-ctx.translate(cx,cy);
-ctx.scale(zoomScale,zoomScale);
-ctx.translate(-cx,-cy);
-
-draw();
-
-ctx.restore();
-
-}
-
 
 function finish(result){
-
-// CAMERA SHAKE
-const wheelBox=document.getElementById("wheelContainer");
-if(wheelBox){
-wheelBox.classList.add("shake");
-setTimeout(()=>{
-wheelBox.classList.remove("shake");
-},500);
-}
 
 
 spinSound.pause();
@@ -272,7 +223,7 @@ confettiRain();
 
 }
 
-zoomWinner();
+
 countdown();
 
 }
