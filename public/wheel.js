@@ -257,7 +257,7 @@ socket.on("queueUpdate",(q)=>{
 
 let html="";
 
-q.forEach((u,i)=>{
+q.slice(0,15).forEach((u,i)=>{
  html+=(i+1)+". "+u+"<br>";
 });
 
@@ -269,7 +269,7 @@ socket.on("lastWinners",(list)=>{
 
 let html="";
 
-list.forEach((w,i)=>{
+list.slice(0,15).forEach((w,i)=>{
  html+=(i+1)+". "+w.user+" — "+w.result+" AZN<br>";
 });
 
