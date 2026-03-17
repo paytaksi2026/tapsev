@@ -37,7 +37,7 @@ const tickSound=document.getElementById("tickSound"); // NEW
 
 const segments=44;
 
-const values=["0 AZN","0 AZN","0.10 AZN","0 AZN","0 AZN","0.20 AZN","0 AZN","0 AZN","0 AZN","0.10 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0.30 AZN","0 AZN","0 AZN","0.10 AZN","0 AZN","0 AZN","0.20 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0.10 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN"];
+const values=["0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","2 AZN","0 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","0 AZN","0 AZN","3 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","2 AZN","0 AZN","0 AZN","0 AZN","0 AZN","1 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN","0 AZN"];
 
 const segmentAngle=(Math.PI*2)/segments;
 

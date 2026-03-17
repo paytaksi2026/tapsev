@@ -46,9 +46,9 @@ function broadcastWinners(){
 function getRandomSegment(){
   const segments=[
     ...Array(37).fill(0),
-    ...Array(4).fill(0.10),
-    ...Array(2).fill(0.20),
-    0.30
+    ...Array(4).fill(1),
+    ...Array(2).fill(2),
+    3
   ];
   return segments[Math.floor(Math.random()*segments.length)];
 }
@@ -108,7 +108,7 @@ broadcastTop();
 
 likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
 
-if(likeCounter[user] >= 1000){
+if(likeCounter[user] >= 10){
 
 likeCounter[user] = 0;
 
