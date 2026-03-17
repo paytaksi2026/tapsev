@@ -281,7 +281,8 @@ socket.on("topLike",(list)=>{
 
 let html="";
 list.forEach((u,i)=>{
- html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
+ let cls = i===0 ? 'first' : '';
+ html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
 });
 
 document.getElementById("topLike").innerHTML=html||"No data";
@@ -292,7 +293,8 @@ socket.on("topGift",(list)=>{
 
 let html="";
 list.forEach((u,i)=>{
- html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
+ let cls = i===0 ? 'first' : '';
+ html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
 });
 
 document.getElementById("topGift").innerHTML=html||"No data";

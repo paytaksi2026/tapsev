@@ -173,3 +173,16 @@ gap:10px;
 .box{
 flex:1;
 }
+
+/* SAFE SCROLL */
+#topLike, #topGift, #queuePanel, #winnersPanel{
+  max-height:220px;
+  overflow-y:auto;
+}
+
+/* FIRST PLACE HIGHLIGHT */
+.first{
+  color: gold;
+  font-weight: bold;
+  text-shadow: 0 0 8px gold;
+}
