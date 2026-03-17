@@ -27,7 +27,7 @@ let lastWinners = [];
 function topList(obj){
   return Object.entries(obj)
     .sort((a,b)=>b[1]-a[1])
-    .slice(0,10);
+    .slice(0,15);
 }
 
 function broadcastTop(){
@@ -72,7 +72,7 @@ function processQueue(){
     io.emit("spinResult",{user,result});
 
     lastWinners.unshift({user,result});
-    lastWinners = lastWinners.slice(0,10);
+    lastWinners = lastWinners.slice(0,15);
     broadcastWinners();
 
     spinning = false;
