@@ -261,7 +261,7 @@ q.slice(0,15).forEach((u,i)=>{
  html+=(i+1)+". "+u+"<br>";
 });
 
-document.getElementById("queuePanel").innerHTML=html||"Empty";
+document.getElementById("queuePanel").innerHTML=`<div class="scrollContent">${html}</div>`||"Empty";
 
 });
 
@@ -273,14 +273,18 @@ list.slice(0,15).forEach((w,i)=>{
  html+=(i+1)+". "+w.user+" — "+w.result+" AZN<br>";
 });
 
-document.getElementById("winnersPanel").innerHTML=html||"No winners yet";
+document.getElementById("winnersPanel").innerHTML=`<div class="scrollContent">${html}</div>`||"No winners yet";
 
 });
 
 socket.on("topLike",(list)=>{
 
 let html="";
+let html="";
 list.forEach((u,i)=>{
+ let cls = i===0 ? 'first' : '';
+ html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
+});
  html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
 
@@ -291,7 +295,11 @@ document.getElementById("topLike").innerHTML=html||"No data";
 socket.on("topGift",(list)=>{
 
 let html="";
+let html="";
 list.forEach((u,i)=>{
+ let cls = i===0 ? 'first' : '';
+ html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
+});
  html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
 
