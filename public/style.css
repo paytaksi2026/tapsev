@@ -174,37 +174,14 @@ gap:10px;
 flex:1;
 }
 
-
-/* SCROLL LIST */
+/* SCROLL FIX */
 #topLike, #topGift, #queuePanel, #winnersPanel{
 max-height:200px;
-overflow:hidden;
-position:relative;
+overflow-y:auto;
 }
 
-.scrollContent{
-animation:scrollUp 10s linear infinite;
-}
-
-@keyframes scrollUp{
-0%{transform:translateY(0)}
-100%{transform:translateY(-50%)}
-}
-
-/* FIRST PLACE HIGHLIGHT */
+/* FIRST PLACE */
 .first{
 color:gold;
 font-weight:bold;
-text-shadow:0 0 10px gold;
-}
-
-/* PULSE EFFECT */
-.pulse{
-animation:pulseAnim 0.5s;
-}
-
-@keyframes pulseAnim{
-0%{transform:scale(1)}
-50%{transform:scale(1.2)}
-100%{transform:scale(1)}
 }

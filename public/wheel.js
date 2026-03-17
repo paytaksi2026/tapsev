@@ -1,33 +1,4 @@
 
-function showWinPopup(amount){
-const popup=document.getElementById("winPopup");
-const amt=document.getElementById("winAmount");
-if(!popup||!amt)return;
-
-amt.innerText=amount;
-popup.style.display="flex";
-
-setTimeout(()=>{
-popup.style.display="none";
-},3000);
-}
-
-function confettiRain(){
-for(let i=0;i<40;i++){
-let c=document.createElement("div");
-c.className="confetti";
-c.innerText="🎉";
-c.style.left=Math.random()*100+"vw";
-c.style.fontSize=(14+Math.random()*20)+"px";
-document.body.appendChild(c);
-
-setTimeout(()=>{
-c.remove();
-},3000);
-}
-}
-
-
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
@@ -204,10 +175,7 @@ frame();
 
 }
 
-
-
 function finish(result){
-
 
 spinSound.pause();
 
@@ -218,11 +186,7 @@ document.getElementById("result").innerText="😢 Uduzdunuz";
 }else{
 winSound.play();
 document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
-showWinPopup(resultText);
-confettiRain();
-
 }
-
 
 countdown();
 
@@ -257,11 +221,11 @@ socket.on("queueUpdate",(q)=>{
 
 let html="";
 
-q.slice(0,15).forEach((u,i)=>{
+q.forEach((u,i)=>{
  html+=(i+1)+". "+u+"<br>";
 });
 
-document.getElementById("queuePanel").innerHTML=`<div class="scrollContent">${html}</div>`||"Empty";
+document.getElementById("queuePanel").innerHTML=html||"Empty";
 
 });
 
@@ -269,23 +233,21 @@ socket.on("lastWinners",(list)=>{
 
 let html="";
 
-list.slice(0,15).forEach((w,i)=>{
+list.forEach((w,i)=>{
  html+=(i+1)+". "+w.user+" — "+w.result+" AZN<br>";
 });
 
-document.getElementById("winnersPanel").innerHTML=`<div class="scrollContent">${html}</div>`||"No winners yet";
+document.getElementById("winnersPanel").innerHTML=html||"No winners yet";
 
 });
 
 socket.on("topLike",(list)=>{
 
 let html="";
-let html="";
 list.forEach((u,i)=>{
  let cls = i===0 ? 'first' : '';
+
  html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
-});
- html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
 
 document.getElementById("topLike").innerHTML=html||"No data";
@@ -295,12 +257,10 @@ document.getElementById("topLike").innerHTML=html||"No data";
 socket.on("topGift",(list)=>{
 
 let html="";
-let html="";
 list.forEach((u,i)=>{
  let cls = i===0 ? 'first' : '';
+
  html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
-});
- html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
 
 document.getElementById("topGift").innerHTML=html||"No data";
