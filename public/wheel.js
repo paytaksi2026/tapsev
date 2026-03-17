@@ -1,9 +1,39 @@
 
+function showWinPopup(amount){
+const popup=document.getElementById("winPopup");
+const amt=document.getElementById("winAmount");
+if(!popup||!amt)return;
+
+amt.innerText=amount;
+popup.style.display="flex";
+
+setTimeout(()=>{
+popup.style.display="none";
+},3000);
+}
+
+function confettiRain(){
+for(let i=0;i<40;i++){
+let c=document.createElement("div");
+c.className="confetti";
+c.innerText="🎉";
+c.style.left=Math.random()*100+"vw";
+c.style.fontSize=(14+Math.random()*20)+"px";
+document.body.appendChild(c);
+
+setTimeout(()=>{
+c.remove();
+},3000);
+}
+}
+
+
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
 const spinSound=document.getElementById("spinSound");
 const winSound=document.getElementById("winSound");
+const tickSound=document.getElementById("tickSound"); // NEW
 
 const segments=44;
 
@@ -14,6 +44,9 @@ const segmentAngle=(Math.PI*2)/segments;
 let angle=0;
 let spinning=false;
 
+let ledOffset=0; // LED animation
+let winnerIndex=null; // highlight winner
+
 function draw(){
 
 const cx=300;
@@ -21,6 +54,18 @@ const cy=300;
 const r=250;
 
 ctx.clearRect(0,0,600,600);
+
+/* LED RING */
+for(let i=0;i<segments;i++){
+let a=i*segmentAngle;
+let x=cx+Math.cos(a)*290;
+let y=cy+Math.sin(a)*290;
+
+ctx.beginPath();
+ctx.arc(x,y,6,0,Math.PI*2);
+ctx.fillStyle=(i+ledOffset)%2 ? "#fff200" : "#444";
+ctx.fill();
+}
 
 /* OUTER GOLD RING */
 ctx.beginPath();
@@ -60,6 +105,15 @@ grad.addColorStop(1,i%2?"#333":"#ffd700");
 ctx.fillStyle=grad;
 ctx.fill();
 
+/* WINNER GLOW */
+if(i===winnerIndex){
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.arc(cx,cy,r,start,end);
+ctx.fillStyle="rgba(255,255,255,0.35)";
+ctx.fill();
+}
+
 ctx.save();
 
 ctx.translate(cx,cy);
@@ -92,6 +146,8 @@ function spinTo(user,result){
 if(spinning) return;
 spinning=true;
 
+winnerIndex=null;
+
 document.getElementById("spinInfo").innerText="🎡 Çarx "+user+" üçün fırlanır";
 
 spinSound.play();
@@ -121,12 +177,19 @@ if(t<1){
 
 angle=startAngle+(target-startAngle)*(1-Math.pow(1-t,4));
 
+// tick sound when passing segments
+if(tickSound && Math.random()<0.2){
+try{ tickSound.currentTime=0; tickSound.play(); }catch(e){}
+}
+
 draw();
 requestAnimationFrame(frame);
 
 }else{
 
 angle=target;
+winnerIndex=index;
+
 draw();
 
 finish(result);
@@ -141,7 +204,10 @@ frame();
 
 }
 
+
+
 function finish(result){
+
 
 spinSound.pause();
 
@@ -152,7 +218,11 @@ document.getElementById("result").innerText="😢 Uduzdunuz";
 }else{
 winSound.play();
 document.getElementById("result").innerText="🎉 Qazandınız: "+resultText;
+showWinPopup(resultText);
+confettiRain();
+
 }
+
 
 countdown();
 
@@ -187,7 +257,7 @@ socket.on("queueUpdate",(q)=>{
 
 let html="";
 
-q.forEach((u,i)=>{
+q.slice(0,15).forEach((u,i)=>{
  html+=(i+1)+". "+u+"<br>";
 });
 
@@ -199,7 +269,7 @@ socket.on("lastWinners",(list)=>{
 
 let html="";
 
-list.forEach((w,i)=>{
+list.slice(0,15).forEach((w,i)=>{
  html+=(i+1)+". "+w.user+" — "+w.result+" AZN<br>";
 });
 
@@ -211,7 +281,7 @@ socket.on("topLike",(list)=>{
 
 let html="";
 list.forEach((u,i)=>{
- let cls=(i===0?"first":i===1?"second":i===2?"third":""); html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
+ html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
 
 document.getElementById("topLike").innerHTML=html||"No data";
@@ -222,9 +292,15 @@ socket.on("topGift",(list)=>{
 
 let html="";
 list.forEach((u,i)=>{
- let cls=(i===0?"first":i===1?"second":i===2?"third":""); html+=`<div class="${cls}">${i+1}. ${u[0]} ${u[1]}</div>`;
+ html+=(i+1)+". "+u[0]+" "+u[1]+"<br>";
 });
 
 document.getElementById("topGift").innerHTML=html||"No data";
 
 });
+
+// LED animation loop
+setInterval(()=>{
+ledOffset++;
+draw();
+},200);
