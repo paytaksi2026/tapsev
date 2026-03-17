@@ -174,15 +174,8 @@ gap:10px;
 flex:1;
 }
 
-/* SAFE SCROLL */
+/* REMOVE SCROLL (FIXED HEIGHT CLEAN LOOK) */
 #topLike, #topGift, #queuePanel, #winnersPanel{
-  max-height:220px;
-  overflow-y:auto;
-}
-
-/* FIRST PLACE HIGHLIGHT */
-.first{
-  color: gold;
-  font-weight: bold;
-  text-shadow: 0 0 8px gold;
+  max-height:none;
+  overflow:hidden;
 }
