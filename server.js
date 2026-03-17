@@ -46,9 +46,9 @@ function broadcastWinners(){
 function getRandomSegment(){
   const segments=[
     ...Array(37).fill(0),
-    ...Array(4).fill(1),
-    ...Array(2).fill(2),
-    3
+    ...Array(4).fill(0.10),
+    ...Array(2).fill(0.20),
+    0.30
   ];
   return segments[Math.floor(Math.random()*segments.length)];
 }
