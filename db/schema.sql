@@ -1,0 +1,7 @@
+
+CREATE TABLE spins(
+ id SERIAL PRIMARY KEY,
+ username TEXT,
+ prize INT,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,0 +1,165 @@
+body{
+background:#000;
+color:white;
+font-family:Arial,Helvetica,sans-serif;
+display:flex;
+justify-content:space-between;
+align-items:center;
+height:100vh;
+margin:0;
+overflow:hidden;
+}
+
+#wheelContainer{
+position:relative;
+text-align:center;
+}
+
+#wheel{
+filter:drop-shadow(0 0 25px gold);
+}
+
+#pointer{
+position:absolute;
+top:-22px;
+left:50%;
+transform:translateX(-50%);
+font-size:48px;
+color:#ff3b3b;
+z-index:10;
+text-shadow:0 0 10px red,0 0 20px red;
+}
+
+#centerText{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:rgba(0,0,0,0.75);
+padding:22px;
+border-radius:18px;
+border:3px solid gold;
+box-shadow:0 0 20px rgba(255,215,0,0.7);
+}
+
+#centerText h2{
+margin:0;
+color:gold;
+}
+
+#spinInfo{
+position:absolute;
+top:15px;
+left:50%;
+transform:translateX(-50%);
+font-size:24px;
+color:gold;
+text-shadow:0 0 10px gold;
+}
+
+#countdown{
+position:absolute;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+font-size:30px;
+color:#fff;
+}
+
+#result{
+position:absolute;
+bottom:80px;
+left:50%;
+transform:translateX(-50%);
+font-size:34px;
+color:gold;
+text-shadow:0 0 10px gold,0 0 20px orange;
+}
+
+#leftPanel,#rightPanel{
+width:260px;
+padding:20px;
+}
+
+#queuePanel,#winnersPanel{
+background:#111;
+border:1px solid #444;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+min-height:90px;
+box-shadow:0 0 10px rgba(255,215,0,0.2);
+}
+
+
+/* CAMERA SHAKE EFFECT */
+.shake{
+animation:cameraShake 0.5s;
+}
+
+@keyframes cameraShake{
+0%{transform:translate(0px,0px) rotate(0deg);}
+20%{transform:translate(-6px,3px) rotate(-1deg);}
+40%{transform:translate(6px,-3px) rotate(1deg);}
+60%{transform:translate(-6px,2px) rotate(0deg);}
+80%{transform:translate(6px,-2px) rotate(1deg);}
+100%{transform:translate(0px,0px) rotate(0deg);}
+}
+
+
+
+/* WIN POPUP */
+#winPopup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:none;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,0.6);
+z-index:9998;
+}
+
+#winBox{
+background:#111;
+border:3px solid gold;
+padding:40px 60px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 0 40px gold;
+animation:popupScale 0.5s ease;
+}
+
+.winTitle{
+font-size:42px;
+color:gold;
+margin-bottom:10px;
+}
+
+#winAmount{
+font-size:56px;
+color:#ffd700;
+text-shadow:0 0 20px gold;
+}
+
+@keyframes popupScale{
+0%{transform:scale(0.5)}
+100%{transform:scale(1)}
+}
+
+/* CONFETTI */
+.confetti{
+position:fixed;
+top:-10px;
+font-size:20px;
+pointer-events:none;
+z-index:9999;
+animation:confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall{
+0%{transform:translateY(0) rotate(0)}
+100%{transform:translateY(110vh) rotate(720deg)}
+}
