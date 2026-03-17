@@ -27,13 +27,6 @@ io.on('connection', (socket) => {
     io.emit('queue', queue);
   });
 
-
-
-
-  app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/overlay.html');
-});
-
   socket.on('finishSpin', (data) => {
     winners.unshift(data);
     winners = winners.slice(0,15);
