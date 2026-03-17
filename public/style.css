@@ -173,3 +173,23 @@ gap:10px;
 .box{
 flex:1;
 }
+
+
+/* TOP 3 HIGHLIGHT */
+.first{
+  color: gold;
+  font-weight: bold;
+  text-shadow: 0 0 10px gold, 0 0 20px orange;
+}
+
+.second{
+  color: silver;
+  font-weight: bold;
+  text-shadow: 0 0 8px silver;
+}
+
+.third{
+  color: #cd7f32;
+  font-weight: bold;
+  text-shadow: 0 0 8px #cd7f32;
+}
