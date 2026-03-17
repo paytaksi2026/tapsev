@@ -163,3 +163,13 @@ animation:confettiFall 3s linear forwards;
 0%{transform:translateY(0) rotate(0)}
 100%{transform:translateY(110vh) rotate(720deg)}
 }
+
+
+.panelRow{
+display:flex;
+gap:10px;
+}
+
+.box{
+flex:1;
+}
