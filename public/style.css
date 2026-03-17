@@ -174,7 +174,6 @@ gap:10px;
 flex:1;
 }
 
-/* TOP 3 SAFE */
-.first{color:gold;font-weight:bold;text-shadow:0 0 10px gold;}
+.first{color:gold;font-weight:bold;text-shadow:0 0 8px gold;}
 .second{color:silver;font-weight:bold;}
 .third{color:#cd7f32;font-weight:bold;}
