@@ -173,9 +173,3 @@ gap:10px;
 .box{
 flex:1;
 }
-
-/* REMOVE SCROLL (FIXED HEIGHT CLEAN LOOK) */
-#topLike, #topGift, #queuePanel, #winnersPanel{
-  max-height:none;
-  overflow:hidden;
-}
