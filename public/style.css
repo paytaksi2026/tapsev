@@ -1,0 +1,6 @@
+
+body { background:#000; color:#fff; font-family:sans-serif; }
+#layout { display:flex; }
+#left,#right { width:20%; }
+#center { width:60%; text-align:center; }
+ul { list-style:none; padding:0; }
