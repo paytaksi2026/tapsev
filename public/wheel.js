@@ -281,7 +281,7 @@ socket.on("topLike",(list)=>{
 
 let html="";
 list.forEach((u,i)=>{
- let cls = "";
+ let cls="";
  if(i===0) cls="first";
  else if(i===1) cls="second";
  else if(i===2) cls="third";
@@ -297,7 +297,7 @@ socket.on("topGift",(list)=>{
 
 let html="";
 list.forEach((u,i)=>{
- let cls = "";
+ let cls="";
  if(i===0) cls="first";
  else if(i===1) cls="second";
  else if(i===2) cls="third";
