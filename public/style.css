@@ -3,7 +3,6 @@ body{
     background:#0a0a0a;
     color:#fff;
     text-align:center;
-    overflow:hidden;
 }
 
 #track{
@@ -11,6 +10,7 @@ body{
     margin-top:40px;
 }
 
+/* lanes ALWAYS visible */
 .lane{
     height:80px;
     background:linear-gradient(#2b2b2b,#1a1a1a);
@@ -18,27 +18,33 @@ body{
     position:relative;
 }
 
+/* grass */
 .lane:before{
     content:"";
     position:absolute;
     left:0;
-    width:20px;
+    width:25px;
     height:100%;
-    background:linear-gradient(green,#0f0);
+    background:linear-gradient(#0f0,#060);
 }
 
+/* fallback car if image missing */
 .car{
     position:absolute;
     top:15px;
     width:140px;
     height:50px;
-    background:url('car.png') no-repeat center/contain;
-    transition: all 0.5s linear;
+    background:#ff4444; /* fallback visible */
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
+/* avatar visible */
 .avatar{
-    width:30px;
-    height:30px;
+    width:28px;
+    height:28px;
     border-radius:50%;
     background:#fff;
     position:absolute;
@@ -48,27 +54,8 @@ body{
 
 .name{
     position:absolute;
-    top:35px;
+    bottom:-15px;
     font-size:10px;
     width:100%;
     text-align:center;
-}
-
-#likes{
-    position:fixed;
-    bottom:10px;
-    width:100%;
-    font-size:11px;
-    opacity:0.6;
-}
-
-.likeItem{
-    margin-right:10px;
-}
-
-#leaderboard{
-    position:fixed;
-    right:10px;
-    top:50px;
-    font-size:12px;
 }
