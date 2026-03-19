@@ -1,6 +1,14 @@
 const socket = io();
 let cars={};
 
+socket.on("queue",(list)=>{
+  const el=document.getElementById("queue");
+  el.innerHTML="";
+  list.forEach((u,i)=>{
+    el.innerHTML += (i+1)+". "+u.user+"<br>";
+  });
+});
+
 socket.on("racePlayers",(players)=>{
   const track=document.getElementById("track");
   track.innerHTML='<div id="finish"></div>';
