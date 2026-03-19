@@ -1,41 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>CANLI YARIŞ</title>
 <link rel="stylesheet" href="style.css">
 <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
-<h1 class="title">🚗 CANLI YARIŞ</h1>
+<h1>🚗 CANLI YARIŞ</h1>
 
-<div id="info">
-<b>🔥 QAYDALAR:</b><br><br>
-
-🎁 10 TikTok hədiyyə göndər → yarışa qoşul<br>
-❤️ 1000 like → pulsuz qoşul<br><br>
-
-⚡ Yarış başlayanda:<br>
-👉 daha çox hədiyyə = daha sürətli maşın<br>
-👉 çox like atan da sürət qazanır<br><br>
-
-⏱ Yarış müddəti: 3 dəqiqə<br>
-🏁 Ən uzağa gedən qalib olur<br><br>
-
-💰 Qalib ümumi hədiyyələrin 10%-ni qazanır!<br><br>
-
-🚀 Qazanmaq istəyirsənsə:
-Daha çox hədiyyə at!
+<div id="rules">
+<h2>📢 QAYDALAR (OXU!)</h2>
+<p>🎁 10 hədiyyə göndər → yarışa gir</p>
+<p>❤️ 1000 like → pulsuz gir</p>
+<p>⚡ Yarışda: kim çox hədiyyə atırsa — daha sürətli gedir!</p>
+<p>🔥 Çox at = qalib ol!</p>
+<p>⏱ 3 dəqiqə davam edir</p>
+<p>🏆 1-ci yer qalib olur</p>
+<p>💰 Qalib 10% qazanır</p>
 </div>
 
-<div id="queueBox">
-<b>NÖVBƏ</b>
-<div id="queue"></div>
-</div>
+<div id="queueBox"><b>NÖVBƏ</b><div id="queue"></div></div>
 
 <div id="track"></div>
 
-<div id="winner"></div>
+<h2 id="winner"></h2>
 
 <script src="game.js"></script>
 </body>
