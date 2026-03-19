@@ -13,7 +13,6 @@ app.use(express.static(__dirname));
 let queue = [];
 let totalCoins = 0;
 let leaderboard = {};
-let likes = {};
 
 const tiktok = new WebcastPushConnection(config.tiktokUser);
 
@@ -36,18 +35,6 @@ tiktok.on("gift",(data)=>{
     let players = queue.splice(0,5);
     io.emit("racePlayers", players);
     io.emit("raceStart");
-  }
-});
-
-tiktok.on("like",(data)=>{
-  let user = data.uniqueId;
-  likes[user]=(likes[user]||0)+1;
-
-  if(likes[user]>=1000){
-    if(!queue.find(u=>u.user===user)){
-      queue.push({user, avatar:data.profilePictureUrl});
-    }
-    likes[user]=0;
   }
 });
 
