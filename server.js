@@ -1,4 +1,3 @@
-// FULL PRO server (extended logic)
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -11,38 +10,47 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 let players = [];
-let totalGifts = 0;
+let stats = {};
 
 const tiktok = new WebcastPushConnection("xeberx.az");
 
 tiktok.connect().then(()=>console.log("TikTok connected"));
 
-tiktok.on('gift', data=>{
-    totalGifts += data.diamondCount || 1;
-    boost(data.uniqueId, (data.diamondCount||1)*2);
-    addUser(data);
-});
-
 tiktok.on('like', data=>{
-    boost(data.uniqueId, 1);
+    const u = data.uniqueId;
+    if(!stats[u]) stats[u] = {likes:0,gifts:0,avatar:data.profilePictureUrl};
+    stats[u].likes += data.likeCount || 1;
+    checkJoin(u);
+    boost(u,1);
 });
 
-function addUser(data){
-    if(players.find(p=>p.username===data.uniqueId)) return;
+tiktok.on('gift', data=>{
+    const u = data.uniqueId;
+    if(!stats[u]) stats[u] = {likes:0,gifts:0,avatar:data.profilePictureUrl};
+    stats[u].gifts += 1;
+    checkJoin(u);
+    boost(u,5);
+});
 
-    if(players.length < 5){
-        players.push({
-            username:data.uniqueId,
-            avatar:data.profilePictureUrl,
-            position:0,
-            speed:1
-        });
+function checkJoin(u){
+    const s = stats[u];
+    if(!s) return;
+
+    if((s.gifts >= 10 || s.likes >= 1000) && !players.find(p=>p.username===u)){
+        if(players.length < 5){
+            players.push({
+                username:u,
+                avatar:s.avatar,
+                position:0,
+                speed:2
+            });
+        }
     }
 }
 
-function boost(username, power){
+function boost(u,power){
     players.forEach(p=>{
-        if(p.username===username){
+        if(p.username===u){
             p.speed += power;
         }
     });
@@ -52,8 +60,7 @@ setInterval(()=>{
     players.forEach(p=>{
         p.position += p.speed;
     });
-
-    io.emit('update', {players, totalGifts});
+    io.emit("update", players);
 },100);
 
 server.listen(3000);

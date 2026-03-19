@@ -6,51 +6,43 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let players = [];
-let gifts = 0;
+let images = {};
 
 socket.on("update", data=>{
-    players = data.players;
-    gifts = data.totalGifts;
+    players = data;
     draw();
-    updateLeaderboard();
 });
+
+function loadAvatar(url, username){
+    if(images[username]) return;
+    const img = new Image();
+    img.src = url;
+    images[username] = img;
+}
 
 function draw(){
     ctx.fillStyle="#111";
     ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    // road
     ctx.fillStyle="#333";
     ctx.fillRect(0,100,canvas.width,300);
 
-    // finish
     ctx.fillStyle="white";
     ctx.fillRect(canvas.width-150,100,10,300);
 
     players.forEach((p,i)=>{
-        let y = 120 + i*60;
+        let y = 120 + i*80;
 
-        // car sprite (rectangle placeholder)
+        loadAvatar(p.avatar, p.username);
+
         ctx.fillStyle="red";
-        ctx.fillRect(p.position,y,100,50);
+        ctx.fillRect(p.position,y,120,50);
 
-        // nitro effect
-        if(p.speed > 5){
-            ctx.fillStyle="orange";
-            ctx.fillRect(p.position-20,y+15,20,20);
+        if(images[p.username]){
+            ctx.drawImage(images[p.username], p.position+40, y-30,40,40);
         }
 
-        // username
         ctx.fillStyle="white";
-        ctx.fillText(p.username,p.position,y-5);
-    });
-}
-
-function updateLeaderboard(){
-    let lb = document.getElementById("leaderboard");
-    lb.innerHTML = "<b>TOP 15</b><br>";
-    players.sort((a,b)=>b.position-a.position);
-    players.slice(0,15).forEach((p,i)=>{
-        lb.innerHTML += (i+1)+". "+p.username+"<br>";
+        ctx.fillText(p.username,p.position,y-10);
     });
 }
