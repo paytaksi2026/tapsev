@@ -32,7 +32,12 @@ function render(){
         let lane = document.createElement('div');
         lane.className='lane';
 
-        // spectators
+        // finish line
+        let finish = document.createElement('div');
+        finish.className='finish';
+        lane.appendChild(finish);
+
+        // crowd
         let crowd = document.createElement('div');
         crowd.className='crowd';
         crowd.innerText = "🧍 🧍‍♀️ 🧍‍♂️ 🧍 🧍‍♂️";
@@ -46,6 +51,7 @@ function render(){
 
             car.innerHTML = `
                 🔥🚗
+                <img src="${p.avatar}" class="avatar"/>
                 <div class="name">${p.username}</div>
             `;
 

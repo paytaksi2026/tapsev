@@ -10,16 +10,14 @@ body{
     margin-top:40px;
 }
 
-/* road */
 .lane{
-    height:90px;
+    height:100px;
     background:linear-gradient(#333,#111);
     border-bottom:3px dashed #aaa;
     position:relative;
     overflow:hidden;
 }
 
-/* grass */
 .lane:before{
     content:"";
     position:absolute;
@@ -29,7 +27,14 @@ body{
     background:linear-gradient(#0f0,#050);
 }
 
-/* crowd */
+.finish{
+    position:absolute;
+    right:50px;
+    width:10px;
+    height:100%;
+    background:white;
+}
+
 .crowd{
     position:absolute;
     top:5px;
@@ -38,21 +43,24 @@ body{
     opacity:0.5;
 }
 
-/* car */
 .car{
     position:absolute;
-    top:30px;
+    top:40px;
     font-size:24px;
     transition: all 0.5s linear;
 }
 
-/* name */
+.avatar{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+}
+
 .name{
     font-size:10px;
 }
 
 #countdown{
     font-size:30px;
-    margin-top:10px;
     color:red;
 }
