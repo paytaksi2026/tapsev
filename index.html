@@ -1,41 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TikTok Race FULL</title>
-  <script src="/socket.io/socket.io.js"></script>
+<title>TikTok Race PRO</title>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+body{background:#000;color:#fff;text-align:center;font-family:sans-serif}
+.track{width:90%;margin:auto;margin-top:30px}
+.car{height:40px;background:red;margin:10px;transition:all 0.5s}
+</style>
 </head>
-<body style="background:#000;color:#fff;text-align:center;">
-  <h1>🚗 TikTok Race (FULL)</h1>
-  <button onclick="join()">Join</button>
-  <button onclick="start()">Start</button>
-  <h2 id="players"></h2>
-  <h1 id="winner"></h1>
+<body>
+
+<h1>🚗 TikTok Race PRO</h1>
+
+<button onclick="sendGift()">🎁 10 Coin (Test)</button>
+
+<div id="track" class="track"></div>
+
+<h2 id="winner"></h2>
+
+<h3>TOP 15</h3>
+<div id="board"></div>
 
 <script>
 const socket = io();
+let cars = {};
 
-function join(){
-  socket.emit("join", "User_" + Math.floor(Math.random()*1000));
+function sendGift(){
+  let user = "user_" + Math.floor(Math.random()*100);
+  socket.emit("gift", user);
 }
 
-function start(){
-  socket.emit("startRace");
-}
-
-socket.on("players", (p)=>{
-  document.getElementById("players").innerText = "Players: " + p.join(", ");
+socket.on("racePlayers",(players)=>{
+  const track = document.getElementById("track");
+  track.innerHTML="";
+  cars = {};
+  players.forEach(p=>{
+    let div = document.createElement("div");
+    div.className="car";
+    div.innerText=p;
+    div.style.width="50px";
+    track.appendChild(div);
+    cars[p]=div;
+  });
 });
 
-socket.on("raceStart", ()=>{
-  setTimeout(()=>{
-    let winner = "Winner_" + Math.floor(Math.random()*100);
-    socket.emit("finish", winner);
-  }, 3000);
+socket.on("raceStart",()=>{
+  let interval = setInterval(()=>{
+    for(let p in cars){
+      let w = parseInt(cars[p].style.width);
+      cars[p].style.width = (w + Math.random()*50) + "px";
+      if(w > 800){
+        socket.emit("finish", p);
+        clearInterval(interval);
+      }
+    }
+  },500);
 });
 
-socket.on("winner", (w)=>{
-  document.getElementById("winner").innerText = "🏆 " + w;
+socket.on("winner",(data)=>{
+  document.getElementById("winner").innerText =
+    "🏆 "+data.winner+" qazandı ("+data.reward+" coin)";
+
+  let html="";
+  let sorted = Object.entries(data.leaderboard).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  sorted.forEach((u,i)=>{
+    html += (i+1)+". "+u[0]+" ("+u[1]+")<br>";
+  });
+  document.getElementById("board").innerHTML = html;
 });
 </script>
+
 </body>
 </html>
