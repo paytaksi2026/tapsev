@@ -10,77 +10,36 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 let players = {};
-const tiktokUsername = "xeberx.az";
 
-// TikTok connect
-const tiktok = new WebcastPushConnection(tiktokUsername);
+const tiktok = new WebcastPushConnection("xeberx.az");
 
-tiktok.connect().then(() => {
-  console.log("TikTok connected");
-}).catch(err => console.error(err));
+tiktok.connect().then(()=>console.log("TikTok connected"));
 
-// Gift event
-tiktok.on("gift", data => {
-  const user = data.uniqueId;
-  Object.values(players).forEach(p=>{
-    if(p.username === user && !p.dead){
-      p.hp += 20;
-    }
-  });
-  io.emit("effect",{type:"tiktok_gift", user});
-  io.emit("update", players);
-});
-
-// Like event
-tiktok.on("like", data => {
-  const user = data.uniqueId;
-  Object.values(players).forEach(p=>{
-    if(p.username === user && !p.dead){
-      p.hp += 5;
-    }
-  });
-  io.emit("update", players);
-});
-
-function randomDamage(){
-  const ids = Object.keys(players);
-  if(ids.length === 0) return;
-  const id = ids[Math.floor(Math.random()*ids.length)];
-  players[id].hp -= 5;
-  if(players[id].hp <= 0){
-    players[id].hp = 0;
-    players[id].dead = true;
+tiktok.on("gift", data=>{
+  if(data.diamondCount >= 10){
+    players[data.uniqueId] = players[data.uniqueId] || {hp:100,size:20};
+    players[data.uniqueId].hp += 20;
+    players[data.uniqueId].size += 5;
+    io.emit("update", players);
   }
-}
+});
+
+tiktok.on("like", data=>{
+  if(data.totalLikeCount >= 1000){
+    players[data.uniqueId] = players[data.uniqueId] || {hp:100,size:20};
+    io.emit("update", players);
+  }
+});
 
 setInterval(()=>{
-  randomDamage();
+  const ids = Object.keys(players);
+  ids.forEach(id=>{
+    players[id].hp -= 1;
+    if(players[id].hp <=0) delete players[id];
+  });
   io.emit("update", players);
-}, 4000);
+}, 1000);
 
-io.on("connection", (socket) => {
+io.on("connection", socket=>{});
 
-  socket.on("join", (username) => {
-    players[socket.id] = { username, hp: 100, dead:false };
-    io.emit("update", players);
-  });
-
-  socket.on("attack", (targetId)=>{
-    if(players[socket.id] && players[targetId]){
-      players[targetId].hp -= 20;
-      if(players[targetId].hp <=0){
-        players[targetId].hp=0;
-        players[targetId].dead=true;
-      }
-      io.emit("update", players);
-    }
-  });
-
-  socket.on("disconnect", ()=>{
-    delete players[socket.id];
-    io.emit("update", players);
-  });
-
-});
-
-server.listen(3000, ()=>console.log("TikTok REAL server running"));
+server.listen(3000, ()=>console.log("Running"));
