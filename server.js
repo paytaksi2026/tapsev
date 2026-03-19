@@ -24,9 +24,6 @@ function tryStartRace(){
 }
 
 io.on("connection", (socket)=>{
-  console.log("Connected");
-
-  // simulate TikTok gift
   socket.on("gift", (user)=>{
     totalCoins += 10;
 
@@ -35,12 +32,10 @@ io.on("connection", (socket)=>{
     }
 
     tryStartRace();
-    io.emit("queue", queue);
   });
 
   socket.on("finish", (winner)=>{
     let reward = totalCoins * 0.1;
-
     leaderboard[winner] = (leaderboard[winner] || 0) + 1;
 
     io.emit("winner", {winner, reward, leaderboard});

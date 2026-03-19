@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>TikTok Race PRO</title>
+<title>TikTok Race FINAL</title>
 <script src="/socket.io/socket.io.js"></script>
 <style>
 body{background:#000;color:#fff;text-align:center;font-family:sans-serif}
-.track{width:90%;margin:auto;margin-top:30px}
-.car{height:40px;background:red;margin:10px;transition:all 0.5s}
+.track{width:90%;margin:auto;margin-top:20px}
+.car{height:40px;background:linear-gradient(90deg,red,orange);margin:10px;border-radius:10px;transition:all 0.3s}
+#rules{position:fixed;top:10px;right:10px;background:#111;padding:10px;border:1px solid #444;border-radius:10px;width:250px;text-align:left;font-size:14px}
 </style>
 </head>
 <body>
 
-<h1>🚗 TikTok Race PRO</h1>
+<h1>🚗 TikTok Race FINAL</h1>
 
-<button onclick="sendGift()">🎁 10 Coin (Test)</button>
+<div id="rules">
+<b>🚗 Qaydalar</b><br>
+🎁 10 gift → qoşul<br>
+👥 5 nəfər → start<br>
+⏱ 3 dəq yarış<br>
+⚡ gift → sürət<br>
+🏁 ilk çatan qalib<br>
+💰 qalib = 10%<br>
+</div>
+
+<button onclick="sendGift()">🎁 Test Gift</button>
 
 <div id="track" class="track"></div>
-
 <h2 id="winner"></h2>
-
-<h3>TOP 15</h3>
 <div id="board"></div>
 
 <script>
@@ -49,20 +57,20 @@ socket.on("raceStart",()=>{
   let interval = setInterval(()=>{
     for(let p in cars){
       let w = parseInt(cars[p].style.width);
-      cars[p].style.width = (w + Math.random()*50) + "px";
-      if(w > 800){
+      cars[p].style.width = (w + Math.random()*40) + "px";
+      if(w > 900){
         socket.emit("finish", p);
         clearInterval(interval);
       }
     }
-  },500);
+  },300);
 });
 
 socket.on("winner",(data)=>{
   document.getElementById("winner").innerText =
     "🏆 "+data.winner+" qazandı ("+data.reward+" coin)";
 
-  let html="";
+  let html="<h3>TOP 15</h3>";
   let sorted = Object.entries(data.leaderboard).sort((a,b)=>b[1]-a[1]).slice(0,15);
   sorted.forEach((u,i)=>{
     html += (i+1)+". "+u[0]+" ("+u[1]+")<br>";

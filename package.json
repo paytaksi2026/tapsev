@@ -1,5 +1,5 @@
 {
-  "name": "tiktok-race-pro",
+  "name": "tiktok-race-final",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
