@@ -1,10 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TikTok Race</title>
+  <title>TikTok Race FULL</title>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
-<body style="background:#111;color:#fff;text-align:center;">
-  <h1>🚗 TikTok Race System</h1>
-  <p>Server işləyir ✅</p>
+<body style="background:#000;color:#fff;text-align:center;">
+  <h1>🚗 TikTok Race (FULL)</h1>
+  <button onclick="join()">Join</button>
+  <button onclick="start()">Start</button>
+  <h2 id="players"></h2>
+  <h1 id="winner"></h1>
+
+<script>
+const socket = io();
+
+function join(){
+  socket.emit("join", "User_" + Math.floor(Math.random()*1000));
+}
+
+function start(){
+  socket.emit("startRace");
+}
+
+socket.on("players", (p)=>{
+  document.getElementById("players").innerText = "Players: " + p.join(", ");
+});
+
+socket.on("raceStart", ()=>{
+  setTimeout(()=>{
+    let winner = "Winner_" + Math.floor(Math.random()*100);
+    socket.emit("finish", winner);
+  }, 3000);
+});
+
+socket.on("winner", (w)=>{
+  document.getElementById("winner").innerText = "🏆 " + w;
+});
+</script>
 </body>
 </html>
