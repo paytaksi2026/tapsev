@@ -18,7 +18,7 @@ socket.on("racePlayers",(players)=>{
   document.getElementById("alert").style.display="none";
 
   const track=document.getElementById("track");
-  track.innerHTML='<div id="finish"></div>';
+  track.innerHTML='<div id="road"></div><div id="finish"></div>';
   cars={};
 
   const skins=[
@@ -55,17 +55,23 @@ socket.on("racePlayers",(players)=>{
 
 socket.on("raceStart",()=>{
   let interval=setInterval(()=>{
+    document.getElementById("road").style.backgroundPositionX -= 10 + "px";
+
     for(let u in cars){
       let obj=cars[u];
       let w=parseInt(obj.bar.style.width);
       let boost=Math.random()*30;
+
+      // AI balans (son anda sürət artır)
+      if(w>600){
+        boost += Math.random()*50;
+      }
 
       obj.bar.style.width=(w+boost)+"px";
 
       if(w>900){
         socket.emit("finish",{user:u});
         document.getElementById("finishSound").play();
-        document.getElementById("track").classList.add("zoom");
         clearInterval(interval);
       }
     }
