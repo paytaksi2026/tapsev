@@ -1,84 +1,58 @@
 
 body{
-    background:#000;
-    color:#fff;
-    font-family:sans-serif;
-    overflow:hidden;
+ background:#000;
+ color:#fff;
+ overflow:hidden;
+ font-family:sans-serif;
 }
 
-#topbar{
-    position:fixed;
-    top:0;
-    width:100%;
-    text-align:center;
-    font-size:14px;
-}
-
-#rules{
-    position:fixed;
-    top:30px;
-    left:10px;
-    font-size:12px;
-    opacity:0.7;
-}
-
-#track{
-    margin-top:80px;
-}
-
-/* ROAD */
 .lane{
-    height:90px;
-    position:relative;
-    background:linear-gradient(#2b2b2b,#111);
-    border-bottom:2px dashed #aaa;
+ height:90px;
+ background:linear-gradient(#2b2b2b,#111);
+ border-bottom:2px dashed #aaa;
+ position:relative;
 }
 
-/* FINISH */
 .finish{
-    position:absolute;
-    right:20px;
-    width:8px;
-    height:100%;
-    background:white;
+ position:absolute;
+ right:20px;
+ width:6px;
+ height:100%;
+ background:#fff;
 }
 
-/* CAR */
 .car{
-    position:absolute;
-    left:0;
-    top:40px;
-    font-size:28px;
+ position:absolute;
+ left:0;
+ top:40px;
+ font-size:30px;
 }
 
-/* USER */
 .user{
-    position:absolute;
-    top:5px;
-    text-align:center;
-    transition:transform 0.3s linear;
+ position:absolute;
+ top:5px;
+ text-align:center;
+ transition:transform 0.2s linear;
 }
 
 .user img{
-    width:35px;
-    height:35px;
-    border-radius:50%;
-    border:2px solid #fff;
+ width:35px;
+ border-radius:50%;
+ border:2px solid #fff;
 }
 
-/* NAME */
-.name{
-    font-size:10px;
-}
-
-/* NITRO */
-.nitro{
-    color:orange;
-    font-size:16px;
-    animation: flame 0.3s infinite alternate;
+.trail{
+ color:orange;
+ animation: flame 0.2s infinite alternate;
 }
 
 @keyframes flame{
-    from{transform:scale(1);}
-    to{transform:scale(1.3);}
+ from{transform:scale(1);}
+ to{transform:scale(1.4);}
+}
+
+.heart{
+ position:fixed;
+ pointer-events:none;
+ font-size:18px;
 }
