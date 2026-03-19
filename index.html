@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <title>CANLI YARIŞ</title>
 <link rel="stylesheet" href="style.css">
 <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
-<h1>🚗 CANLI YARIŞ</h1>
+<h1 class="title">🚗 CANLI YARIŞ</h1>
 
-<div id="rules">
-<h2>📢 QAYDALAR (OXU!)</h2>
-<p>🎁 10 hədiyyə göndər → yarışa gir</p>
-<p>❤️ 1000 like → pulsuz gir</p>
-<p>⚡ Yarışda: kim çox hədiyyə atırsa — daha sürətli gedir!</p>
-<p>🔥 Çox at = qalib ol!</p>
-<p>⏱ 3 dəqiqə davam edir</p>
-<p>🏆 1-ci yer qalib olur</p>
-<p>💰 Qalib 10% qazanır</p>
+<div id="info">
+<b>🚗 YARIŞ NECƏ İŞLƏYİR?</b><br><br>
+🎁 10 jeton göndər — qoşul<br>
+🔥 çox hədiyyə = sürət<br>
+❤️ 1000 like = qoşul<br>
+👥 5 nəfər = start<br>
+🏁 birinci qalib<br>
+💰 10% qazanır
 </div>
 
-<div id="queueBox"><b>NÖVBƏ</b><div id="queue"></div></div>
+<div id="queueBox">
+<b>NÖVBƏ</b>
+<div id="queue"></div>
+</div>
 
 <div id="track"></div>
 
-<h2 id="winner"></h2>
+<div id="winner"></div>
 
 <script src="game.js"></script>
 </body>
