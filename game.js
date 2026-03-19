@@ -7,9 +7,16 @@ socket.on("queue",(list)=>{
   list.forEach((u,i)=>{
     el.innerHTML += (i+1)+". "+u.user+"<br>";
   });
+
+  if(list.length===3){
+    document.getElementById("alert").style.display="block";
+    document.getElementById("alertSound").play();
+  }
 });
 
 socket.on("racePlayers",(players)=>{
+  document.getElementById("alert").style.display="none";
+
   const track=document.getElementById("track");
   track.innerHTML='<div id="finish"></div>';
   cars={};
@@ -31,7 +38,7 @@ socket.on("racePlayers",(players)=>{
     avatar.className="avatar";
 
     let car=document.createElement("img");
-    car.src=skins[i % skins.length];
+    car.src=skins[i];
 
     let bar=document.createElement("div");
     bar.className="bar";
@@ -51,16 +58,14 @@ socket.on("raceStart",()=>{
     for(let u in cars){
       let obj=cars[u];
       let w=parseInt(obj.bar.style.width);
-      let boost=Math.random()*25;
-
-      if(Math.random()>0.9){
-        boost+=70;
-      }
+      let boost=Math.random()*30;
 
       obj.bar.style.width=(w+boost)+"px";
 
       if(w>900){
         socket.emit("finish",{user:u});
+        document.getElementById("finishSound").play();
+        document.getElementById("track").classList.add("zoom");
         clearInterval(interval);
       }
     }
