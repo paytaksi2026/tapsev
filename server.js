@@ -14,7 +14,7 @@ function randomDamage(){
   const ids = Object.keys(players);
   if(ids.length === 0) return;
   const id = ids[Math.floor(Math.random()*ids.length)];
-  players[id].hp -= 10;
+  players[id].hp -= 5;
   if(players[id].hp <= 0){
     players[id].hp = 0;
     players[id].dead = true;
@@ -24,7 +24,18 @@ function randomDamage(){
 setInterval(()=>{
   randomDamage();
   io.emit("update", players);
-}, 5000);
+}, 4000);
+
+// TikTok placeholder (ready to plug connector later)
+function simulateTikTokGift(username){
+  Object.values(players).forEach(p=>{
+    if(p.username === username && !p.dead){
+      p.hp += 20;
+    }
+  });
+  io.emit("effect",{type:"tiktok_gift", user: username});
+  io.emit("update", players);
+}
 
 io.on("connection", (socket) => {
 
@@ -53,6 +64,10 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("simulateTikTok", (username)=>{
+    simulateTikTokGift(username);
+  });
+
   socket.on("disconnect", ()=>{
     delete players[socket.id];
     io.emit("update", players);
@@ -60,4 +75,4 @@ io.on("connection", (socket) => {
 
 });
 
-server.listen(3000, ()=>console.log("PRO server running"));
+server.listen(3000, ()=>console.log("FINAL server running"));

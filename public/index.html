@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Last Hero PRO</title>
+<title>Last Hero FINAL</title>
 <script src="/socket.io/socket.io.js"></script>
 <style>
-body{background:#0b0b0f;color:#fff;font-family:sans-serif}
-.player{margin:5px;padding:5px;border:1px solid #444}
-.dead{opacity:0.4}
-.bar{height:10px;background:red}
+body{background:#050510;color:#0ff;font-family:sans-serif}
+.player{margin:10px;padding:10px;border:1px solid #0ff;border-radius:8px}
+.dead{opacity:0.3}
+.bar{height:10px;background:lime}
+button{margin:3px}
 </style>
 </head>
 <body>
 
-<h2>🔥 Last Hero Standing PRO</h2>
+<h2>⚡ Last Hero Standing FINAL</h2>
 
 <input id="name" placeholder="username">
 <button onclick="join()">Join</button>
 <button onclick="gift()">Gift</button>
+<button onclick="fakeTikTok()">Fake TikTok Gift</button>
 
 <div id="effects"></div>
 <div id="players"></div>
@@ -32,9 +34,13 @@ function gift(){
   socket.emit("gift");
 }
 
+function fakeTikTok(){
+  const name = document.getElementById("name").value;
+  socket.emit("simulateTikTok", name);
+}
+
 socket.on("effect",(e)=>{
-  const div=document.getElementById("effects");
-  div.innerHTML = JSON.stringify(e);
+  document.getElementById("effects").innerText = JSON.stringify(e);
 });
 
 socket.on("update",(players)=>{
@@ -43,7 +49,7 @@ socket.on("update",(players)=>{
   Object.entries(players).forEach(([id,p])=>{
     const d=document.createElement("div");
     d.className="player "+(p.dead?"dead":"");
-    d.innerHTML = p.username+" HP:"+p.hp+
+    d.innerHTML = "<b>"+p.username+"</b> HP:"+p.hp+
     `<div class="bar" style="width:${p.hp}%"></div>
      <button onclick="attack('${id}')">Attack</button>`;
     box.appendChild(d);
