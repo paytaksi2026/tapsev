@@ -1,20 +1,18 @@
 const socket = io();
 let cars={};
-let raceTime=180;
 
-function startTimer(){
-  const el=document.getElementById("timer");
-  let t=180;
-  let interval=setInterval(()=>{
-    t--;
-    el.innerText="Vaxt: "+t+" san";
-    if(t<=0) clearInterval(interval);
-  },1000);
+function createSmoke(el){
+  let smoke=document.createElement("div");
+  smoke.className="smoke";
+  el.appendChild(smoke);
+  setTimeout(()=>smoke.remove(),800);
 }
 
-function getCarSkin(){
-  const skins=["ferrari.png","bmw.png","lambo.png"];
-  return skins[Math.floor(Math.random()*skins.length)];
+function createExplosion(el){
+  let boom=document.createElement("div");
+  boom.className="boom";
+  el.appendChild(boom);
+  setTimeout(()=>boom.remove(),600);
 }
 
 socket.on("racePlayers",(players)=>{
@@ -26,44 +24,46 @@ socket.on("racePlayers",(players)=>{
     let div=document.createElement("div");
     div.className="car";
 
-    let car=document.createElement("img");
-    car.src=getCarSkin();
+    let avatar=document.createElement("img");
+    avatar.src=p.avatar;
+    avatar.className="avatar";
 
-    let name=document.createElement("span");
-    name.innerText=p.user;
+    let car=document.createElement("img");
+    car.src=["ferrari_small.png","bmw_small.png","lambo_small.png"][Math.floor(Math.random()*3)];
 
     let bar=document.createElement("div");
     bar.className="bar";
     bar.style.width="50px";
 
+    div.appendChild(avatar);
     div.appendChild(car);
-    div.appendChild(name);
     div.appendChild(bar);
 
     track.appendChild(div);
-    cars[p.user]=bar;
+    cars[p.user]={bar,div};
   });
 });
 
 socket.on("raceStart",()=>{
-  document.getElementById("engine").play();
-  startTimer();
-
   let interval=setInterval(()=>{
     for(let u in cars){
-      let boost=Math.random()*30;
+      let obj=cars[u];
+      let w=parseInt(obj.bar.style.width);
+      let boost=Math.random()*25;
 
-      // turbo effect
       if(Math.random()>0.9){
-        boost+=80;
+        boost+=70;
+        createExplosion(obj.div);
       }
 
-      let w=parseInt(cars[u].style.width);
-      cars[u].style.width=(w+boost)+"px";
+      if(Math.random()>0.7){
+        createSmoke(obj.div);
+      }
+
+      obj.bar.style.width=(w+boost)+"px";
 
       if(w>900){
         socket.emit("finish",{user:u});
-        document.getElementById("finishSound").play();
         clearInterval(interval);
       }
     }
