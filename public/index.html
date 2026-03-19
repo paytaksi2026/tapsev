@@ -1,26 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Last Hero FINAL</title>
+<title>Last Hero TikTok LIVE</title>
 <script src="/socket.io/socket.io.js"></script>
 <style>
-body{background:#050510;color:#0ff;font-family:sans-serif}
-.player{margin:10px;padding:10px;border:1px solid #0ff;border-radius:8px}
+body{background:#02020a;color:#0ff;font-family:sans-serif}
+.player{margin:10px;padding:10px;border:1px solid #0ff;border-radius:10px}
 .dead{opacity:0.3}
 .bar{height:10px;background:lime}
-button{margin:3px}
 </style>
 </head>
 <body>
 
-<h2>⚡ Last Hero Standing FINAL</h2>
+<h2>🔥 TikTok LIVE Battle (xeberx.az)</h2>
 
-<input id="name" placeholder="username">
+<input id="name" placeholder="TikTok username">
 <button onclick="join()">Join</button>
-<button onclick="gift()">Gift</button>
-<button onclick="fakeTikTok()">Fake TikTok Gift</button>
 
-<div id="effects"></div>
 <div id="players"></div>
 
 <script>
@@ -29,19 +25,6 @@ const socket = io();
 function join(){
   socket.emit("join", document.getElementById("name").value);
 }
-
-function gift(){
-  socket.emit("gift");
-}
-
-function fakeTikTok(){
-  const name = document.getElementById("name").value;
-  socket.emit("simulateTikTok", name);
-}
-
-socket.on("effect",(e)=>{
-  document.getElementById("effects").innerText = JSON.stringify(e);
-});
 
 socket.on("update",(players)=>{
   const box=document.getElementById("players");

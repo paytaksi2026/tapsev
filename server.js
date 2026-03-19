@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const { WebcastPushConnection } = require("tiktok-live-connector");
 
 const app = express();
 const server = http.createServer(app);
@@ -9,6 +10,37 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 let players = {};
+const tiktokUsername = "xeberx.az";
+
+// TikTok connect
+const tiktok = new WebcastPushConnection(tiktokUsername);
+
+tiktok.connect().then(() => {
+  console.log("TikTok connected");
+}).catch(err => console.error(err));
+
+// Gift event
+tiktok.on("gift", data => {
+  const user = data.uniqueId;
+  Object.values(players).forEach(p=>{
+    if(p.username === user && !p.dead){
+      p.hp += 20;
+    }
+  });
+  io.emit("effect",{type:"tiktok_gift", user});
+  io.emit("update", players);
+});
+
+// Like event
+tiktok.on("like", data => {
+  const user = data.uniqueId;
+  Object.values(players).forEach(p=>{
+    if(p.username === user && !p.dead){
+      p.hp += 5;
+    }
+  });
+  io.emit("update", players);
+});
 
 function randomDamage(){
   const ids = Object.keys(players);
@@ -26,17 +58,6 @@ setInterval(()=>{
   io.emit("update", players);
 }, 4000);
 
-// TikTok placeholder (ready to plug connector later)
-function simulateTikTokGift(username){
-  Object.values(players).forEach(p=>{
-    if(p.username === username && !p.dead){
-      p.hp += 20;
-    }
-  });
-  io.emit("effect",{type:"tiktok_gift", user: username});
-  io.emit("update", players);
-}
-
 io.on("connection", (socket) => {
 
   socket.on("join", (username) => {
@@ -44,28 +65,15 @@ io.on("connection", (socket) => {
     io.emit("update", players);
   });
 
-  socket.on("gift", () => {
-    if(players[socket.id] && !players[socket.id].dead){
-      players[socket.id].hp += 15;
-      io.emit("effect", { type:"heal", user: players[socket.id].username });
-      io.emit("update", players);
-    }
-  });
-
   socket.on("attack", (targetId)=>{
     if(players[socket.id] && players[targetId]){
       players[targetId].hp -= 20;
-      io.emit("effect", { type:"attack", from: players[socket.id].username, to: players[targetId].username });
       if(players[targetId].hp <=0){
         players[targetId].hp=0;
         players[targetId].dead=true;
       }
       io.emit("update", players);
     }
-  });
-
-  socket.on("simulateTikTok", (username)=>{
-    simulateTikTokGift(username);
   });
 
   socket.on("disconnect", ()=>{
@@ -75,4 +83,4 @@ io.on("connection", (socket) => {
 
 });
 
-server.listen(3000, ()=>console.log("FINAL server running"));
+server.listen(3000, ()=>console.log("TikTok REAL server running"));
