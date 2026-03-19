@@ -1,37 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Last Hero</title>
-  <script src="/socket.io/socket.io.js"></script>
+<title>Last Hero PRO</title>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+body{background:#0b0b0f;color:#fff;font-family:sans-serif}
+.player{margin:5px;padding:5px;border:1px solid #444}
+.dead{opacity:0.4}
+.bar{height:10px;background:red}
+</style>
 </head>
 <body>
-  <h1>Last Hero Standing</h1>
-  <input id="name" placeholder="username"/>
-  <button onclick="join()">Join</button>
-  <button onclick="gift()">Gift</button>
-  <ul id="players"></ul>
+
+<h2>🔥 Last Hero Standing PRO</h2>
+
+<input id="name" placeholder="username">
+<button onclick="join()">Join</button>
+<button onclick="gift()">Gift</button>
+
+<div id="effects"></div>
+<div id="players"></div>
 
 <script>
 const socket = io();
 
 function join(){
-  const name = document.getElementById("name").value;
-  socket.emit("join", name);
+  socket.emit("join", document.getElementById("name").value);
 }
 
 function gift(){
   socket.emit("gift");
 }
 
-socket.on("update", (players)=>{
-  const ul = document.getElementById("players");
-  ul.innerHTML="";
-  Object.values(players).forEach(p=>{
-    const li=document.createElement("li");
-    li.innerText=p.username+" HP:"+p.hp;
-    ul.appendChild(li);
+socket.on("effect",(e)=>{
+  const div=document.getElementById("effects");
+  div.innerHTML = JSON.stringify(e);
+});
+
+socket.on("update",(players)=>{
+  const box=document.getElementById("players");
+  box.innerHTML="";
+  Object.entries(players).forEach(([id,p])=>{
+    const d=document.createElement("div");
+    d.className="player "+(p.dead?"dead":"");
+    d.innerHTML = p.username+" HP:"+p.hp+
+    `<div class="bar" style="width:${p.hp}%"></div>
+     <button onclick="attack('${id}')">Attack</button>`;
+    box.appendChild(d);
   });
 });
+
+function attack(id){
+  socket.emit("attack", id);
+}
 </script>
+
 </body>
 </html>
