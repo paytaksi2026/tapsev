@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Yarış Sistemi</title>
-<script src="/socket.io/socket.io.js"></script>
+<title>CANLI YARIŞ</title>
 <link rel="stylesheet" href="style.css">
+<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
 <h1>🚗 CANLI YARIŞ</h1>
+<div id="timer">Vaxt: 180 san</div>
 
 <div id="qaydalar">
 <b>Qaydalar</b><br>
-🎁 Minimum 10 jeton göndər<br>
-👥 5 nəfər tamam olsun<br>
-⚡ Hədiyyə göndərdikcə sürət artır<br>
-🏁 Finişə ilk çatan qalibdir<br>
-💰 Qalib 10% qazanır
+Minimum 10 jeton göndər<br>
+5 nəfər tamam olsun<br>
+Hədiyyə göndərdikcə sürət artır<br>
+Finişə ilk çatan qalibdir<br>
+Qalib 10% qazanır
 </div>
 
 <div id="track"></div>
-<h2 id="winner"></h2>
-<div id="leaderboard"></div>
+<div id="winner"></div>
 
 <audio id="engine" src="engine.mp3" loop></audio>
 <audio id="finishSound" src="finish.mp3"></audio>
 
 <script src="game.js"></script>
-
 </body>
 </html>

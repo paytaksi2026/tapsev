@@ -1,5 +1,19 @@
 const socket = io();
 let cars={};
+let raceTime=180;
+let timerInterval=null;
+
+function startTimer(){
+  raceTime=180;
+  const el=document.getElementById("timer");
+  timerInterval=setInterval(()=>{
+    raceTime--;
+    el.innerText="Vaxt: "+raceTime+" san";
+    if(raceTime<=0){
+      clearInterval(timerInterval);
+    }
+  },1000);
+}
 
 socket.on("racePlayers",(players)=>{
   const track=document.getElementById("track");
@@ -10,8 +24,8 @@ socket.on("racePlayers",(players)=>{
     let div=document.createElement("div");
     div.className="car";
 
-    let img=document.createElement("img");
-    img.src=p.avatar;
+    let car=document.createElement("img");
+    car.src="car.png";
 
     let name=document.createElement("span");
     name.innerText=p.user;
@@ -20,42 +34,33 @@ socket.on("racePlayers",(players)=>{
     bar.className="bar";
     bar.style.width="50px";
 
-    div.appendChild(img);
+    div.appendChild(car);
     div.appendChild(name);
     div.appendChild(bar);
 
     track.appendChild(div);
     cars[p.user]=bar;
   });
-
-  document.getElementById("engine").play();
 });
 
 socket.on("raceStart",()=>{
+  document.getElementById("engine").play();
+  startTimer();
+
   let interval=setInterval(()=>{
     for(let u in cars){
       let w=parseInt(cars[u].style.width);
-      cars[u].style.width=(w+Math.random()*40)+"px";
-      if(w>900){
+      cars[u].style.width=(w+Math.random()*20)+"px";
+      if(w>1000){
         socket.emit("finish",{user:u});
         document.getElementById("finishSound").play();
         clearInterval(interval);
       }
     }
-  },300);
+  },200);
 });
 
 socket.on("winner",(data)=>{
   document.getElementById("winner").innerText=
   "🏆 "+data.winner.user+" qalib oldu!";
-
-  let html="<h3>Ən yaxşı 15</h3>";
-  let sorted=Object.entries(data.leaderboard)
-  .sort((a,b)=>b[1]-a[1]).slice(0,15);
-
-  sorted.forEach((u,i)=>{
-    html+=(i+1)+". "+u[0]+" ("+u[1]+")<br>";
-  });
-
-  document.getElementById("leaderboard").innerHTML=html;
 });
