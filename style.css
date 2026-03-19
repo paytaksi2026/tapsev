@@ -1,113 +1,25 @@
-body{
-background:#000;
-color:#fff;
-font-family:sans-serif;
-text-align:center
-}
+body{background:#000;color:#fff;text-align:center;font-family:sans-serif}
 
-.title{
-font-size:30px;
-margin-top:10px;
-letter-spacing:2px
-}
+.title{font-size:30px}
 
-#track{
-width:100%;
-height:400px;
-background:#111;
-margin-top:20px;
-position:relative;
-overflow:hidden
-}
+#track{width:100%;height:400px;background:#111;margin-top:20px;position:relative;overflow:hidden}
 
-#road{
-position:absolute;
-width:200%;
-height:100%;
-background:repeating-linear-gradient(
-90deg,
-#222 0px,
-#222 40px,
-#333 40px,
-#333 80px
-);
-animation:roadMove 2s linear infinite;
-}
+#road{position:absolute;width:200%;height:100%;background:repeating-linear-gradient(90deg,#222 0,#222 40px,#333 40px,#333 80px);animation:roadMove 2s linear infinite}
 
-@keyframes roadMove{
-0%{background-position:0 0}
-100%{background-position:-200px 0}
-}
+@keyframes roadMove{0%{background-position:0}100%{background-position:-200px}}
 
-.car{
-display:flex;
-align-items:center;
-margin:20px;
-position:relative
-}
+.car{display:flex;align-items:center;margin:20px;position:relative}
 
-.car img{
-width:55px
-}
+.car img{width:55px}
 
-.avatar{
-position:absolute;
-top:-18px;
-left:5px;
-width:26px;
-height:26px;
-border-radius:50%;
-border:2px solid #fff
-}
+.avatar{position:absolute;top:-18px;left:5px;width:26px;height:26px;border-radius:50%;border:2px solid #fff}
 
-.bar{
-height:14px;
-background:linear-gradient(90deg,#ff0000,#ffaa00);
-border-radius:10px
-}
+.username{margin-left:10px;font-size:14px;font-weight:bold}
 
-#finish{
-position:absolute;
-right:10px;
-width:6px;
-height:100%;
-background:yellow;
-box-shadow:0 0 10px yellow
-}
+.bar{height:12px;background:linear-gradient(90deg,red,orange);border-radius:10px}
 
-#info{
-position:absolute;
-right:10px;
-top:10px;
-background:#111;
-border:2px solid #666;
-padding:15px;
-width:300px;
-font-size:15px;
-line-height:1.8;
-color:#fff
-}
+#finish{position:absolute;right:10px;width:6px;height:100%;background:yellow}
 
-#queueBox{
-position:absolute;
-left:10px;
-top:10px;
-background:#111;
-border:2px solid #666;
-padding:15px;
-width:220px;
-font-size:15px
-}
+#info{position:fixed;right:10px;bottom:10px;background:rgba(0,0,0,0.8);padding:15px;width:280px;line-height:1.8}
 
-#alert{
-display:none;
-position:absolute;
-top:90px;
-left:50%;
-transform:translateX(-50%);
-background:red;
-padding:12px 25px;
-border-radius:12px;
-font-weight:bold;
-font-size:18px
-}
+#queueBox{position:fixed;left:10px;bottom:10px;background:#111;padding:15px;width:200px}
