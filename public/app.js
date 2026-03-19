@@ -13,13 +13,12 @@ socket.on('countdown', ()=>{
 function startCountdown(){
     let c = 10;
     const el = document.getElementById('countdown');
-    el.innerText = "START " + c;
     let i = setInterval(()=>{
-        c--;
         el.innerText = "START " + c;
-        if(c<=0){
+        c--;
+        if(c<0){
             clearInterval(i);
-            el.innerText = "";
+            el.innerText="";
         }
     },1000);
 }
@@ -32,7 +31,7 @@ function render(){
         let lane = document.createElement('div');
         lane.className='lane';
 
-        // finish line
+        // finish
         let finish = document.createElement('div');
         finish.className='finish';
         lane.appendChild(finish);
@@ -40,22 +39,28 @@ function render(){
         // crowd
         let crowd = document.createElement('div');
         crowd.className='crowd';
-        crowd.innerText = "🧍 🧍‍♀️ 🧍‍♂️ 🧍 🧍‍♂️";
+        crowd.innerText = "🧍 🧍‍♀️ 🧍‍♂️ 🧍 🧍‍♂️ 🧍";
         lane.appendChild(crowd);
+
+        // base car ALWAYS visible
+        let car = document.createElement('div');
+        car.className='car baseCar';
+        car.style.left = "0px";
+        car.innerText = "🚗";
+        lane.appendChild(car);
 
         let p = players[i];
         if(p){
-            let car = document.createElement('div');
-            car.className='car';
-            car.style.left = p.progress+'px';
+            let user = document.createElement('div');
+            user.className='userInfo';
+            user.style.left = p.progress + "px";
 
-            car.innerHTML = `
-                🔥🚗
+            user.innerHTML = `
                 <img src="${p.avatar}" class="avatar"/>
                 <div class="name">${p.username}</div>
             `;
 
-            lane.appendChild(car);
+            lane.appendChild(user);
         }
 
         track.appendChild(lane);

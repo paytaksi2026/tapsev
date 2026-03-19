@@ -3,6 +3,7 @@ body{
     background:#000;
     color:#fff;
     text-align:center;
+    overflow:hidden;
 }
 
 #track{
@@ -15,9 +16,9 @@ body{
     background:linear-gradient(#333,#111);
     border-bottom:3px dashed #aaa;
     position:relative;
-    overflow:hidden;
 }
 
+/* grass */
 .lane:before{
     content:"";
     position:absolute;
@@ -27,14 +28,16 @@ body{
     background:linear-gradient(#0f0,#050);
 }
 
+/* finish */
 .finish{
     position:absolute;
-    right:50px;
-    width:10px;
+    right:40px;
+    width:8px;
     height:100%;
     background:white;
 }
 
+/* crowd */
 .crowd{
     position:absolute;
     top:5px;
@@ -43,16 +46,24 @@ body{
     opacity:0.5;
 }
 
-.car{
+/* base cars always visible */
+.baseCar{
     position:absolute;
-    top:40px;
-    font-size:24px;
-    transition: all 0.5s linear;
+    top:50px;
+    font-size:22px;
+}
+
+/* user moving */
+.userInfo{
+    position:absolute;
+    top:20px;
+    text-align:center;
+    transition:all 0.5s linear;
 }
 
 .avatar{
-    width:30px;
-    height:30px;
+    width:35px;
+    height:35px;
     border-radius:50%;
 }
 
@@ -61,6 +72,26 @@ body{
 }
 
 #countdown{
-    font-size:30px;
+    font-size:28px;
     color:red;
+}
+
+/* rules */
+#rules{
+    position:fixed;
+    left:10px;
+    bottom:10px;
+    font-size:11px;
+    opacity:0.6;
+    text-align:left;
+    max-width:250px;
+}
+
+/* queue */
+#queue{
+    position:fixed;
+    right:10px;
+    bottom:10px;
+    font-size:11px;
+    opacity:0.6;
 }
