@@ -12,100 +12,83 @@ const io = new Server(server);
 app.use(express.static(path.join(__dirname, 'public')));
 
 let players = [];
+let queue = [];
+let winners = [];
+let likers = {};
 let raceStarted = false;
-
-// gift power map
-const giftPower = {
-  "Rose": 1,
-  "TikTok": 2,
-  "Finger Heart": 3,
-  "Perfume": 5,
-  "Lion": 10
-};
 
 const tiktok = new WebcastPushConnection("xeberx.az");
 
-tiktok.connect().then(()=>console.log("TikTok connected"))
-.catch(err=>console.log(err));
-
-// LIKE → join if >=1000
-let likeCounter = {};
+tiktok.connect()
+.then(()=> io.emit('status','online'))
+.catch(()=> io.emit('status','offline'));
 
 tiktok.on('like', data=>{
     const u = data.uniqueId;
-    likeCounter[u] = (likeCounter[u] || 0) + data.likeCount;
+    likers[u] = (likers[u]||0)+data.likeCount;
 
-    if(likeCounter[u] >= 1000){
-        joinPlayer(u, data.profilePictureUrl);
+    if(likers[u] >= 1000){
+        join(u,data.profilePictureUrl);
     }
 
-    boost(u, 0.2);
+    io.emit('topLikes', getTop(likers));
 });
-
-// GIFT → join if >=10
-let giftCounter = {};
 
 tiktok.on('gift', data=>{
     const u = data.uniqueId;
-    giftCounter[u] = (giftCounter[u] || 0) + 1;
 
-    if(giftCounter[u] >= 10){
-        joinPlayer(u, data.profilePictureUrl);
+    if(!players.find(p=>p.username===u)){
+        join(u,data.profilePictureUrl);
     }
 
-    let power = giftPower[data.giftName] || 2;
-    boost(u, power);
+    let p = players.find(x=>x.username===u);
+    if(p) p.speed += 2;
 });
 
-function joinPlayer(username, avatar){
-    if(players.find(p=>p.username===username)) return;
-
-    if(players.length < 5 && !raceStarted){
-        players.push({
-            username,
-            avatar,
-            progress:0,
-            speed:1
-        });
-
-        io.emit('players', players);
-
-        if(players.length === 5){
-            startRace();
-        }
+function join(username,avatar){
+    if(players.length<5 && !raceStarted){
+        players.push({username,avatar,progress:0,speed:1});
+    }else{
+        queue.push({username,avatar});
     }
+
+    io.emit('players',players);
+    io.emit('queue',queue);
+
+    if(players.length===5) start();
 }
 
-function boost(username, power){
-    let p = players.find(x=>x.username===username);
-    if(p) p.speed += power;
-}
-
-function startRace(){
-    raceStarted = true;
+function start(){
+    raceStarted=true;
     io.emit('countdown');
 
     setTimeout(()=>{
-        let time = 0;
+        let t=0;
+        let int=setInterval(()=>{
+            t++;
+            players.forEach(p=> p.progress+=p.speed);
 
-        let interval = setInterval(()=>{
-            time++;
+            io.emit('update',players);
 
-            players.forEach(p=>{
-                p.progress += p.speed * 0.3;
-            });
+            if(t>=180){
+                clearInterval(int);
+                let winner = players.sort((a,b)=>b.progress-a.progress)[0];
+                winners.push(winner);
+                winners = winners.slice(-15);
 
-            io.emit('update', players);
-
-            if(time >= 180){
-                clearInterval(interval);
-                io.emit('finish');
-                players=[];
+                players = queue.splice(0,5);
                 raceStarted=false;
+
+                io.emit('winners',winners);
             }
         },1000);
-
     },10000);
 }
 
-server.listen(process.env.PORT || 3000);
+function getTop(obj){
+    return Object.entries(obj)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,15);
+}
+
+server.listen(process.env.PORT||3000);

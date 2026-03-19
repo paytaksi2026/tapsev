@@ -2,28 +2,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Race ULTIMATE</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="status">🟢 ONLINE</div>
-<div id="countdown"></div>
+<div id="topbar">
+ <div id="status">🟡 CONNECTING...</div>
+ <div id="rules">1000 like / 10 gift → qoşul | gift daha güclüdür</div>
+</div>
+
+<div id="winners"></div>
+<div id="likes"></div>
 
 <div id="track"></div>
 
-<div id="rules">
-📜 QAYDALAR:<br>
-• 1000 bəyənmə → yarışa qoşul<br>
-• 10 hədiyyə → yarışa qoşul<br>
-• Hədiyyə daha güclüdür 🚀<br>
-• 5 nəfər → yarış başlayır<br>
-• 3 dəqiqə yarış<br>
-• Daha çox hədiyyə atan qalib olur
-</div>
-
-<div id="queue">NÖVBƏ: ...</div>
+<div id="queue"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="app.js"></script>
