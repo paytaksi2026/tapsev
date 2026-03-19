@@ -1,90 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>TikTok Race REAL</title>
+<title>Yarış Sistemi</title>
 <script src="/socket.io/socket.io.js"></script>
-<style>
-body{background:#000;color:#fff;text-align:center;font-family:sans-serif}
-.track{width:90%;margin:auto;margin-top:20px}
-.car{display:flex;align-items:center;height:50px;margin:10px;transition:all 0.3s}
-.car img{width:40px;height:40px;border-radius:50%;margin-right:10px}
-.bar{height:20px;background:linear-gradient(90deg,#00f,#0ff);border-radius:10px}
-#rules{position:fixed;top:10px;right:10px;background:#111;padding:10px;border-radius:10px;width:220px}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🚗 TikTok Race REAL</h1>
+<h1>🚗 CANLI YARIŞ</h1>
 
-<div id="rules">
+<div id="qaydalar">
 <b>Qaydalar</b><br>
-🎁 min 10 coin<br>
-👥 5 nəfər start<br>
-⚡ gift = sürət<br>
-🏁 ilk qalib<br>
-💰 10% reward
+🎁 Minimum 10 jeton göndər<br>
+👥 5 nəfər tamam olsun<br>
+⚡ Hədiyyə göndərdikcə sürət artır<br>
+🏁 Finişə ilk çatan qalibdir<br>
+💰 Qalib 10% qazanır
 </div>
 
-<div id="track" class="track"></div>
+<div id="track"></div>
 <h2 id="winner"></h2>
-<div id="board"></div>
+<div id="leaderboard"></div>
 
-<script>
-const socket = io();
-let cars = {};
+<audio id="engine" src="engine.mp3" loop></audio>
+<audio id="finishSound" src="finish.mp3"></audio>
 
-socket.on("racePlayers",(players)=>{
-  const track = document.getElementById("track");
-  track.innerHTML="";
-  cars = {};
-  players.forEach(p=>{
-    let div = document.createElement("div");
-    div.className="car";
-
-    let img = document.createElement("img");
-    img.src = p.avatar;
-
-    let name = document.createElement("span");
-    name.innerText = p.user;
-
-    let bar = document.createElement("div");
-    bar.className="bar";
-    bar.style.width="50px";
-
-    div.appendChild(img);
-    div.appendChild(name);
-    div.appendChild(bar);
-
-    track.appendChild(div);
-    cars[p.user]=bar;
-  });
-});
-
-socket.on("raceStart",()=>{
-  let interval = setInterval(()=>{
-    for(let u in cars){
-      let w = parseInt(cars[u].style.width);
-      cars[u].style.width = (w + Math.random()*30) + "px";
-      if(w > 900){
-        socket.emit("finish", {user:u});
-        clearInterval(interval);
-      }
-    }
-  },300);
-});
-
-socket.on("winner",(data)=>{
-  document.getElementById("winner").innerText =
-    "🏆 "+data.winner.user+" qazandı ("+data.reward+" coin)";
-
-  let html="<h3>TOP 15</h3>";
-  let sorted = Object.entries(data.leaderboard).sort((a,b)=>b[1]-a[1]).slice(0,15);
-  sorted.forEach((u,i)=>{
-    html += (i+1)+". "+u[0]+" ("+u[1]+")<br>";
-  });
-  document.getElementById("board").innerHTML = html;
-});
-</script>
+<script src="game.js"></script>
 
 </body>
 </html>
