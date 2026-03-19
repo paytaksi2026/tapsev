@@ -1,41 +1,42 @@
 const socket = io();
-const canvas = document.getElementById("canvas");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 let players = [];
 
-socket.on("status",(s)=>{
+socket.on("status", s=>{
     document.getElementById("status").innerText = s ? "🟢 CONNECTED" : "🔴 NOT CONNECTED";
 });
 
-socket.on("update",(data)=>{
-    players = data.players;
+socket.on("update", data=>{
+    players = data;
     draw();
 });
 
-socket.on("raceEnd",(top)=>{
-    alert("Winner: "+top[0].username);
-});
-
 function draw(){
-    ctx.clearRect(0,0,800,400);
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // road
+    ctx.fillStyle = "#333";
+    ctx.fillRect(0,100,canvas.width,300);
+
+    // finish
+    ctx.fillStyle = "white";
+    ctx.fillRect(canvas.width-100,100,10,300);
 
     players.forEach((p,i)=>{
-        ctx.fillStyle="red";
-        ctx.fillRect(p.position, i*70+50, 60,30);
-        ctx.fillStyle="white";
-        ctx.fillText(p.username, p.position, i*70+40);
+        const y = 120 + i*60;
+
+        // car
+        ctx.fillStyle = "red";
+        ctx.fillRect(p.position, y, 80,40);
+
+        // name
+        ctx.fillStyle = "white";
+        ctx.fillText(p.username, p.position, y-5);
     });
 }
-
-// demo join
-setTimeout(()=>{
-    socket.emit("join",{username:"player"+Math.random().toFixed(3)});
-},1000);
-
-// simulate actions
-setInterval(()=>{
-    if(players[0]){
-        socket.emit("like", players[0].username);
-    }
-},2000);
