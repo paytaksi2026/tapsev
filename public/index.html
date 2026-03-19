@@ -1,1 +1,37 @@
-<!DOCTYPE html><html><body><h1>Last Hero Standing</h1></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Last Hero</title>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Last Hero Standing</h1>
+  <input id="name" placeholder="username"/>
+  <button onclick="join()">Join</button>
+  <button onclick="gift()">Gift</button>
+  <ul id="players"></ul>
+
+<script>
+const socket = io();
+
+function join(){
+  const name = document.getElementById("name").value;
+  socket.emit("join", name);
+}
+
+function gift(){
+  socket.emit("gift");
+}
+
+socket.on("update", (players)=>{
+  const ul = document.getElementById("players");
+  ul.innerHTML="";
+  Object.values(players).forEach(p=>{
+    const li=document.createElement("li");
+    li.innerText=p.username+" HP:"+p.hp;
+    ul.appendChild(li);
+  });
+});
+</script>
+</body>
+</html>
