@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const { WebcastPushConnection } = require('tiktok-live-connector');
+const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const server = http.createServer(app);
@@ -10,45 +11,45 @@ const io = new Server(server);
 
 app.use(express.static('public'));
 
+// DB
+const db = new sqlite3.Database('./race.db');
+db.run(`CREATE TABLE IF NOT EXISTS winners (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    wins INTEGER DEFAULT 1,
+    earnings REAL DEFAULT 0
+)`);
+
 let players = [];
 let raceStarted = false;
+let totalGifts = 0;
 
-// TikTok username
-const tiktokUsername = "xeberx.az";
-const tiktok = new WebcastPushConnection(tiktokUsername);
+const tiktok = new WebcastPushConnection("xeberx.az");
 
-tiktok.connect().then(()=>{
-    console.log("TikTok LIVE connected");
-}).catch(err=>{
-    console.log("TikTok connect error", err);
-});
+tiktok.connect().then(()=>console.log("TikTok connected"))
+.catch(err=>console.log(err));
 
-// TikTok EVENTS
+// EVENTS
 tiktok.on('like', data=>{
-    let username = data.uniqueId;
-    addOrBoost(username, 0.2);
+    io.emit('like_stream', data.uniqueId);
+    boost(data.uniqueId, 0.2);
 });
 
 tiktok.on('gift', data=>{
-    let username = data.uniqueId;
-    addOrBoost(username, 2);
+    totalGifts += 1;
+    boost(data.uniqueId, 2);
 });
 
-function addOrBoost(username, power){
+function boost(username, power){
     let p = players.find(x=>x.username===username);
 
     if(!p && players.length < 5 && !raceStarted){
         players.push({username, progress:0, speed:1});
         io.emit('players', players);
-
-        if(players.length === 5){
-            startRace();
-        }
+        if(players.length===5) startRace();
     }
 
-    if(p){
-        p.speed += power;
-    }
+    if(p) p.speed += power;
 }
 
 function startRace(){
@@ -66,17 +67,31 @@ function startRace(){
 
             io.emit('update', players);
 
-            if(time >= 180){
+            if(time>=180){
                 let winner = players.sort((a,b)=>b.progress-a.progress)[0];
-                io.emit('winner', winner);
+
+                let reward = totalGifts * 0.1;
+
+                db.run(`INSERT INTO winners(username, earnings) VALUES(?,?)`,
+                    [winner.username, reward]);
+
+                io.emit('winner', {user:winner.username, reward});
+
+                players=[];
+                totalGifts=0;
+                raceStarted=false;
                 clearInterval(interval);
-                players = [];
-                raceStarted = false;
             }
         },1000);
     },10000);
 }
 
-server.listen(process.env.PORT || 3000, ()=>{
-    console.log("Server running");
+app.get('/top', (req,res)=>{
+    db.all(`SELECT username, COUNT(*) as wins, SUM(earnings) as earnings
+            FROM winners GROUP BY username ORDER BY wins DESC LIMIT 10`,
+        [], (err,rows)=>{
+            res.json(rows);
+        });
 });
+
+server.listen(process.env.PORT || 3000);
