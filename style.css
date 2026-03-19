@@ -1,14 +1,8 @@
 body{
 background:#000;
 color:#fff;
-font-family:sans-serif;
-text-align:center
-}
-
-.title{
-font-size:30px;
-margin-top:10px;
-letter-spacing:2px
+text-align:center;
+font-family:sans-serif
 }
 
 #track{
@@ -17,97 +11,31 @@ height:400px;
 background:#111;
 margin-top:20px;
 position:relative;
-overflow:hidden
-}
-
-#road{
-position:absolute;
-width:200%;
-height:100%;
-background:repeating-linear-gradient(
-90deg,
-#222 0px,
-#222 40px,
-#333 40px,
-#333 80px
-);
-animation:roadMove 2s linear infinite;
-}
-
-@keyframes roadMove{
-0%{background-position:0 0}
-100%{background-position:-200px 0}
 }
 
 .car{
 display:flex;
 align-items:center;
-margin:20px;
+margin:25px;
 position:relative
 }
 
 .car img{
-width:55px
+width:60px
 }
 
 .avatar{
 position:absolute;
-top:-18px;
-left:5px;
-width:26px;
-height:26px;
+top:-20px;
+left:0;
+width:28px;
+height:28px;
 border-radius:50%;
 border:2px solid #fff
 }
 
-.bar{
-height:14px;
-background:linear-gradient(90deg,#ff0000,#ffaa00);
-border-radius:10px
-}
-
-#finish{
-position:absolute;
-right:10px;
-width:6px;
-height:100%;
-background:yellow;
-box-shadow:0 0 10px yellow
-}
-
-#info{
-position:absolute;
-right:10px;
-top:10px;
-background:#111;
-border:2px solid #666;
-padding:15px;
-width:300px;
-font-size:15px;
-line-height:1.8;
+.username{
+margin-left:10px;
+font-size:14px;
 color:#fff
-}
-
-#queueBox{
-position:absolute;
-left:10px;
-top:10px;
-background:#111;
-border:2px solid #666;
-padding:15px;
-width:220px;
-font-size:15px
-}
-
-#alert{
-display:none;
-position:absolute;
-top:90px;
-left:50%;
-transform:translateX(-50%);
-background:red;
-padding:12px 25px;
-border-radius:12px;
-font-weight:bold;
-font-size:18px
 }
