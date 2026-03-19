@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>TikTok Race FINAL</title>
+<title>TikTok Race REAL</title>
 <script src="/socket.io/socket.io.js"></script>
 <style>
 body{background:#000;color:#fff;text-align:center;font-family:sans-serif}
 .track{width:90%;margin:auto;margin-top:20px}
-.car{height:40px;background:linear-gradient(90deg,red,orange);margin:10px;border-radius:10px;transition:all 0.3s}
-#rules{position:fixed;top:10px;right:10px;background:#111;padding:10px;border:1px solid #444;border-radius:10px;width:250px;text-align:left;font-size:14px}
+.car{display:flex;align-items:center;height:50px;margin:10px;transition:all 0.3s}
+.car img{width:40px;height:40px;border-radius:50%;margin-right:10px}
+.bar{height:20px;background:linear-gradient(90deg,#00f,#0ff);border-radius:10px}
+#rules{position:fixed;top:10px;right:10px;background:#111;padding:10px;border-radius:10px;width:220px}
 </style>
 </head>
 <body>
 
-<h1>🚗 TikTok Race FINAL</h1>
+<h1>🚗 TikTok Race REAL</h1>
 
 <div id="rules">
-<b>🚗 Qaydalar</b><br>
-🎁 10 gift → qoşul<br>
-👥 5 nəfər → start<br>
-⏱ 3 dəq yarış<br>
-⚡ gift → sürət<br>
-🏁 ilk çatan qalib<br>
-💰 qalib = 10%<br>
+<b>Qaydalar</b><br>
+🎁 min 10 coin<br>
+👥 5 nəfər start<br>
+⚡ gift = sürət<br>
+🏁 ilk qalib<br>
+💰 10% reward
 </div>
-
-<button onclick="sendGift()">🎁 Test Gift</button>
 
 <div id="track" class="track"></div>
 <h2 id="winner"></h2>
@@ -34,11 +33,6 @@ body{background:#000;color:#fff;text-align:center;font-family:sans-serif}
 const socket = io();
 let cars = {};
 
-function sendGift(){
-  let user = "user_" + Math.floor(Math.random()*100);
-  socket.emit("gift", user);
-}
-
 socket.on("racePlayers",(players)=>{
   const track = document.getElementById("track");
   track.innerHTML="";
@@ -46,20 +40,33 @@ socket.on("racePlayers",(players)=>{
   players.forEach(p=>{
     let div = document.createElement("div");
     div.className="car";
-    div.innerText=p;
-    div.style.width="50px";
+
+    let img = document.createElement("img");
+    img.src = p.avatar;
+
+    let name = document.createElement("span");
+    name.innerText = p.user;
+
+    let bar = document.createElement("div");
+    bar.className="bar";
+    bar.style.width="50px";
+
+    div.appendChild(img);
+    div.appendChild(name);
+    div.appendChild(bar);
+
     track.appendChild(div);
-    cars[p]=div;
+    cars[p.user]=bar;
   });
 });
 
 socket.on("raceStart",()=>{
   let interval = setInterval(()=>{
-    for(let p in cars){
-      let w = parseInt(cars[p].style.width);
-      cars[p].style.width = (w + Math.random()*40) + "px";
+    for(let u in cars){
+      let w = parseInt(cars[u].style.width);
+      cars[u].style.width = (w + Math.random()*30) + "px";
       if(w > 900){
-        socket.emit("finish", p);
+        socket.emit("finish", {user:u});
         clearInterval(interval);
       }
     }
@@ -68,7 +75,7 @@ socket.on("raceStart",()=>{
 
 socket.on("winner",(data)=>{
   document.getElementById("winner").innerText =
-    "🏆 "+data.winner+" qazandı ("+data.reward+" coin)";
+    "🏆 "+data.winner.user+" qazandı ("+data.reward+" coin)";
 
   let html="<h3>TOP 15</h3>";
   let sorted = Object.entries(data.leaderboard).sort((a,b)=>b[1]-a[1]).slice(0,15);
