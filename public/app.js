@@ -1,31 +1,40 @@
 
 const socket = io();
 
-let username = "user" + Math.floor(Math.random()*1000);
+socket.on('players', render);
+socket.on('update', render);
 
-socket.emit('join',{username});
-
-socket.on('players', (players)=>{
-    render(players);
-});
-
-socket.on('update', (players)=>{
-    render(players);
+socket.on('countdown', ()=>{
+    document.getElementById('countdown').innerText = "START 10...";
+    let c = 10;
+    let i = setInterval(()=>{
+        c--;
+        document.getElementById('countdown').innerText = "START " + c;
+        if(c<=0){
+            clearInterval(i);
+            document.getElementById('countdown').innerText = "";
+        }
+    },1000);
 });
 
 socket.on('winner', (w)=>{
-    document.getElementById('winner').innerText = "Qalib: " + w.username;
+    document.getElementById('winner').innerText = "🏆 Qalib: " + w.username;
 });
 
 function render(players){
     let track = document.getElementById('track');
     track.innerHTML = '';
 
-    players.forEach(p=>{
-        let div = document.createElement('div');
-        div.className = 'car';
-        div.style.marginLeft = p.progress + 'px';
-        div.innerText = p.username;
-        track.appendChild(div);
+    players.forEach((p,i)=>{
+        let lane = document.createElement('div');
+        lane.className = 'lane';
+
+        let car = document.createElement('div');
+        car.className = 'car';
+        car.style.left = p.progress + 'px';
+        car.innerText = p.username;
+
+        lane.appendChild(car);
+        track.appendChild(lane);
     });
 }
