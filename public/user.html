@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Panel</title>
+</head>
+<body>
+
+<h2>Balansım</h2>
+<div id="bal">0</div>
+
+<script>
+let user = prompt("Username:");
+fetch("/api/balance/"+user)
+.then(r=>r.json())
+.then(d=>{
+    document.getElementById("bal").innerText = d.balance + " AZN";
+});
+</script>
+
+</body>
+</html>

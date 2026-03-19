@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TOP 15</title>
+</head>
+<body>
+
+<h2>GÜNLÜK TOP</h2>
+<div id="list"></div>
+
+<script>
+fetch("/api/top")
+.then(r=>r.json())
+.then(data=>{
+    let html="";
+    data.forEach((u,i)=>{
+        html += (i+1)+". "+u.user+" - "+u.amount+" AZN<br>";
+    });
+    document.getElementById("list").innerHTML = html;
+});
+</script>
+
+</body>
+</html>
