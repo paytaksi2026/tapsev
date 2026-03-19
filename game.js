@@ -1,23 +1,25 @@
 const socket = io();
 let cars={};
 let raceTime=180;
-let timerInterval=null;
 
 function startTimer(){
-  raceTime=180;
   const el=document.getElementById("timer");
-  timerInterval=setInterval(()=>{
-    raceTime--;
-    el.innerText="Vaxt: "+raceTime+" san";
-    if(raceTime<=0){
-      clearInterval(timerInterval);
-    }
+  let t=180;
+  let interval=setInterval(()=>{
+    t--;
+    el.innerText="Vaxt: "+t+" san";
+    if(t<=0) clearInterval(interval);
   },1000);
+}
+
+function getCarSkin(){
+  const skins=["ferrari.png","bmw.png","lambo.png"];
+  return skins[Math.floor(Math.random()*skins.length)];
 }
 
 socket.on("racePlayers",(players)=>{
   const track=document.getElementById("track");
-  track.innerHTML="";
+  track.innerHTML='<div id="finish"></div>';
   cars={};
 
   players.forEach(p=>{
@@ -25,7 +27,7 @@ socket.on("racePlayers",(players)=>{
     div.className="car";
 
     let car=document.createElement("img");
-    car.src="car.png";
+    car.src=getCarSkin();
 
     let name=document.createElement("span");
     name.innerText=p.user;
@@ -49,9 +51,17 @@ socket.on("raceStart",()=>{
 
   let interval=setInterval(()=>{
     for(let u in cars){
+      let boost=Math.random()*30;
+
+      // turbo effect
+      if(Math.random()>0.9){
+        boost+=80;
+      }
+
       let w=parseInt(cars[u].style.width);
-      cars[u].style.width=(w+Math.random()*20)+"px";
-      if(w>1000){
+      cars[u].style.width=(w+boost)+"px";
+
+      if(w>900){
         socket.emit("finish",{user:u});
         document.getElementById("finishSound").play();
         clearInterval(interval);
