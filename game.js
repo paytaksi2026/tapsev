@@ -1,26 +1,20 @@
 const socket = io();
 let cars={};
 
-function createSmoke(el){
-  let smoke=document.createElement("div");
-  smoke.className="smoke";
-  el.appendChild(smoke);
-  setTimeout(()=>smoke.remove(),800);
-}
-
-function createExplosion(el){
-  let boom=document.createElement("div");
-  boom.className="boom";
-  el.appendChild(boom);
-  setTimeout(()=>boom.remove(),600);
-}
-
 socket.on("racePlayers",(players)=>{
   const track=document.getElementById("track");
   track.innerHTML='<div id="finish"></div>';
   cars={};
 
-  players.forEach(p=>{
+  const skins=[
+    "ferrari_live_real.png",
+    "bmw_live_real.png",
+    "lambo_live_real.png",
+    "green_live_real.png",
+    "purple_live_real.png"
+  ];
+
+  players.forEach((p,i)=>{
     let div=document.createElement("div");
     div.className="car";
 
@@ -29,7 +23,7 @@ socket.on("racePlayers",(players)=>{
     avatar.className="avatar";
 
     let car=document.createElement("img");
-    car.src=["ferrari_small.png","bmw_small.png","lambo_small.png"][Math.floor(Math.random()*3)];
+    car.src=skins[i % skins.length];
 
     let bar=document.createElement("div");
     bar.className="bar";
@@ -53,11 +47,6 @@ socket.on("raceStart",()=>{
 
       if(Math.random()>0.9){
         boost+=70;
-        createExplosion(obj.div);
-      }
-
-      if(Math.random()>0.7){
-        createSmoke(obj.div);
       }
 
       obj.bar.style.width=(w+boost)+"px";
