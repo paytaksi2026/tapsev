@@ -7,17 +7,16 @@ c.height = window.innerHeight;
 
 let players = [];
 let images = {};
-let carImg = new Image();
-carImg.src = "https://i.imgur.com/7QFQZ5K.png"; // sample car
-
-setInterval(()=>{
-    document.getElementById("popup").style.display="block";
-    setTimeout(()=>document.getElementById("popup").style.display="none",2000);
-},4000);
 
 socket.on("update",(data)=>{
     players = data.players || [];
+    applySmartBoost();
     draw();
+});
+
+socket.on("winner",(p)=>{
+    showWinner(p);
+    confetti();
 });
 
 function loadAvatar(url,u){
@@ -35,50 +34,61 @@ function draw(){
     ctx.fillStyle="#444";
     ctx.fillRect(0,200,c.width,200);
 
-    // road lines
-    ctx.strokeStyle="white";
-    for(let i=0;i<c.width;i+=40){
-        ctx.beginPath();
-        ctx.moveTo(i,300);
-        ctx.lineTo(i+20,300);
-        ctx.stroke();
-    }
-
-    // spectators (simple animation)
-    for(let i=0;i<20;i++){
-        ctx.fillStyle="yellow";
-        ctx.fillRect(i*80,150 + Math.sin(Date.now()/200+i)*5,10,20);
-    }
+    // finish
+    ctx.fillStyle="white";
+    ctx.fillRect(c.width-120,200,10,200);
 
     players.forEach((p,i)=>{
         let y = 220 + i*50;
 
         loadAvatar(p.avatar,p.username);
 
-        // car sprite
-        ctx.drawImage(carImg,p.position,y,80,40);
+        // car
+        ctx.fillStyle="red";
+        ctx.fillRect(p.position,y,80,40);
 
-        // avatar inside car
+        // avatar
         if(images[p.username]){
-            ctx.drawImage(images[p.username],p.position+25,y+5,30,30);
+            ctx.drawImage(images[p.username],p.position+20,y+5,30,30);
         }
 
-        // boost flame
-        if(p.speed>5){
+        // gift type effect
+        if(p.lastGift === "diamond"){
+            ctx.fillStyle="cyan";
+            ctx.fillRect(p.position,y-10,20,5);
+        }
+
+        // flame
+        if(p.speed > 5){
             ctx.fillStyle="orange";
             ctx.beginPath();
             ctx.arc(p.position-10,y+20,10,0,Math.PI*2);
             ctx.fill();
         }
 
-        // username
         ctx.fillStyle="white";
         ctx.fillText(p.username,p.position,y-5);
     });
+}
 
-    // start light effect
-    ctx.fillStyle="red";
-    ctx.beginPath();
-    ctx.arc(c.width/2,100,20,0,Math.PI*2);
-    ctx.fill();
+function showWinner(name){
+    let w = document.getElementById("winner");
+    w.style.display="block";
+    w.innerText = "👑 QALİB: "+name;
+}
+
+function confetti(){
+    for(let i=0;i<100;i++){
+        ctx.fillStyle = "hsl("+Math.random()*360+",100%,50%)";
+        ctx.fillRect(Math.random()*c.width,Math.random()*c.height,5,5);
+    }
+}
+
+// engagement hack
+function applySmartBoost(){
+    if(players.length<2) return;
+
+    let min = players.reduce((a,b)=>a.position<b.position?a:b);
+
+    min.speed += 0.5; // losing player boost
 }

@@ -2,25 +2,37 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>GAME LEVEL RACE</title>
+<title>FINAL BOSS RACE</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:sans-serif}
-#rules{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.7);padding:10px;border-radius:10px}
-#popup{position:absolute;top:20px;left:50%;transform:translateX(-50%);
-background:red;padding:15px;border-radius:10px;font-size:20px;display:none}
+#rules{position:absolute;bottom:10px;left:10px;background:#111;padding:12px;border-radius:10px;font-size:14px;max-width:300px}
+#winner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+font-size:40px;display:none;background:#000;padding:20px;border-radius:10px}
 canvas{display:block}
 </style>
 </head>
 <body>
 
-<div id="popup">🎁 HƏDİYYƏ AT! ❤️ BƏYƏN!</div>
+<div id="winner"></div>
 
 <div id="rules">
-<b>QAYDALAR:</b><br>
+<b>🏁 YARIŞ QAYDALARI</b><br><br>
+🔹 Yarışa qoşulmaq üçün:<br>
+➡️ 10 hədiyyə at<br>
+və ya<br>
+➡️ 1000 bəyən göndər<br><br>
+
+🔹 Yarış zamanı:<br>
 ❤️ Bəyən → maşın sürətlənir<br>
-🎁 Hədiyyə → güclü boost<br>
-🔥 Daha çox hədiyyə = daha çox sürət<br>
-🏆 Qalib → bütün hədiyyələrin 10%-ni qazanır
+🎁 Hədiyyə → güclü boost verir<br>
+💎 Bahalı hədiyyə → turbo sürət<br><br>
+
+🔹 Qazanmaq üçün:<br>
+🔥 Daha çox hədiyyə at<br>
+🔥 Davamlı bəyən bas<br>
+🔥 Startdan sonra aktiv ol<br><br>
+
+🏆 1-ci yer → bütün hədiyyələrin 10%-ni qazanır
 </div>
 
 <canvas id="c"></canvas>
