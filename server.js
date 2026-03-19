@@ -1,6 +1,6 @@
-
 const express = require('express');
 const http = require('http');
+const path = require('path');
 const { Server } = require('socket.io');
 const { WebcastPushConnection } = require('tiktok-live-connector');
 const sqlite3 = require('sqlite3').verbose();
@@ -9,7 +9,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static('public'));
+// FIX: correct static path
+app.use(express.static(path.join(__dirname, 'public')));
 
 // DB
 const db = new sqlite3.Database('./race.db');
@@ -27,7 +28,7 @@ let totalGifts = 0;
 const tiktok = new WebcastPushConnection("xeberx.az");
 
 tiktok.connect().then(()=>console.log("TikTok connected"))
-.catch(err=>console.log(err));
+.catch(err=>console.log("TikTok error:", err));
 
 // EVENTS
 tiktok.on('like', data=>{
@@ -94,4 +95,5 @@ app.get('/top', (req,res)=>{
         });
 });
 
-server.listen(process.env.PORT || 3000);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, ()=>console.log("Server running on", PORT));
