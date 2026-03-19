@@ -1,83 +1,53 @@
 const socket = io();
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const c = document.getElementById("c");
+const ctx = c.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+c.width = window.innerWidth;
+c.height = window.innerHeight;
 
 let players = [];
-let queue = [];
+let raceStarted = false;
 
-const engine = document.getElementById("engine");
-const boostSound = document.getElementById("boost");
+socket.emit("join",{username:"user"+Math.random().toFixed(3)});
 
-engine.volume = 0.3;
-engine.play();
+socket.on("countdown",(n)=>{
+    document.getElementById("count").innerText = "START IN "+n;
+});
 
-setInterval(()=>{
-    document.getElementById("popup").style.display = "block";
-    setTimeout(()=>{document.getElementById("popup").style.display="none"},2000);
-},5000);
+socket.on("winner",(name)=>{
+    document.getElementById("count").innerText = "🏆 "+name+" QAZANDI!";
+});
 
-socket.on("update", data=>{
-    players = data.players || [];
-    queue = data.queue || [];
+socket.on("update",(data)=>{
+    players = data.players;
+    raceStarted = data.raceStarted;
     draw();
-    updateQueue();
 });
 
 function draw(){
-    ctx.fillStyle="#111";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#0a0";
+    ctx.fillRect(0,0,c.width,c.height);
 
     // road
     ctx.fillStyle="#333";
-    ctx.fillRect(0,100,canvas.width,300);
+    ctx.fillRect(0,200,c.width,200);
 
-    // finish
-    ctx.fillStyle="white";
-    ctx.fillRect(canvas.width-150,100,10,300);
+    // lines
+    ctx.strokeStyle="white";
+    for(let i=0;i<c.width;i+=40){
+        ctx.beginPath();
+        ctx.moveTo(i,300);
+        ctx.lineTo(i+20,300);
+        ctx.stroke();
+    }
 
     players.forEach((p,i)=>{
-        let y = 120 + i*80;
+        let y = 220 + i*40;
 
-        // car
         ctx.fillStyle="red";
-        ctx.fillRect(p.position,y,120,50);
+        ctx.fillRect(p.position,y,40,20);
 
-        // nitro flame
-        if(p.speed > 5){
-            ctx.fillStyle="orange";
-            ctx.beginPath();
-            ctx.arc(p.position-10,y+25,15,0,Math.PI*2);
-            ctx.fill();
-            boostSound.play();
-        }
-
-        // username
         ctx.fillStyle="white";
-        ctx.fillText(p.username,p.position,y-10);
-
-        // finish check
-        if(p.position > canvas.width-160){
-            showWinner(p.username);
-        }
-
-        // engine sound speed
-        engine.playbackRate = 1 + (p.speed/10);
-    });
-}
-
-function showWinner(name){
-    ctx.fillStyle="yellow";
-    ctx.font="40px Arial";
-    ctx.fillText("🏆 QALİB: "+name, canvas.width/2-150, 80);
-}
-
-function updateQueue(){
-    let q = document.getElementById("queue");
-    q.innerHTML = "<b>QUEUE</b><br>";
-    queue.forEach((u,i)=>{
-        q.innerHTML += (i+1)+". "+u.username+"<br>";
+        ctx.fillText(p.username,p.position,y-5);
     });
 }
