@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>ULTRA Race</title>
 <style>
-body{margin:0;background:#000;color:#fff}
+body{margin:0;background:#000;color:#fff;font-family:sans-serif}
+#queue{position:absolute;top:10px;right:10px;background:#111;padding:10px}
+#popup{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+background:#ff0000;padding:15px;border-radius:10px;display:none}
 canvas{display:block}
-#count{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-font-size:60px;color:red}
 </style>
 </head>
 <body>
 
-<div id="count"></div>
-<canvas id="c"></canvas>
+<div id="queue">QUEUE:</div>
+<div id="popup">❤️ LIKE BAS! 🎁 GIFT AT!</div>
+
+<canvas id="game"></canvas>
+
+<audio id="engine" src="engine.mp3" loop></audio>
+<audio id="boost" src="boost.mp3"></audio>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="race.js"></script>
