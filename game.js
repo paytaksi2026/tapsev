@@ -44,9 +44,14 @@ socket.on("racePlayers",(players)=>{
     bar.className="bar";
     bar.style.width="50px";
 
+    let name=document.createElement("div");
+    name.className="username";
+    name.innerText="@"+p.user;
+
     div.appendChild(avatar);
     div.appendChild(car);
     div.appendChild(bar);
+    div.appendChild(name);
 
     track.appendChild(div);
     cars[p.user]={bar,div};
@@ -62,7 +67,6 @@ socket.on("raceStart",()=>{
       let w=parseInt(obj.bar.style.width);
       let boost=Math.random()*30;
 
-      // AI balans (son anda sürət artır)
       if(w>600){
         boost += Math.random()*50;
       }

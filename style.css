@@ -60,6 +60,13 @@ border-radius:50%;
 border:2px solid #fff
 }
 
+.username{
+margin-left:10px;
+font-size:14px;
+color:#fff;
+font-weight:bold;
+}
+
 .bar{
 height:14px;
 background:linear-gradient(90deg,#ff0000,#ffaa00);
@@ -76,22 +83,23 @@ box-shadow:0 0 10px yellow
 }
 
 #info{
-position:absolute;
+position:fixed;
 right:10px;
-top:10px;
-background:#111;
+bottom:10px;
+background:rgba(0,0,0,0.85);
 border:2px solid #666;
 padding:15px;
 width:300px;
-font-size:15px;
-line-height:1.8;
-color:#fff
+font-size:16px;
+line-height:2;
+color:#fff;
+z-index:9999
 }
 
 #queueBox{
-position:absolute;
+position:fixed;
 left:10px;
-top:10px;
+bottom:10px;
 background:#111;
 border:2px solid #666;
 padding:15px;
