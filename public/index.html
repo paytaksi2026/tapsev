@@ -1,17 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>3D Race Real</title>
+<title>FULL PRO Race</title>
 <style>
-body{margin:0;background:#000;color:#fff}
-#status{position:absolute;top:10px;left:10px}
+body{margin:0;background:#000;color:#fff;font-family:sans-serif}
+#ui{position:absolute;top:10px;left:10px}
+#leaderboard{position:absolute;right:10px;top:10px;background:#111;padding:10px}
+#rules{position:absolute;bottom:10px;left:10px;background:#111;padding:10px}
 canvas{display:block}
 </style>
 </head>
 <body>
 
-<div id="status">CONNECTING...</div>
+<div id="ui">🟢 LIVE CONNECTED</div>
+
+<div id="leaderboard">TOP 15</div>
+
+<div id="rules">
+<b>QAYDALAR:</b><br>
+❤️ Like = speed<br>
+🎁 Gift = böyük boost<br>
+🔥 Daha çox gift → daha sürətli maşın<br>
+🏆 Qalib → 10% qazanc
+</div>
+
 <canvas id="game"></canvas>
+
+<audio id="engine" src="engine.mp3" loop></audio>
+<audio id="boost" src="boost.mp3"></audio>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="race.js"></script>
