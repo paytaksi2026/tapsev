@@ -1,36 +1,69 @@
 
 body{
-    background:#111;
+    background:#0a0a0a;
     color:#fff;
     text-align:center;
+    overflow:hidden;
 }
 
 #track{
     width:100%;
+    margin-top:40px;
 }
 
 .lane{
-    height:70px;
-    background:linear-gradient(#333,#222);
-    border-bottom:2px dashed #888;
+    height:80px;
+    background:linear-gradient(#2b2b2b,#1a1a1a);
+    border-bottom:2px dashed #999;
     position:relative;
+}
+
+.lane:before{
+    content:"";
+    position:absolute;
+    left:0;
+    width:20px;
+    height:100%;
+    background:linear-gradient(green,#0f0);
 }
 
 .car{
     position:absolute;
-    top:10px;
-    width:120px;
+    top:15px;
+    width:140px;
     height:50px;
-    background:#ff4444;
-    border-radius:10px;
+    background:url('car.png') no-repeat center/contain;
+    transition: all 0.5s linear;
+}
+
+.avatar{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:#fff;
+    position:absolute;
+    top:-15px;
+    left:50px;
+}
+
+.name{
+    position:absolute;
+    top:35px;
+    font-size:10px;
+    width:100%;
+    text-align:center;
 }
 
 #likes{
     position:fixed;
     bottom:10px;
     width:100%;
-    font-size:12px;
-    opacity:0.7;
+    font-size:11px;
+    opacity:0.6;
+}
+
+.likeItem{
+    margin-right:10px;
 }
 
 #leaderboard{
