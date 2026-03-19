@@ -1,40 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>FINAL BOSS RACE</title>
 <style>
-body{margin:0;background:#000;color:#fff;font-family:sans-serif}
-#rules{position:absolute;bottom:10px;left:10px;background:#111;padding:12px;border-radius:10px;font-size:14px;max-width:300px}
-#winner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-font-size:40px;display:none;background:#000;padding:20px;border-radius:10px}
+body{margin:0;background:#000;color:#fff}
 canvas{display:block}
+#count{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+font-size:60px;color:red}
 </style>
 </head>
 <body>
 
-<div id="winner"></div>
-
-<div id="rules">
-<b>🏁 YARIŞ QAYDALARI</b><br><br>
-🔹 Yarışa qoşulmaq üçün:<br>
-➡️ 10 hədiyyə at<br>
-və ya<br>
-➡️ 1000 bəyən göndər<br><br>
-
-🔹 Yarış zamanı:<br>
-❤️ Bəyən → maşın sürətlənir<br>
-🎁 Hədiyyə → güclü boost verir<br>
-💎 Bahalı hədiyyə → turbo sürət<br><br>
-
-🔹 Qazanmaq üçün:<br>
-🔥 Daha çox hədiyyə at<br>
-🔥 Davamlı bəyən bas<br>
-🔥 Startdan sonra aktiv ol<br><br>
-
-🏆 1-ci yer → bütün hədiyyələrin 10%-ni qazanır
-</div>
-
+<div id="count"></div>
 <canvas id="c"></canvas>
 
 <script src="/socket.io/socket.io.js"></script>
