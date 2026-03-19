@@ -52,7 +52,7 @@ function render(){
 
   let car=document.createElement('div');
   car.className='car';
-  car.innerText='🏎️';
+  car.innerText='🚗';
   lane.appendChild(car);
 
   let p=players[i];
