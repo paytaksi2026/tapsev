@@ -9,14 +9,42 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let particles = [];
+
 function firework(){
+  // create particles
   for(let i=0;i<80;i++){
-    let x=Math.random()*canvas.width;
-    let y=Math.random()*canvas.height;
-    ctx.fillStyle="hsl("+Math.random()*360+",100%,50%)";
-    ctx.fillRect(x,y,4,4);
+    particles.push({
+      x: canvas.width/2,
+      y: canvas.height/2,
+      vx: (Math.random()-0.5)*6,
+      vy: (Math.random()-0.5)*6,
+      life: 100,
+      color: "hsl("+Math.random()*360+",100%,50%)"
+    });
   }
 }
+
+// animate particles
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p=>{
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.life/100;
+    ctx.fillRect(p.x,p.y,3,3);
+  });
+
+  particles = particles.filter(p=>p.life>0);
+  ctx.globalAlpha = 1;
+
+  requestAnimationFrame(animate);
+}
+animate();
 
 // random balloon color each round
 function randomColor(){
@@ -63,13 +91,12 @@ socket.on('winner',(data)=>{
   document.getElementById('winnerPopup').classList.remove('hidden');
   document.getElementById('winnerText').innerText = data.user+" qazandı "+data.reward;
 
-  for(let i=0;i<15;i++){
-    setTimeout(firework, i*150);
-  }
+  firework();
 
   setTimeout(()=>{
     document.getElementById('winnerPopup').classList.add('hidden');
     size=1;
     randomColor();
+    particles = []; // 🔥 clear after round
   },5000);
 });
