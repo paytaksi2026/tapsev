@@ -1,6 +1,5 @@
 
-body{background:#000;color:#fff;font-family:sans-serif;display:flex}
+body{background:black;color:white;display:flex}
 .left,.right{width:20%;padding:10px}
-.center{flex:1;text-align:center;margin-top:50px}
+.center{flex:1;text-align:center}
 #balloon{width:150px;height:200px;background:red;border-radius:50%;margin:auto;transition:0.3s}
-#countdown{font-size:40px;color:yellow;margin-top:20px}

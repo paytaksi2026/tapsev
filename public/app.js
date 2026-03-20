@@ -1,50 +1,29 @@
 
+const socket = io();
+
 let size=1;
-let canGrow=true;
-let timer=300; // 5 min
-let breakTime=30;
+
+socket.on('update', (data)=>{
+  let users = data.users;
+
+  let likeList = Object.entries(users)
+    .sort((a,b)=>b[1].likes-a[1].likes)
+    .slice(0,10);
+
+  let giftList = Object.entries(users)
+    .sort((a,b)=>b[1].gifts-a[1].gifts)
+    .slice(0,10);
+
+  document.getElementById('likes').innerHTML =
+    likeList.map(u=>"<li>"+u[0]+" "+u[1].likes+"</li>").join("");
+
+  document.getElementById('gifts').innerHTML =
+    giftList.map(u=>"<li>"+u[0]+" "+u[1].gifts+"</li>").join("");
+
+  grow(0.05);
+});
 
 function grow(v){
- if(!canGrow)return;
- size+=v;
- document.getElementById('balloon').style.transform='scale('+size+')';
-}
-
-setInterval(()=>{
- if(canGrow){
-   grow(0.02);
-   timer--;
-   if(timer<=0){
-     explode();
-   }
- }
-},1000);
-
-function explode(){
- canGrow=false;
- document.getElementById('balloon').style.background='white';
- document.getElementById('countdown').innerText='💥 PARTLADI!';
- startBreak();
-}
-
-function startBreak(){
- let t=breakTime;
- const el=document.getElementById('countdown');
- let interval=setInterval(()=>{
-   el.innerText='Yeni yarış: '+t+'s';
-   t--;
-   if(t<0){
-     clearInterval(interval);
-     resetGame();
-   }
- },1000);
-}
-
-function resetGame(){
- size=1;
- timer=300;
- canGrow=true;
- document.getElementById('balloon').style.transform='scale(1)';
- document.getElementById('balloon').style.background='red';
- document.getElementById('countdown').innerText='';
+  size+=v;
+  document.getElementById('balloon').style.transform='scale('+size+')';
 }
