@@ -40,25 +40,19 @@ tiktok.on("gift",data=>{
  totalGifts += data.diamondCount||1;
 });
 
-// ✅ FIXED WINNER LOGIC
+// 💣 NEW SCORE SYSTEM (likes vs gifts)
 function explodeNow(){
 
  let entries = Object.entries(users);
-
  if(entries.length===0) return;
 
- let winnerUser;
+ let winner = entries.sort((a,b)=>{
+   let scoreA = a[1].likes + (a[1].gifts * 100);
+   let scoreB = b[1].likes + (b[1].gifts * 100);
+   return scoreB - scoreA;
+ })[0];
 
- // 1️⃣ əvvəl gift yoxla
- let giftLeader = entries.sort((a,b)=>b[1].gifts-a[1].gifts)[0];
-
- if(giftLeader && giftLeader[1].gifts > 0){
-   winnerUser = giftLeader[0];
- } else {
-   // 2️⃣ gift yoxdursa like lider
-   let likeLeader = entries.sort((a,b)=>b[1].likes-a[1].likes)[0];
-   winnerUser = likeLeader ? likeLeader[0] : entries[0][0];
- }
+ let winnerUser = winner[0];
 
  winners.unshift(winnerUser);
  if(winners.length>10) winners.pop();
