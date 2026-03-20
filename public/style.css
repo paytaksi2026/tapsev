@@ -101,3 +101,21 @@ body{
 #balloon{
   animation:balloonBreath 4s infinite ease-in-out;
 }
+
+
+/* 🎈 ROPE */
+#balloon::before{
+  content:"";
+  position:absolute;
+  bottom:-60px;
+  left:50%;
+  width:2px;
+  height:60px;
+  background:linear-gradient(#ccc,#888);
+  transform:translateX(-50%);
+}
+
+/* smooth color change */
+#balloon{
+  transition: background 0.5s, box-shadow 0.3s, transform 0.2s;
+}

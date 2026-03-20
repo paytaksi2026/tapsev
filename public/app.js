@@ -159,3 +159,29 @@ function ultraRealMotion(){
   requestAnimationFrame(ultraRealMotion);
 }
 ultraRealMotion();
+
+
+// 👉 TOUCH INTERACTION
+balloon.addEventListener("click",()=>{
+  balloon.style.transform += " scale(1.1)";
+  setTimeout(()=>{
+    balloon.style.transform = balloon.style.transform.replace(" scale(1.1)","");
+  },200);
+});
+
+// 👉 COLOR CHANGE BY LIKES
+function updateColorByLikes(totalLikes){
+  let intensity = Math.min(totalLikes/5000,1);
+  let r = 255;
+  let g = Math.floor(80*(1-intensity));
+  let b = Math.floor(80*(1-intensity));
+
+  balloon.style.background = `
+    radial-gradient(circle at 30% 25%, #ffffffaa, transparent 40%),
+    radial-gradient(circle at 50% 60%, rgb(${r},${g},${b}), #550000 80%)
+  `;
+}
+
+socket.on('update',(data)=>{
+  updateColorByLikes(data.totalLikes || 0);
+});
