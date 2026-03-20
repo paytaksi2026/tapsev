@@ -1,148 +1,44 @@
+const express=require('express');
+const http=require('http');
+const {Server}=require('socket.io');
+const {WebcastPushConnection}=require('tiktok-live-connector');
 
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const { WebcastPushConnection } = require("tiktok-live-connector");
+const app=express();
+const serverHttp=http.createServer(app);
+const io=new Server(serverHttp);
 
-const TIKTOK_USERNAME = "xeberx.az";
+app.use(express.static('public'));
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
+const USERNAME=process.env.TIKTOK_USERNAME||"xeberx.az";
 
-app.use(express.static("public"));
-app.use("/admin", express.static("admin"));
+let users={};
+let timer=300;
 
-let queue = [];
-let spinning = false;
+const tiktok=new WebcastPushConnection(USERNAME);
 
-let likeCounter = {};
-let giftCounter = {};
+tiktok.connect().then(()=>console.log("TikTok Connected"));
 
-let likeTotals = {};
-let giftTotals = {};
-
-let lastWinners = [];
-
-function topList(obj){
-  return Object.entries(obj)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,15);
-}
-
-function broadcastTop(){
-  io.emit("topLike", topList(likeTotals));
-  io.emit("topGift", topList(giftTotals));
-}
-
-function broadcastQueue(){
-  io.emit("queueUpdate", queue);
-}
-
-function broadcastWinners(){
-  io.emit("lastWinners", lastWinners);
-}
-
-function getRandomSegment(){
-  const segments=[
-    ...Array(37).fill(0),
-    ...Array(4).fill(1),
-    ...Array(2).fill(2),
-    3
-  ];
-  return segments[Math.floor(Math.random()*segments.length)];
-}
-
-function processQueue(){
-
-  if(spinning) return;
-  if(queue.length === 0) return;
-
-  spinning = true;
-
-  const user = queue.shift();
-  broadcastQueue();
-
-  const result = getRandomSegment();
-
-  io.emit("spinStart",{user,result});
-
-  setTimeout(()=>{
-
-    io.emit("spinResult",{user,result});
-
-    lastWinners.unshift({user,result});
-    lastWinners = lastWinners.slice(0,15);
-    broadcastWinners();
-
-    spinning = false;
-
-    setTimeout(processQueue,10000);
-
-  },15000);
-
-}
-
-const tiktokLiveConnection = new WebcastPushConnection(TIKTOK_USERNAME);
-
-tiktokLiveConnection.connect()
-.then(state => {
-
-console.log("Connected to TikTok LIVE:", state.roomId);
-io.emit("tiktokStatus","connected");
-
-})
-.catch(err => {
-
-console.error("TikTok connection failed", err);
-io.emit("tiktokStatus","failed");
-
+tiktok.on("like",data=>{
+ const u=data.uniqueId;
+ if(!users[u]) users[u]={likes:0,gifts:0};
+ users[u].likes+=data.likeCount||1;
 });
 
-tiktokLiveConnection.on("like", data => {
-
-const user = data.uniqueId;
-
-likeTotals[user] = (likeTotals[user]||0) + data.likeCount;
-broadcastTop();
-
-likeCounter[user] = (likeCounter[user]||0) + data.likeCount;
-
-if(likeCounter[user] >= 10){
-
-likeCounter[user] = 0;
-
-queue.push(user);
-broadcastQueue();
-
-processQueue();
-
-}
-
+tiktok.on("gift",data=>{
+ const u=data.uniqueId;
+ if(!users[u]) users[u]={likes:0,gifts:0};
+ users[u].gifts+=data.diamondCount||1;
 });
 
-tiktokLiveConnection.on("gift", data => {
+setInterval(()=>{
+ timer--;
+ if(timer<=0){
+  let w=Object.entries(users).sort((a,b)=>b[1].gifts-a[1].gifts)[0];
+  if(w) io.emit("winner",{user:w[0],reward:0});
+  users={};
+  timer=300;
+ }
+ io.emit("update",{users,timer});
+},1000);
 
-const user = data.uniqueId;
-
-giftTotals[user] = (giftTotals[user]||0) + 1;
-broadcastTop();
-
-giftCounter[user] = (giftCounter[user]||0) + 1;
-
-if(giftCounter[user] >= 100){
-
-giftCounter[user] = 0;
-
-queue.push(user);
-broadcastQueue();
-
-processQueue();
-
-}
-
-});
-
-server.listen(3000,()=>{
- console.log("Server running with TikTok connector + TOP panels + Queue + Winners");
-});
+serverHttp.listen(3000);
