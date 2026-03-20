@@ -13,7 +13,7 @@ app.use(express.static('public'));
 const USERNAME=process.env.TIKTOK_USERNAME||"xeberx.az";
 
 let users={};
-let timer=300;
+let timer=180;
 let phase="game"; // game | pause
 let pauseTime=15;
 
