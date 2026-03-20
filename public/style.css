@@ -20,51 +20,57 @@ body{
   position:relative;
 }
 
-/* REAL BALLOON */
+/* ULTRA REAL BALLOON */
 #balloon{
-  width:120px;
-  height:150px;
+  width:130px;
+  height:170px;
   margin:100px auto;
   border-radius:50% 50% 45% 45%;
   position:relative;
+
   background: radial-gradient(circle at 30% 30%, #ff6b6b, #b30000 70%);
+
   box-shadow:
-    inset -15px -25px 40px rgba(0,0,0,0.6),
-    inset 15px 15px 25px rgba(255,255,255,0.4),
-    0 0 60px rgba(255,0,0,0.5);
-  transition: transform 0.2s;
-  animation: float 3s ease-in-out infinite;
+    inset -20px -30px 60px rgba(0,0,0,0.7),
+    inset 20px 20px 40px rgba(255,255,255,0.5),
+    0 0 80px rgba(255,0,0,0.6);
+
+  transition: all 0.2s ease;
 }
 
 /* shine */
 #balloon:before{
   content:"";
   position:absolute;
-  top:20%;
-  left:25%;
-  width:30%;
-  height:30%;
-  background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+  top:18%;
+  left:22%;
+  width:35%;
+  height:35%;
+  background: radial-gradient(circle, rgba(255,255,255,0.9), transparent);
   border-radius:50%;
-  filter: blur(2px);
+  filter: blur(3px);
 }
 
 /* string */
 #balloon:after{
   content:"";
   position:absolute;
-  bottom:-40px;
+  bottom:-50px;
   left:50%;
   width:2px;
-  height:60px;
+  height:70px;
   background:linear-gradient(white, transparent);
 }
 
-/* floating animation */
-@keyframes float{
-  0%{ transform: translateY(0px) scale(1); }
-  50%{ transform: translateY(-10px) scale(1.02); }
-  100%{ transform: translateY(0px) scale(1); }
+/* tail */
+#balloon span{
+  position:absolute;
+  bottom:-10px;
+  left:50%;
+  width:10px;
+  height:10px;
+  background:#fff;
+  transform:translateX(-50%) rotate(45deg);
 }
 
 #countdown{
