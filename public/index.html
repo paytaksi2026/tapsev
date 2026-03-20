@@ -1,29 +1,30 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TikTok Balloon Live</title>
+<title>TikTok Balloon</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <div class="left">
-    <h2>TOP 10 Likes</h2>
-    <ul id="likes"></ul>
-    <h2>TOP 10 Gifts</h2>
-    <ul id="gifts"></ul>
-  </div>
 
-  <div class="center">
-    <div id="balloon"></div>
-    <div id="status" class="offline">OFFLINE</div>
-  </div>
+<div class="left">
+<h3>TOP 10 LIKE</h3>
+<ul id="likes"></ul>
+<h3>TOP 10 GIFT</h3>
+<ul id="gifts"></ul>
+</div>
 
-  <div class="right">
-    <h2>Qaydalar</h2>
-    <p>Like və gift balonu böyüdür. 5 dəqiqədən sonra partlayır.</p>
-  </div>
+<div class="center">
+<div id="balloon"></div>
+<div id="status">OFFLINE</div>
+<div id="countdown"></div>
+</div>
+
+<div class="right">
+<h3>Qaydalar</h3>
+<p>5 dəqiqə yarış → balon partlayır</p>
+<p>30 saniyə fasilə → yeni yarış</p>
 </div>
 
 <script src="app.js"></script>

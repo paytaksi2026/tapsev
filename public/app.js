@@ -1,25 +1,50 @@
-let size = 1;
 
-function grow(amount){
-  size += amount;
-  document.getElementById('balloon').style.transform = 'scale('+size+')';
+let size=1;
+let canGrow=true;
+let timer=300; // 5 min
+let breakTime=30;
+
+function grow(v){
+ if(!canGrow)return;
+ size+=v;
+ document.getElementById('balloon').style.transform='scale('+size+')';
 }
 
-// demo loop (simulate likes/gifts)
 setInterval(()=>{
-  grow(0.05);
+ if(canGrow){
+   grow(0.02);
+   timer--;
+   if(timer<=0){
+     explode();
+   }
+ }
 },1000);
 
-// fake online toggle
-setInterval(()=>{
-  const el = document.getElementById('status');
-  if(el.classList.contains('offline')){
-    el.classList.remove('offline');
-    el.classList.add('online');
-    el.innerText = "ONLINE";
-  } else {
-    el.classList.remove('online');
-    el.classList.add('offline');
-    el.innerText = "OFFLINE";
-  }
-},5000);
+function explode(){
+ canGrow=false;
+ document.getElementById('balloon').style.background='white';
+ document.getElementById('countdown').innerText='💥 PARTLADI!';
+ startBreak();
+}
+
+function startBreak(){
+ let t=breakTime;
+ const el=document.getElementById('countdown');
+ let interval=setInterval(()=>{
+   el.innerText='Yeni yarış: '+t+'s';
+   t--;
+   if(t<0){
+     clearInterval(interval);
+     resetGame();
+   }
+ },1000);
+}
+
+function resetGame(){
+ size=1;
+ timer=300;
+ canGrow=true;
+ document.getElementById('balloon').style.transform='scale(1)';
+ document.getElementById('balloon').style.background='red';
+ document.getElementById('countdown').innerText='';
+}
