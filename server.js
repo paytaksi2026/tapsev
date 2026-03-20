@@ -40,13 +40,31 @@ tiktok.on("gift",data=>{
  totalGifts += data.diamondCount||1;
 });
 
+// ✅ FIXED WINNER LOGIC
 function explodeNow(){
- let w=Object.entries(users).sort((a,b)=>b[1].gifts-a[1].gifts)[0];
- if(w){
-   winners.unshift(w[0]);
-   if(winners.length>10) winners.pop();
-   io.emit("winner",{user:w[0],reward:0});
+
+ let entries = Object.entries(users);
+
+ if(entries.length===0) return;
+
+ let winnerUser;
+
+ // 1️⃣ əvvəl gift yoxla
+ let giftLeader = entries.sort((a,b)=>b[1].gifts-a[1].gifts)[0];
+
+ if(giftLeader && giftLeader[1].gifts > 0){
+   winnerUser = giftLeader[0];
+ } else {
+   // 2️⃣ gift yoxdursa like lider
+   let likeLeader = entries.sort((a,b)=>b[1].likes-a[1].likes)[0];
+   winnerUser = likeLeader ? likeLeader[0] : entries[0][0];
  }
+
+ winners.unshift(winnerUser);
+ if(winners.length>10) winners.pop();
+
+ io.emit("winner",{user:winnerUser,reward:0});
+
  phase="pause";
  pauseTime=15;
 }
@@ -56,7 +74,6 @@ setInterval(()=>{
  if(phase==="game"){
    timer--;
 
-   // SMART EXPLOSION
    if(totalLikes>=10000 || totalGifts>=5000){
      explodeNow();
    }
