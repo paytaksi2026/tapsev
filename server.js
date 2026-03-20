@@ -56,16 +56,7 @@ tiktok.on('gift', data => {
   totalGifts += coins;
 });
 
-// fallback (if TikTok gives nothing)
-setInterval(()=>{
-  if(Date.now() - lastEventTime > 15000){
-    let user = "demo"+Math.floor(Math.random()*5);
-    if(!users[user]) users[user]={likes:0,gifts:0};
-    users[user].likes += 1;
-    users[user].gifts += 1;
-    totalGifts += 1;
-  }
-},3000);
+
 
 // DB save
 async function saveWinner(username, reward){
