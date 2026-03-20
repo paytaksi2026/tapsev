@@ -9,23 +9,26 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const boomSound = new Audio('boom.mp3');
+
 let particles = [];
 
 function firework(){
-  // create particles
-  for(let i=0;i<80;i++){
+  boomSound.currentTime=0;
+  boomSound.play();
+
+  for(let i=0;i<120;i++){
     particles.push({
       x: canvas.width/2,
       y: canvas.height/2,
-      vx: (Math.random()-0.5)*6,
-      vy: (Math.random()-0.5)*6,
+      vx: (Math.random()-0.5)*8,
+      vy: (Math.random()-0.5)*8,
       life: 100,
       color: "hsl("+Math.random()*360+",100%,50%)"
     });
   }
 }
 
-// animate particles
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -46,7 +49,6 @@ function animate(){
 }
 animate();
 
-// random balloon color each round
 function randomColor(){
   const colors=[
     ["#ff6b6b","#b30000"],
@@ -88,15 +90,24 @@ socket.on('update',(data)=>{
 });
 
 socket.on('winner',(data)=>{
+  balloon.style.transform='scale(2.2)';
+  balloon.style.transition='0.2s';
+
+  setTimeout(()=>{
+    balloon.style.display='none';
+  },200);
+
   document.getElementById('winnerPopup').classList.remove('hidden');
-  document.getElementById('winnerText').innerText = data.user+" qazandı "+data.reward;
+  document.getElementById('winnerText').innerText = data.user+" qazandı";
 
   firework();
 
   setTimeout(()=>{
     document.getElementById('winnerPopup').classList.add('hidden');
     size=1;
+    balloon.style.display='block';
+    balloon.style.transform='scale(1)';
     randomColor();
-    particles = []; // 🔥 clear after round
+    particles=[];
   },5000);
 });
