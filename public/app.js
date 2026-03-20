@@ -9,7 +9,7 @@ const boomSound=new Audio('boom.mp3');
 let fragments=[];
 
 function createFragments(){
-  for(let i=0;i<20;i++){
+  for(let i=0;i<40;i++){
     let el=document.createElement("div");
     el.className="fragment";
     document.body.appendChild(el);
@@ -18,9 +18,10 @@ function createFragments(){
       el,
       x:window.innerWidth/2,
       y:window.innerHeight/2,
-      vx:(Math.random()-0.5)*8,
-      vy:(Math.random()-0.5)*8,
-      life:80
+      vx:(Math.random()-0.5)*12,
+      vy:(Math.random()-0.5)*12,
+      life:120,
+      rotate:Math.random()*360
     });
   }
 }
@@ -29,11 +30,11 @@ function animateFragments(){
   fragments.forEach(f=>{
     f.x+=f.vx;
     f.y+=f.vy;
-    f.vy+=0.2;
+    f.vy+=0.25;
     f.life--;
 
-    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
-    f.el.style.opacity=f.life/80;
+    f.el.style.transform=`translate(${f.x}px,${f.y}px) rotate(${f.rotate+=5}deg) scale(${f.life/120})`;
+    f.el.style.opacity=f.life/120;
   });
 
   fragments=fragments.filter(f=>{
@@ -47,7 +48,6 @@ animateFragments();
 
 socket.on('update',(data)=>{
 
-  // ✅ FIX: render TOP lists
   let users = data.users || {};
 
   let likeList = Object.entries(users)
@@ -64,7 +64,6 @@ socket.on('update',(data)=>{
   document.getElementById('gifts').innerHTML =
     giftList.map(u=>"<li>"+u[0]+" "+u[1].gifts+"</li>").join("");
 
-  // ✅ FIX: winners list
   if(data.winners){
     document.getElementById('winners').innerHTML =
       data.winners.map(u=>"<li>"+u+"</li>").join("");
@@ -77,43 +76,52 @@ socket.on('update',(data)=>{
 
   document.getElementById('countdown').innerText="Time: "+data.timer;
 
-  size+=0.003;
-  if(size>1.5) size=1.5;
+  // REAL physics grow
+  size+=0.002;
+  if(size>1.6) size=1.6;
 
-  floatOffset+=0.02;
-  let y=Math.sin(floatOffset)*8;
+  floatOffset+=0.015;
+  let y=Math.sin(floatOffset)*10;
 
   balloon.style.transform=`translateY(${y}px) scale(${size})`;
+
+  // glow pulse
+  let glow = Math.sin(floatOffset)*20 + 40;
+  balloon.style.boxShadow=`0 0 ${glow}px rgba(255,0,0,0.7)`;
 });
 
 socket.on('winner',(data)=>{
 
-  let shake=0;
-  let sh=setInterval(()=>{
-    shake++;
-    balloon.style.transform=`translate(${Math.random()*6-3}px,${Math.random()*6-3}px) scale(${size+0.1})`;
+  // tension before explosion
+  let tension=0;
+  let tensionInterval=setInterval(()=>{
+    tension++;
+    balloon.style.transform=`scale(${size + Math.random()*0.05})`;
 
-    if(shake>12){
-      clearInterval(sh);
+    if(tension>20){
+      clearInterval(tensionInterval);
 
       try{boomSound.currentTime=0;boomSound.play();}catch(e){}
 
+      // vibration
+      document.body.classList.add("shakeScreen");
+
       createFragments();
 
-      balloon.style.transition="0.3s";
-      balloon.style.transform="scale(2)";
+      // explode effect
+      balloon.style.transition="0.2s";
+      balloon.style.transform="scale(2.5)";
       balloon.style.opacity="0";
-
-      document.body.classList.add("shakeScreen");
 
       setTimeout(()=>{
         document.body.classList.remove("shakeScreen");
-      },400);
+      },500);
 
+      // winner delay (cinematic)
       setTimeout(()=>{
         document.getElementById('winnerPopup').classList.remove('hidden');
         document.getElementById('winnerText').innerText=data.user+" qazandı";
-      },2000);
+      },2500);
 
       setTimeout(()=>{
         document.getElementById('winnerPopup').classList.add('hidden');
@@ -122,7 +130,7 @@ socket.on('winner',(data)=>{
         balloon.style.transform='scale(1)';
         size=1;
 
-      },5000);
+      },6000);
     }
   },40);
 

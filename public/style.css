@@ -1,7 +1,7 @@
 
 body{
   margin:0;
-  background: radial-gradient(circle, #111, #000);
+  background: radial-gradient(circle, #050505, #000);
   color:white;
   display:flex;
   font-family:Arial;
@@ -9,41 +9,45 @@ body{
 }
 
 .shakeScreen{
-  animation:shake 0.3s;
+  animation:shake 0.4s;
 }
 
 @keyframes shake{
   0%{transform:translate(0,0)}
-  50%{transform:translate(3px,-3px)}
+  25%{transform:translate(4px,-4px)}
+  50%{transform:translate(-4px,4px)}
+  75%{transform:translate(3px,-3px)}
   100%{transform:translate(0,0)}
 }
 
-/* NEW fragments (better look) */
 .fragment{
-  width:6px;
-  height:12px;
-  background: radial-gradient(circle,#ff6b6b,#b30000);
+  width:8px;
+  height:14px;
+  background: radial-gradient(circle,#ff4d4d,#800000);
   position:fixed;
-  border-radius:2px;
-  box-shadow:0 0 8px red;
+  border-radius:3px;
+  box-shadow:0 0 12px red;
 }
 
-/* improved balloon */
+/* ULTRA REAL BALLOON */
 #balloon{
-  width:130px;
-  height:170px;
+  width:140px;
+  height:180px;
   margin:100px auto;
   border-radius:50% 50% 45% 45%;
   position:relative;
 
-  background: radial-gradient(circle at 30% 30%, #ff7a7a, #b30000 70%);
+  background:
+    radial-gradient(circle at 30% 25%, #ffffff88, transparent 40%),
+    radial-gradient(circle at 50% 60%, #ff4d4d, #990000 80%);
 
   box-shadow:
-    inset -20px -30px 60px rgba(0,0,0,0.7),
-    inset 20px 20px 40px rgba(255,255,255,0.5),
-    0 0 60px rgba(255,0,0,0.6);
+    inset -25px -35px 70px rgba(0,0,0,0.8),
+    inset 25px 25px 60px rgba(255,255,255,0.6),
+    0 0 80px rgba(255,0,0,0.8);
 
-  transition: all 0.3s ease;
+  filter: blur(0.2px);
+  transition: all 0.25s ease;
 }
 
 #countdown{font-size:22px}
@@ -51,7 +55,7 @@ body{
 .popup{
   position:fixed;
   top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.8);
+  background:rgba(0,0,0,0.85);
   display:flex;
   align-items:center;
   justify-content:center;
