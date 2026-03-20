@@ -57,7 +57,7 @@ setInterval(()=>{
 
    if(pauseTime<=0){
      users={};
-     timer=300;
+     timer=180;
      phase="game";
    }
  }
