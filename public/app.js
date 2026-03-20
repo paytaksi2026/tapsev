@@ -8,11 +8,11 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 function firework(){
-  for(let i=0;i<50;i++){
+  for(let i=0;i<80;i++){
     let x=Math.random()*canvas.width;
     let y=Math.random()*canvas.height;
     ctx.fillStyle="hsl("+Math.random()*360+",100%,50%)";
-    ctx.fillRect(x,y,5,5);
+    ctx.fillRect(x,y,4,4);
   }
 }
 
@@ -27,7 +27,9 @@ socket.on('update',(data)=>{
 
   document.getElementById('countdown').innerText = "Time: "+data.timer;
 
-  size+=0.02;
+  size += 0.01;
+  if(size > 2) size = 2; // limit growth
+
   document.getElementById('balloon').style.transform='scale('+size+')';
 });
 
@@ -35,11 +37,12 @@ socket.on('winner',(data)=>{
   document.getElementById('winnerPopup').classList.remove('hidden');
   document.getElementById('winnerText').innerText = data.user+" qazandı "+data.reward;
 
-  for(let i=0;i<10;i++){
-    setTimeout(firework, i*200);
+  for(let i=0;i<15;i++){
+    setTimeout(firework, i*150);
   }
 
   setTimeout(()=>{
     document.getElementById('winnerPopup').classList.add('hidden');
+    size=1;
   },5000);
 });

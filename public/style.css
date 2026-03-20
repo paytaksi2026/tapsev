@@ -1,12 +1,76 @@
 
-body{background:black;color:white;display:flex;overflow:hidden}
-.left,.right{width:20%;padding:10px}
-.center{flex:1;text-align:center}
-#balloon{width:150px;height:200px;background:red;border-radius:50%;margin:auto;transition:0.3s}
+body{
+  margin:0;
+  background: radial-gradient(circle, #111, #000);
+  color:white;
+  display:flex;
+  font-family:Arial;
+}
 
-.popup{position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center}
+.left,.right{
+  width:20%;
+  padding:15px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);
+}
+
+.center{
+  flex:1;
+  text-align:center;
+  position:relative;
+}
+
+#balloon{
+  width:120px;
+  height:150px;
+  margin:100px auto;
+  border-radius:50% 50% 45% 45%;
+  background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
+  box-shadow: inset -10px -20px 30px rgba(0,0,0,0.5),
+              inset 10px 10px 20px rgba(255,255,255,0.3),
+              0 0 40px rgba(255,0,0,0.4);
+  transition: transform 0.2s;
+  position:relative;
+}
+
+#balloon:after{
+  content:"";
+  position:absolute;
+  bottom:-20px;
+  left:50%;
+  width:2px;
+  height:40px;
+  background:white;
+}
+
+#countdown{
+  font-size:22px;
+}
+
+ul{list-style:none;padding:0}
+li{margin:5px 0}
+
+.popup{
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
 .hidden{display:none}
-.popupBox{background:#111;padding:30px;border-radius:20px;text-align:center;color:#fff;font-size:22px}
 
-canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+.popupBox{
+  background:#111;
+  padding:40px;
+  border-radius:20px;
+  text-align:center;
+  font-size:24px;
+}
+
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+}
