@@ -29,7 +29,7 @@ function animateFragments(){
   fragments.forEach(f=>{
     f.x+=f.vx;
     f.y+=f.vy;
-    f.vy+=0.2; // gravity
+    f.vy+=0.2;
     f.life--;
 
     f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
@@ -47,6 +47,29 @@ animateFragments();
 
 socket.on('update',(data)=>{
 
+  // ✅ FIX: render TOP lists
+  let users = data.users || {};
+
+  let likeList = Object.entries(users)
+    .sort((a,b)=>b[1].likes-a[1].likes)
+    .slice(0,10);
+
+  let giftList = Object.entries(users)
+    .sort((a,b)=>b[1].gifts-a[1].gifts)
+    .slice(0,10);
+
+  document.getElementById('likes').innerHTML =
+    likeList.map(u=>"<li>"+u[0]+" "+u[1].likes+"</li>").join("");
+
+  document.getElementById('gifts').innerHTML =
+    giftList.map(u=>"<li>"+u[0]+" "+u[1].gifts+"</li>").join("");
+
+  // ✅ FIX: winners list
+  if(data.winners){
+    document.getElementById('winners').innerHTML =
+      data.winners.map(u=>"<li>"+u+"</li>").join("");
+  }
+
   if(data.phase==="pause"){
     document.getElementById('countdown').innerText="Yeni oyun başlayır: "+data.pauseTime;
     return;
@@ -54,7 +77,7 @@ socket.on('update',(data)=>{
 
   document.getElementById('countdown').innerText="Time: "+data.timer;
 
-  size+=0.003; // slower (fix)
+  size+=0.003;
   if(size>1.5) size=1.5;
 
   floatOffset+=0.02;
