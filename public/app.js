@@ -135,3 +135,27 @@ socket.on('winner',(data)=>{
   },40);
 
 });
+
+
+// 🔥 EXTRA REAL MOTION (added, not replacing)
+let driftX=0;
+let driftY=0;
+
+function ultraRealMotion(){
+  driftX += (Math.random()-0.5)*0.2;
+  driftY += (Math.random()-0.5)*0.2;
+
+  driftX *= 0.98;
+  driftY *= 0.98;
+
+  let extraX = Math.sin(floatOffset*0.7)*6 + driftX;
+  let extraY = Math.cos(floatOffset*0.5)*8 + driftY;
+
+  balloon.style.transform = `
+    translate(${extraX}px,${extraY}px)
+    scale(${size})
+  `;
+
+  requestAnimationFrame(ultraRealMotion);
+}
+ultraRealMotion();
