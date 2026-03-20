@@ -5,80 +5,43 @@ body{
   color:white;
   display:flex;
   font-family:Arial;
+  overflow:hidden;
 }
 
-.left,.right{
-  width:20%;
-  padding:15px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
+/* screen shake */
+.shakeScreen{
+  animation:shake 0.3s infinite;
 }
 
-.center{
-  flex:1;
-  text-align:center;
-  position:relative;
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(5px,-5px)}
+  50%{transform:translate(-5px,5px)}
+  75%{transform:translate(5px,5px)}
+  100%{transform:translate(0,0)}
 }
 
-/* ULTRA REAL BALLOON */
+/* pieces */
+.piece{
+  width:10px;
+  height:10px;
+  background:red;
+  position:fixed;
+  border-radius:50%;
+  box-shadow:0 0 10px red;
+}
+
 #balloon{
   width:130px;
   height:170px;
   margin:100px auto;
   border-radius:50% 50% 45% 45%;
   position:relative;
-
   background: radial-gradient(circle at 30% 30%, #ff6b6b, #b30000 70%);
-
-  box-shadow:
-    inset -20px -30px 60px rgba(0,0,0,0.7),
-    inset 20px 20px 40px rgba(255,255,255,0.5),
-    0 0 80px rgba(255,0,0,0.6);
-
-  transition: all 0.2s ease;
+  box-shadow:0 0 80px rgba(255,0,0,0.6);
 }
 
-/* shine */
-#balloon:before{
-  content:"";
-  position:absolute;
-  top:18%;
-  left:22%;
-  width:35%;
-  height:35%;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), transparent);
-  border-radius:50%;
-  filter: blur(3px);
-}
-
-/* string */
-#balloon:after{
-  content:"";
-  position:absolute;
-  bottom:-50px;
-  left:50%;
-  width:2px;
-  height:70px;
-  background:linear-gradient(white, transparent);
-}
-
-/* tail */
-#balloon span{
-  position:absolute;
-  bottom:-10px;
-  left:50%;
-  width:10px;
-  height:10px;
-  background:#fff;
-  transform:translateX(-50%) rotate(45deg);
-}
-
-#countdown{
-  font-size:22px;
-}
-
-ul{list-style:none;padding:0}
-li{margin:5px 0}
+#countdown{font-size:22px}
 
 .popup{
   position:fixed;
@@ -95,12 +58,5 @@ li{margin:5px 0}
   background:#111;
   padding:40px;
   border-radius:20px;
-  text-align:center;
   font-size:24px;
-}
-
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
 }
