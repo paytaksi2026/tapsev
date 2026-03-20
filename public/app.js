@@ -17,6 +17,16 @@ function firework(){
 }
 
 socket.on('update',(data)=>{
+
+  document.getElementById('winners').innerHTML =
+    data.winners.map(u=>"<li>"+u+"</li>").join("");
+
+  if(data.phase==="pause"){
+    document.getElementById('countdown').innerText =
+      "Yeni oyun başlayır: "+data.pauseTime;
+    return;
+  }
+
   let users=data.users;
 
   let likeList = Object.entries(users).sort((a,b)=>b[1].likes-a[1].likes).slice(0,10);
@@ -28,7 +38,7 @@ socket.on('update',(data)=>{
   document.getElementById('countdown').innerText = "Time: "+data.timer;
 
   size += 0.01;
-  if(size > 2) size = 2; // limit growth
+  if(size > 2) size = 2;
 
   document.getElementById('balloon').style.transform='scale('+size+')';
 });
