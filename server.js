@@ -10,7 +10,7 @@ const io=new Server(serverHttp);
 
 app.use(express.static('public'));
 
-const USERNAME=process.env.TIKTOK_USERNAME||"xeberx.az";
+const USERNAME=process.env.TIKTOK_USERNAME||"balon_yarisi";
 
 let users={};
 let timer=180;
