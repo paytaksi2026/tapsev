@@ -1,6 +1,6 @@
 {
-  "name": "tiktok-balloon-pro",
-  "version": "4.0.0",
+  "name": "tiktok-balloon-ultimate",
+  "version": "5.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
