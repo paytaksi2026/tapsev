@@ -20,27 +20,51 @@ body{
   position:relative;
 }
 
+/* REAL BALLOON */
 #balloon{
   width:120px;
   height:150px;
   margin:100px auto;
   border-radius:50% 50% 45% 45%;
-  background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
-  box-shadow: inset -10px -20px 30px rgba(0,0,0,0.5),
-              inset 10px 10px 20px rgba(255,255,255,0.3),
-              0 0 40px rgba(255,0,0,0.4);
-  transition: transform 0.2s;
   position:relative;
+  background: radial-gradient(circle at 30% 30%, #ff6b6b, #b30000 70%);
+  box-shadow:
+    inset -15px -25px 40px rgba(0,0,0,0.6),
+    inset 15px 15px 25px rgba(255,255,255,0.4),
+    0 0 60px rgba(255,0,0,0.5);
+  transition: transform 0.2s;
+  animation: float 3s ease-in-out infinite;
 }
 
+/* shine */
+#balloon:before{
+  content:"";
+  position:absolute;
+  top:20%;
+  left:25%;
+  width:30%;
+  height:30%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+  border-radius:50%;
+  filter: blur(2px);
+}
+
+/* string */
 #balloon:after{
   content:"";
   position:absolute;
-  bottom:-20px;
+  bottom:-40px;
   left:50%;
   width:2px;
-  height:40px;
-  background:white;
+  height:60px;
+  background:linear-gradient(white, transparent);
+}
+
+/* floating animation */
+@keyframes float{
+  0%{ transform: translateY(0px) scale(1); }
+  50%{ transform: translateY(-10px) scale(1.02); }
+  100%{ transform: translateY(0px) scale(1); }
 }
 
 #countdown{

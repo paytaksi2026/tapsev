@@ -2,6 +2,8 @@
 const socket = io();
 let size=1;
 
+const balloon = document.getElementById('balloon');
+
 const canvas = document.getElementById('fireworks');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -15,6 +17,20 @@ function firework(){
     ctx.fillRect(x,y,4,4);
   }
 }
+
+// random balloon color each round
+function randomColor(){
+  const colors=[
+    ["#ff6b6b","#b30000"],
+    ["#6bafff","#003bb3"],
+    ["#6bff9e","#00b33c"],
+    ["#ffd86b","#b38600"],
+    ["#d96bff","#6a00b3"]
+  ];
+  let c=colors[Math.floor(Math.random()*colors.length)];
+  balloon.style.background="radial-gradient(circle at 30% 30%,"+c[0]+","+c[1]+")";
+}
+randomColor();
 
 socket.on('update',(data)=>{
 
@@ -37,10 +53,10 @@ socket.on('update',(data)=>{
 
   document.getElementById('countdown').innerText = "Time: "+data.timer;
 
-  size += 0.01;
-  if(size > 2) size = 2;
+  size += 0.008;
+  if(size > 1.8) size = 1.8;
 
-  document.getElementById('balloon').style.transform='scale('+size+')';
+  balloon.style.transform='scale('+size+')';
 });
 
 socket.on('winner',(data)=>{
@@ -54,5 +70,6 @@ socket.on('winner',(data)=>{
   setTimeout(()=>{
     document.getElementById('winnerPopup').classList.add('hidden');
     size=1;
+    randomColor();
   },5000);
 });
