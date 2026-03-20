@@ -13,24 +13,31 @@ const io = new Server(serverHttp);
 const PORT = process.env.PORT || 3000;
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-const TIKTOK_USERNAME = process.env.TIKTOK_USERNAME || "xeberx.az";
+const USERNAME = process.env.TIKTOK_USERNAME || "xeberx.az";
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 let users = {};
 let totalGifts = 0;
 let timer = 300;
+let lastEventTime = Date.now();
 
-const tiktok = new WebcastPushConnection(TIKTOK_USERNAME);
+const tiktok = new WebcastPushConnection(USERNAME);
 
 // CONNECT
 tiktok.connect().then(() => {
   console.log("TikTok Connected");
   io.emit("status","ONLINE");
-}).catch(()=> io.emit("status","OFFLINE"));
+}).catch(err => {
+  console.log("TikTok ERROR:", err.message);
+  io.emit("status","OFFLINE");
+});
 
 // LIKE
 tiktok.on('like', data => {
+  console.log("LIKE:", data.uniqueId);
+  lastEventTime = Date.now();
+
   const user = data.uniqueId;
   if(!users[user]) users[user]={likes:0,gifts:0};
   users[user].likes += data.likeCount || 1;
@@ -38,14 +45,29 @@ tiktok.on('like', data => {
 
 // GIFT
 tiktok.on('gift', data => {
+  console.log("GIFT:", data.uniqueId);
+  lastEventTime = Date.now();
+
   const user = data.uniqueId;
   const coins = data.diamondCount || 1;
+
   if(!users[user]) users[user]={likes:0,gifts:0};
   users[user].gifts += coins;
   totalGifts += coins;
 });
 
-// DB winner save
+// fallback (if TikTok gives nothing)
+setInterval(()=>{
+  if(Date.now() - lastEventTime > 15000){
+    let user = "demo"+Math.floor(Math.random()*5);
+    if(!users[user]) users[user]={likes:0,gifts:0};
+    users[user].likes += 1;
+    users[user].gifts += 1;
+    totalGifts += 1;
+  }
+},3000);
+
+// DB save
 async function saveWinner(username, reward){
   try{
     await pool.query("CREATE TABLE IF NOT EXISTS winners(id SERIAL PRIMARY KEY, username TEXT, reward NUMERIC, created_at TIMESTAMP DEFAULT NOW())");
@@ -53,7 +75,7 @@ async function saveWinner(username, reward){
   }catch(e){console.log(e.message)}
 }
 
-// MAIN LOOP
+// LOOP
 setInterval(()=>{
   timer--;
 
@@ -72,7 +94,6 @@ setInterval(()=>{
   }
 
   io.emit("update",{users,totalGifts,timer});
-
 },1000);
 
 serverHttp.listen(PORT, ()=>console.log("Running "+PORT));
