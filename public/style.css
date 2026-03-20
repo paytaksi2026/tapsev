@@ -8,37 +8,42 @@ body{
   overflow:hidden;
 }
 
-/* screen shake */
 .shakeScreen{
-  animation:shake 0.3s infinite;
+  animation:shake 0.3s;
 }
 
 @keyframes shake{
   0%{transform:translate(0,0)}
-  25%{transform:translate(5px,-5px)}
-  50%{transform:translate(-5px,5px)}
-  75%{transform:translate(5px,5px)}
+  50%{transform:translate(3px,-3px)}
   100%{transform:translate(0,0)}
 }
 
-/* pieces */
-.piece{
-  width:10px;
-  height:10px;
-  background:red;
+/* NEW fragments (better look) */
+.fragment{
+  width:6px;
+  height:12px;
+  background: radial-gradient(circle,#ff6b6b,#b30000);
   position:fixed;
-  border-radius:50%;
-  box-shadow:0 0 10px red;
+  border-radius:2px;
+  box-shadow:0 0 8px red;
 }
 
+/* improved balloon */
 #balloon{
   width:130px;
   height:170px;
   margin:100px auto;
   border-radius:50% 50% 45% 45%;
   position:relative;
-  background: radial-gradient(circle at 30% 30%, #ff6b6b, #b30000 70%);
-  box-shadow:0 0 80px rgba(255,0,0,0.6);
+
+  background: radial-gradient(circle at 30% 30%, #ff7a7a, #b30000 70%);
+
+  box-shadow:
+    inset -20px -30px 60px rgba(0,0,0,0.7),
+    inset 20px 20px 40px rgba(255,255,255,0.5),
+    0 0 60px rgba(255,0,0,0.6);
+
+  transition: all 0.3s ease;
 }
 
 #countdown{font-size:22px}

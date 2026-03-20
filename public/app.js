@@ -6,33 +6,44 @@ let floatOffset=0;
 const balloon=document.getElementById('balloon');
 const boomSound=new Audio('boom.mp3');
 
-let pieces=[];
+let fragments=[];
 
-function createPieces(){
-  for(let i=0;i<12;i++){
-    let div=document.createElement("div");
-    div.className="piece";
-    document.body.appendChild(div);
+function createFragments(){
+  for(let i=0;i<20;i++){
+    let el=document.createElement("div");
+    el.className="fragment";
+    document.body.appendChild(el);
 
-    pieces.push({
-      el:div,
+    fragments.push({
+      el,
       x:window.innerWidth/2,
       y:window.innerHeight/2,
-      vx:(Math.random()-0.5)*12,
-      vy:(Math.random()-0.5)*12
+      vx:(Math.random()-0.5)*8,
+      vy:(Math.random()-0.5)*8,
+      life:80
     });
   }
 }
 
-function animatePieces(){
-  pieces.forEach(p=>{
-    p.x+=p.vx;
-    p.y+=p.vy;
-    p.el.style.transform=`translate(${p.x}px,${p.y}px)`;
-  });
-}
+function animateFragments(){
+  fragments.forEach(f=>{
+    f.x+=f.vx;
+    f.y+=f.vy;
+    f.vy+=0.2; // gravity
+    f.life--;
 
-setInterval(animatePieces,30);
+    f.el.style.transform=`translate(${f.x}px,${f.y}px)`;
+    f.el.style.opacity=f.life/80;
+  });
+
+  fragments=fragments.filter(f=>{
+    if(f.life<=0){ f.el.remove(); return false;}
+    return true;
+  });
+
+  requestAnimationFrame(animateFragments);
+}
+animateFragments();
 
 socket.on('update',(data)=>{
 
@@ -43,43 +54,43 @@ socket.on('update',(data)=>{
 
   document.getElementById('countdown').innerText="Time: "+data.timer;
 
-  size+=0.004;
-  if(size>1.6) size=1.6;
+  size+=0.003; // slower (fix)
+  if(size>1.5) size=1.5;
 
   floatOffset+=0.02;
-  let y=Math.sin(floatOffset)*10;
+  let y=Math.sin(floatOffset)*8;
 
   balloon.style.transform=`translateY(${y}px) scale(${size})`;
 });
 
 socket.on('winner',(data)=>{
 
-  // shake
   let shake=0;
   let sh=setInterval(()=>{
     shake++;
-    balloon.style.transform=`translate(${Math.random()*10-5}px,${Math.random()*10-5}px) scale(${size+0.2})`;
-    if(shake>10){
+    balloon.style.transform=`translate(${Math.random()*6-3}px,${Math.random()*6-3}px) scale(${size+0.1})`;
+
+    if(shake>12){
       clearInterval(sh);
 
-      // explode
       try{boomSound.currentTime=0;boomSound.play();}catch(e){}
 
-      createPieces();
+      createFragments();
 
-      balloon.style.opacity='0';
+      balloon.style.transition="0.3s";
+      balloon.style.transform="scale(2)";
+      balloon.style.opacity="0";
 
       document.body.classList.add("shakeScreen");
 
-      // DELAY WINNER (IMPORTANT)
       setTimeout(()=>{
-
         document.body.classList.remove("shakeScreen");
+      },400);
 
+      setTimeout(()=>{
         document.getElementById('winnerPopup').classList.remove('hidden');
         document.getElementById('winnerText').innerText=data.user+" qazandı";
-
-      },2500);
+      },2000);
 
       setTimeout(()=>{
         document.getElementById('winnerPopup').classList.add('hidden');
@@ -88,12 +99,8 @@ socket.on('winner',(data)=>{
         balloon.style.transform='scale(1)';
         size=1;
 
-        pieces.forEach(p=>p.el.remove());
-        pieces=[];
-
-      },6000);
-
+      },5000);
     }
-  },50);
+  },40);
 
 });
