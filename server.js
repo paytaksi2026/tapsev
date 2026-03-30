@@ -1,95 +1,128 @@
+const express = require('express');
+const app = express();
+app.use(express.json());
+app.use(express.static(__dirname + '/public'));
 
-const express=require('express');
-const http=require('http');
-const {Server}=require('socket.io');
-const {WebcastPushConnection}=require('tiktok-live-connector');
+let queue = [];
+let current = null;
 
-const app=express();
-const serverHttp=http.createServer(app);
-const io=new Server(serverHttp);
+let stats = { win:[], like:[], gift:[] };
 
-app.use(express.static('public'));
+let likeValue = {};
+let likeLevel = {};
+let giftValue = {};
+let giftLevel = {};
 
-const USERNAME=process.env.TIKTOK_USERNAME||"balon_yarisi";
+// NEW: store real last total from TikTok
+let lastTotalLike = {};
 
-let users={};
-let timer=180;
-let phase="game";
-let pauseTime=15;
-let winners=[];
-
-let totalLikes=0;
-let totalGifts=0;
-
-const tiktok=new WebcastPushConnection(USERNAME);
-tiktok.connect().then(()=>console.log("TikTok Connected"));
-
-tiktok.on("like",data=>{
- if(phase!=="game") return;
- const u=data.uniqueId;
- if(!users[u]) users[u]={likes:0,gifts:0};
- users[u].likes+=data.likeCount||1;
- totalLikes += data.likeCount||1;
-});
-
-tiktok.on("gift",data=>{
- if(phase!=="game") return;
- const u=data.uniqueId;
- if(!users[u]) users[u]={likes:0,gifts:0};
- users[u].gifts+=data.diamondCount||1;
- totalGifts += data.diamondCount||1;
-});
-
-// 💣 NEW SCORE SYSTEM (likes vs gifts)
-function explodeNow(){
-
- let entries = Object.entries(users);
- if(entries.length===0) return;
-
- let winner = entries.sort((a,b)=>{
-   let scoreA = a[1].likes + (a[1].gifts * 100);
-   let scoreB = b[1].likes + (b[1].gifts * 100);
-   return scoreB - scoreA;
- })[0];
-
- let winnerUser = winner[0];
-
- winners.unshift(winnerUser);
- if(winners.length>10) winners.pop();
-
- io.emit("winner",{user:winnerUser,reward:0});
-
- phase="pause";
- pauseTime=15;
+function upsert(arr, name, avatar, value){
+  let u = arr.find(x=>x.name===name);
+  if(!u){
+    u={name, avatar, value:0};
+    arr.push(u);
+  }
+  u.value = value;
+  return u;
 }
 
+app.get('/queue',(req,res)=>res.json(queue));
+app.get('/current',(req,res)=>res.json(current));
+
+app.get('/top',(req,res)=>{
+  const sort=a=>[...a].sort((x,y)=>y.value-x.value);
+  res.json({win:sort(stats.win),like:sort(stats.like),gift:sort(stats.gift)});
+});
+
+app.post('/result',(req,res)=>{
+  const {user, win}=req.body;
+
+  if(win!=="0"){
+    let u = stats.win.find(x=>x.name===user.name);
+    if(!u){
+      stats.win.push({name:user.name, avatar:user.avatar, value:parseFloat(win)});
+    }else{
+      u.value += parseFloat(win);
+    }
+  }
+
+  current = null;
+  res.json({ok:true});
+});
+
+app.listen(3000, ()=>console.log("SERVER OK"));
+
+const { WebcastPushConnection } = require('tiktok-live-connector');
+const tiktok = new WebcastPushConnection("emildo.celilabadli");
+
+// LIKE (FINAL REAL FIX)
+tiktok.on('like', data=>{
+  const user={name:data.uniqueId, avatar:data.profilePictureUrl};
+
+  let inc = 1;
+
+  if(typeof data.likeCount === "number"){
+    inc = data.likeCount;
+  }
+
+  // fallback safe
+  if(!inc || inc < 0) inc = 1;
+
+  likeValue[user.name] = (likeValue[user.name] || 0) + inc;
+
+  let total = likeValue[user.name];
+
+  upsert(stats.like,user.name,user.avatar,total);
+
+  let level = Math.floor(total / 500);
+  let prevLevel = likeLevel[user.name] || 0;
+
+  if(level > prevLevel){
+    queue.push(user);
+    likeLevel[user.name] = level;
+  }
+});
+
+
+
+// GIFT (UNCHANGED)
+tiktok.on('gift', data=>{
+  const user={name:data.uniqueId, avatar:data.profilePictureUrl};
+
+  if(data.repeatEnd !== true) return;
+
+  let inc = data.repeatCount || 1;
+
+  giftValue[user.name] = (giftValue[user.name] || 0) + inc;
+
+  let total = giftValue[user.name];
+
+  upsert(stats.gift,user.name,user.avatar,total);
+
+  let level = Math.floor(total / 50);
+  let prevLevel = giftLevel[user.name] || 0;
+
+  if(level > prevLevel){
+    queue.push(user);
+    giftLevel[user.name] = level;
+  }
+});
+
+// SPIN LOOP
 setInterval(()=>{
+  if(!current && queue.length){
+    current = queue.shift();
+  }
+},2000);
 
- if(phase==="game"){
-   timer--;
+// CONNECT
+async function connectTikTok(){
+  try{
+    await tiktok.connect();
+    console.log("✅ TikTok Qoşuldu");
+  }catch(e){
+    console.log("❌ TikTok ERROR:", e.message);
+  }
+}
 
-   if(totalLikes>=10000 || totalGifts>=5000){
-     explodeNow();
-   }
-
-   if(timer<=0){
-     explodeNow();
-   }
-
- } else if(phase==="pause"){
-   pauseTime--;
-
-   if(pauseTime<=0){
-     users={};
-     totalLikes=0;
-     totalGifts=0;
-     timer=180;
-     phase="game";
-   }
- }
-
- io.emit("update",{users,timer,phase,pauseTime,winners});
-
-},1000);
-
-serverHttp.listen(3000);
+connectTikTok();
