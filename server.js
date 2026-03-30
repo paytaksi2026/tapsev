@@ -53,7 +53,7 @@ app.post('/result',(req,res)=>{
 app.listen(3000, ()=>console.log("SERVER OK"));
 
 const { WebcastPushConnection } = require('tiktok-live-connector');
-const tiktok = new WebcastPushConnection("emildo.celilabadli");
+const tiktok = new WebcastPushConnection("balacaqiz2026");
 
 // LIKE (FINAL REAL FIX)
 tiktok.on('like', data=>{
