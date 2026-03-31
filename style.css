@@ -1,6 +1,64 @@
-body{background:transparent;color:white;font-family:sans-serif}
-#app{display:flex;justify-content:space-between}
-.left,.right{width:20%}
-.center{width:50%;text-align:center}
-.dice-area div{font-size:70px}
-#popup{position:absolute;top:20%;left:50%;transform:translateX(-50%);background:black;padding:15px}
+
+body{
+ margin:0;
+ background: radial-gradient(circle at center, #0f172a, #020617);
+ font-family: 'Segoe UI', sans-serif;
+ color:white;
+}
+
+#app{
+ display:flex;
+ justify-content:space-between;
+ padding:20px;
+}
+
+.left,.right{
+ width:20%;
+ backdrop-filter: blur(10px);
+ background: rgba(255,255,255,0.05);
+ border-radius:15px;
+ padding:10px;
+}
+
+.center{
+ width:55%;
+ text-align:center;
+}
+
+.rules{
+ background: rgba(0,0,0,0.6);
+ padding:15px;
+ border-radius:15px;
+ margin-bottom:20px;
+}
+
+.dice-area{
+ background: linear-gradient(145deg,#111,#222);
+ border-radius:20px;
+ padding:40px;
+ box-shadow: 0 0 40px rgba(0,255,255,0.3);
+}
+
+.dice{
+ font-size:90px;
+ margin:20px;
+ display:inline-block;
+ animation: float 2s infinite ease-in-out;
+}
+
+@keyframes float{
+ 0%{transform:translateY(0)}
+ 50%{transform:translateY(-10px)}
+ 100%{transform:translateY(0)}
+}
+
+#popup{
+ position:absolute;
+ top:15%;
+ left:50%;
+ transform:translateX(-50%);
+ background:rgba(0,0,0,0.8);
+ padding:20px;
+ border-radius:15px;
+ font-size:22px;
+}
