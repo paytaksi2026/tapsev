@@ -1,5 +1,6 @@
 
-let ws = new WebSocket("ws://localhost:3000");
+let protocol = location.protocol === "https:" ? "wss://" : "ws://";
+let ws = new WebSocket(protocol + location.host);
 
 let queue=[];
 let winners={};
@@ -51,13 +52,9 @@ function roll(user){
  document.getElementById("dice1").innerText=d1;
  document.getElementById("dice2").innerText=d2;
 
- let audio = new Audio("sounds/dice.mp3");
- audio.play();
-
  if(d1==6 && d2==6){
    winners[user]=(winners[user]||0)+1;
    document.getElementById("result").innerText="ŞEŞ QOŞA!";
-   new Audio("sounds/win.mp3").play();
  } else {
    document.getElementById("result").innerText="Uduzdu";
  }

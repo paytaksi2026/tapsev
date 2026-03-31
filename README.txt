@@ -1,8 +1,10 @@
-RENDER READY VERSION
+GITHUB + RENDER READY
 
-Steps:
-1. Upload to Render (Web Service)
-2. Build Command: npm install
-3. Start Command: npm start
+1. GitHub-a upload et
+2. Render -> New Web Service
+3. Repo seç
 
-DONE ✅
+Build: npm install
+Start: npm start
+
+DONE
