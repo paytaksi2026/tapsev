@@ -1,8 +1,8 @@
+RENDER READY VERSION
 
-REAL TikTok Version
+Steps:
+1. Upload to Render (Web Service)
+2. Build Command: npm install
+3. Start Command: npm start
 
-1. npm install tiktok-live-connector ws
-2. node server.js
-3. OBS -> index.html
-
-Tam canlı işləyir
+DONE ✅
