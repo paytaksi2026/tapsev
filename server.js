@@ -77,16 +77,16 @@ function bindEvents(){
     setTimeout(startConnection,3000);
   });
 
-  // ✅ BALANCED LIKE FIX (REALISTIC)
+  // ✅ TRUE LIKE (NO LIMIT)
   tiktok.on('like', data=>{
     const user={name:data.uniqueId, avatar:data.profilePictureUrl};
 
-    let inc = data.likeCount || 1;
+    let inc = data.likeCount;
 
-    // ⚠️ limit spike (TikTok bug protection)
-    if(inc > 10) inc = 2;
-
-    if(inc <= 0) inc = 1;
+    // fallback
+    if(typeof inc !== "number" || inc <= 0){
+      inc = 1;
+    }
 
     likeValue[user.name] = (likeValue[user.name] || 0) + inc;
     let total = likeValue[user.name];
