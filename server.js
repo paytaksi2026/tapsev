@@ -12,7 +12,6 @@ let likeValue = {};
 let likeLevel = {};
 let giftValue = {};
 let giftLevel = {};
-let lastLikeCount = {}; // FIX
 
 function upsert(arr, name, avatar, value){
   let u = arr.find(x=>x.name===name);
@@ -78,17 +77,16 @@ function bindEvents(){
     setTimeout(startConnection,3000);
   });
 
-  // ✅ LIKE FIX (REAL COUNT)
+  // ✅ BALANCED LIKE FIX (REALISTIC)
   tiktok.on('like', data=>{
     const user={name:data.uniqueId, avatar:data.profilePictureUrl};
 
-    let prev = lastLikeCount[user.name] || 0;
-    let now = data.totalLikeCount || prev + 1;
+    let inc = data.likeCount || 1;
 
-    let inc = now - prev;
+    // ⚠️ limit spike (TikTok bug protection)
+    if(inc > 10) inc = 2;
+
     if(inc <= 0) inc = 1;
-
-    lastLikeCount[user.name] = now;
 
     likeValue[user.name] = (likeValue[user.name] || 0) + inc;
     let total = likeValue[user.name];
