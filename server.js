@@ -23,6 +23,29 @@ function upsert(arr, name, avatar, value){
   return u;
 }
 
+
+// REAL CLICK ENDPOINT
+app.post('/manual-like',(req,res)=>{
+  const {name, avatar} = req.body;
+
+  if(!name) return res.json({ok:false});
+
+  likeValue[name] = (likeValue[name] || 0) + 1;
+  let total = likeValue[name];
+
+  upsert(stats.like,name,avatar,total);
+
+  let level = Math.floor(total / 500);
+  let prevLevel = likeLevel[name] || 0;
+
+  if(level > prevLevel){
+    queue.push({name, avatar});
+    likeLevel[name] = level;
+  }
+
+  res.json({ok:true});
+});
+
 app.get('/queue',(req,res)=>res.json(queue));
 app.get('/current',(req,res)=>res.json(current));
 

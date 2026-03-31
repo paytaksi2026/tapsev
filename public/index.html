@@ -324,5 +324,20 @@ async function updateStats(){
 setInterval(updateStats,1000);
 </script>
 
+
+<script>
+// REAL CLICK SYSTEM
+document.addEventListener('click', ()=>{
+  fetch('/manual-like',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      name:'viewer',
+      avatar:'https://i.pravatar.cc/50'
+    })
+  });
+});
+</script>
+
 </body>
 </html>
