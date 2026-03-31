@@ -339,5 +339,29 @@ document.addEventListener('click', ()=>{
 });
 </script>
 
+
+<script>
+// 👤 USER ID (localStorage)
+let userId = localStorage.getItem("userId");
+if(!userId){
+  userId = "user_" + Math.random().toString(36).substr(2,9);
+  localStorage.setItem("userId", userId);
+}
+
+// 📱 ONLY MOBILE TOUCH
+if('ontouchstart' in window){
+  document.addEventListener('touchstart', ()=>{
+    fetch('/manual-like',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name:userId,
+        avatar:'https://i.pravatar.cc/50?u='+userId
+      })
+    });
+  });
+}
+</script>
+
 </body>
 </html>
