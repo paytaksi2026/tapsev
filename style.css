@@ -69,3 +69,16 @@ body{
  border-radius:15px;
  font-size:22px;
 }
+
+
+ul li{
+ display:flex;
+ align-items:center;
+ margin:5px 0;
+ font-size:14px;
+}
+
+ul li img{
+ border-radius:50%;
+ box-shadow:0 0 10px rgba(0,255,255,0.7);
+}

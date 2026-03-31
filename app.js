@@ -31,7 +31,7 @@ ws.onmessage = (e)=>{
 };
 
 function avatar(u){
- return "https://ui-avatars.com/api/?name="+u;
+ return "https://api.dicebear.com/7.x/avataaars/svg?seed="+u;
 }
 
 function render(id,data){
@@ -42,7 +42,7 @@ function render(id,data){
  .slice(0,15)
  .forEach(([u,v])=>{
   let li=document.createElement("li");
-  li.innerHTML="<img src='"+avatar(u)+"' width=25> "+u+" ("+v+")";
+  li.innerHTML="<img src='"+avatar(u)+"' width=40 style='border-radius:50%;box-shadow:0 0 10px #00ffff;margin-right:5px'> "+u+" ("+v+")";
   el.appendChild(li);
  });
 }
