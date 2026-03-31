@@ -12,6 +12,7 @@ let likeValue = {};
 let likeLevel = {};
 let giftValue = {};
 let giftLevel = {};
+let lastLikeCount = {}; // FIX
 
 function upsert(arr, name, avatar, value){
   let u = arr.find(x=>x.name===name);
@@ -54,7 +55,6 @@ const { WebcastPushConnection } = require('tiktok-live-connector');
 let tiktok = null;
 const USERNAME = "peleng____sarhan";
 
-// CONNECT FUNCTION (AUTO RECONNECT)
 async function startConnection(){
   try{
     console.log("🔄 TikTok qoşulur...");
@@ -66,7 +66,6 @@ async function startConnection(){
     console.log("✅ TikTok Qoşuldu");
   }catch(e){
     console.log("❌ TikTok ERROR:", e.message);
-    console.log("⏳ 5 saniyədən sonra yenidən cəhd...");
     setTimeout(startConnection,5000);
   }
 }
@@ -79,12 +78,17 @@ function bindEvents(){
     setTimeout(startConnection,3000);
   });
 
-  // LIKE
+  // ✅ LIKE FIX (REAL COUNT)
   tiktok.on('like', data=>{
     const user={name:data.uniqueId, avatar:data.profilePictureUrl};
 
-    let inc = data.likeCount || 1;
-    if(!inc || inc < 0) inc = 1;
+    let prev = lastLikeCount[user.name] || 0;
+    let now = data.totalLikeCount || prev + 1;
+
+    let inc = now - prev;
+    if(inc <= 0) inc = 1;
+
+    lastLikeCount[user.name] = now;
 
     likeValue[user.name] = (likeValue[user.name] || 0) + inc;
     let total = likeValue[user.name];
@@ -123,12 +127,10 @@ function bindEvents(){
   });
 }
 
-// SPIN LOOP
 setInterval(()=>{
   if(!current && queue.length){
     current = queue.shift();
   }
 },2000);
 
-// START
 startConnection();
