@@ -1,9 +1,40 @@
+
+let ws = new WebSocket("ws://localhost:3000");
+
 let queue=[];
 let winners={};
 let likes={};
 let gifts={};
 
-function updateList(id,data){
+ws.onmessage = (e)=>{
+ let data = JSON.parse(e.data);
+
+ if(data.type==='like'){
+   likes[data.user]=(likes[data.user]||0)+data.count;
+   if(likes[data.user]>=1000){
+     queue.push(data.user);
+     likes[data.user]=0;
+   }
+ }
+
+ if(data.type==='gift'){
+   gifts[data.user]=(gifts[data.user]||0)+data.diamonds;
+   if(gifts[data.user]>=100){
+     queue.push(data.user);
+     gifts[data.user]=0;
+   }
+ }
+
+ updateLists();
+};
+
+function updateLists(){
+ render("topLikes",likes);
+ render("topGifts",gifts);
+ render("winners",winners);
+}
+
+function render(id,data){
  let el=document.getElementById(id);
  el.innerHTML="";
  Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,15).forEach(([u,v])=>{
@@ -16,13 +47,17 @@ function updateList(id,data){
 function roll(user){
  let d1=Math.floor(Math.random()*6)+1;
  let d2=Math.floor(Math.random()*6)+1;
+
  document.getElementById("dice1").innerText=d1;
  document.getElementById("dice2").innerText=d2;
+
+ let audio = new Audio("sounds/dice.mp3");
+ audio.play();
 
  if(d1==6 && d2==6){
    winners[user]=(winners[user]||0)+1;
    document.getElementById("result").innerText="ŞEŞ QOŞA!";
-   updateList("winners",winners);
+   new Audio("sounds/win.mp3").play();
  } else {
    document.getElementById("result").innerText="Uduzdu";
  }
@@ -30,15 +65,17 @@ function roll(user){
 
 function processQueue(){
  if(queue.length==0)return;
- let user=queue.shift();
 
+ let user=queue.shift();
  let popup=document.getElementById("popup");
  let c=15;
+
  popup.innerText=user+" hazır ol "+c;
 
  let int=setInterval(()=>{
   c--;
   popup.innerText=user+" hazır ol "+c;
+
   if(c<=0){
     clearInterval(int);
     popup.innerText="";
@@ -48,24 +85,3 @@ function processQueue(){
 }
 
 setInterval(processQueue,20000);
-
-// simulate TikTok
-setInterval(()=>{
- let u="user"+Math.floor(Math.random()*5);
-
- likes[u]=(likes[u]||0)+500;
- gifts[u]=(gifts[u]||0)+50;
-
- if(likes[u]>=1000){
-  queue.push(u);
-  likes[u]=0;
- }
- if(gifts[u]>=100){
-  queue.push(u);
-  gifts[u]=0;
- }
-
- updateList("topLikes",likes);
- updateList("topGifts",gifts);
-
-},3000);
