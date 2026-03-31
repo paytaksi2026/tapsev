@@ -1,1 +1,2 @@
-// Placeholder backend for TikTok Live connection
+// TikTok Live placeholder logic
+console.log("Server running - TikTok bağlantı əlavə ediləcək");

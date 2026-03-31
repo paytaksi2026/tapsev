@@ -1,8 +1,7 @@
-Shesh Qosha TikTok Live System
+Şeş Qoşa Full Sistem
 
-Setup:
-1. Open OBS
-2. Add Browser Source
-3. Point to index.html
+İstifadə:
+1. index.html faylını OBS-də aç
+2. Sistem avtomatik işləyəcək
 
-(Full system placeholder build)
+(Qeyd: TikTok live inteqrasiya genişləndiriləcək)
