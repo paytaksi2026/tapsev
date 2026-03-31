@@ -326,18 +326,7 @@ setInterval(updateStats,1000);
 
 
 <script>
-// REAL CLICK SYSTEM
-document.addEventListener('click', ()=>{
-  fetch('/manual-like',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      name:'viewer',
-      avatar:'https://i.pravatar.cc/50'
-    })
-  });
-});
-</script>
+
 
 
 <script>
@@ -357,6 +346,37 @@ if('ontouchstart' in window){
       body: JSON.stringify({
         name:userId,
         avatar:'https://i.pravatar.cc/50?u='+userId
+      })
+    });
+  });
+}
+</script>
+
+
+<script>
+// 🔐 LOGIN SYSTEM
+let username = localStorage.getItem("username");
+
+if(!username){
+  username = prompt("Adını yaz (nickname):");
+  if(!username || username.length < 2){
+    username = "User_" + Math.floor(Math.random()*1000);
+  }
+  localStorage.setItem("username", username);
+}
+
+// 👤 USER INFO
+let avatar = "https://i.pravatar.cc/50?u=" + username;
+
+// 📱 ONLY MOBILE TOUCH + USERNAME
+if('ontouchstart' in window){
+  document.addEventListener('touchstart', ()=>{
+    fetch('/manual-like',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: username,
+        avatar: avatar
       })
     });
   });
