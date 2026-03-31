@@ -6,6 +6,7 @@ let queue=[];
 let winners={};
 let likes={};
 let gifts={};
+let rewards={};
 
 ws.onmessage = (e)=>{
  let data = JSON.parse(e.data);
@@ -29,10 +30,8 @@ ws.onmessage = (e)=>{
  updateLists();
 };
 
-function updateLists(){
- render("topLikes",likes);
- render("topGifts",gifts);
- render("winners",winners);
+function avatar(u){
+ return "https://ui-avatars.com/api/?name="+u;
 }
 
 function render(id,data){
@@ -40,9 +39,15 @@ function render(id,data){
  el.innerHTML="";
  Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,15).forEach(([u,v])=>{
   let li=document.createElement("li");
-  li.innerText=u+" ("+v+")";
+  li.innerHTML="<img src='"+avatar(u)+"' width=25> "+u+" ("+v+")";
   el.appendChild(li);
  });
+}
+
+function updateLists(){
+ render("topLikes",likes);
+ render("topGifts",gifts);
+ render("winners",winners);
 }
 
 function roll(user){
@@ -52,9 +57,14 @@ function roll(user){
  document.getElementById("dice1").innerText=d1;
  document.getElementById("dice2").innerText=d2;
 
+ new Audio("sounds/dice.mp3").play();
+
  if(d1==6 && d2==6){
    winners[user]=(winners[user]||0)+1;
+   rewards[user]=(rewards[user]||0)+1;
+
    document.getElementById("result").innerText="ŞEŞ QOŞA!";
+   new Audio("sounds/win.mp3").play();
  } else {
    document.getElementById("result").innerText="Uduzdu";
  }

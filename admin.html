@@ -1,0 +1,16 @@
+
+<!DOCTYPE html>
+<html>
+<body style="background:black;color:white">
+<h2>Admin Panel</h2>
+<div id="rewards"></div>
+<script>
+fetch('/rewards').then(r=>r.json()).then(data=>{
+ let d=document.getElementById("rewards");
+ Object.entries(data).forEach(([u,v])=>{
+  d.innerHTML += u + " → " + v + " manat<br>";
+ });
+});
+</script>
+</body>
+</html>
