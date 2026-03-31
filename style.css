@@ -1,44 +1,6 @@
-body {
-  margin:0;
-  background: transparent;
-  font-family: Arial;
-  color:white;
-}
-
-#app {
-  display:flex;
-  justify-content:space-between;
-  padding:20px;
-}
-
-.rules {
-  width:20%;
-  background: rgba(0,0,0,0.5);
-  padding:10px;
-  border-radius:10px;
-}
-
-.dice-area {
-  text-align:center;
-  width:50%;
-}
-
-.dice {
-  font-size:80px;
-  display:inline-block;
-  margin:10px;
-}
-
-#popup {
-  position:absolute;
-  top:20%;
-  left:50%;
-  transform:translateX(-50%);
-  background:black;
-  padding:20px;
-  border-radius:10px;
-}
-
-.hidden {
-  display:none;
-}
+body{background:transparent;color:white;font-family:sans-serif}
+#app{display:flex;justify-content:space-between}
+.left,.right{width:20%}
+.center{width:50%;text-align:center}
+.dice-area div{font-size:70px}
+#popup{position:absolute;top:20%;left:50%;transform:translateX(-50%);background:black;padding:15px}

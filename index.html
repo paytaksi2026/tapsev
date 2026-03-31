@@ -2,29 +2,42 @@
 <html lang="az">
 <head>
 <meta charset="UTF-8">
-<title>Şeş Qoşa</title>
+<title>Şeş Qoşa PRO</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="app">
-  <div class="rules">
-    <h2>ŞEŞ QOŞA</h2>
-    <p>🎁 100 jeton = 1 zər</p>
-    <p>❤️ 1000 like = 1 zər</p>
-    <p>🏆 6 + 6 = QALİB</p>
-    <p>💰 1 MANAT</p>
-  </div>
 
-  <div class="dice-area">
-    <div id="dice1" class="dice">🎲</div>
-    <div id="dice2" class="dice">🎲</div>
-    <div id="result"></div>
-  </div>
+<div class="left">
+<h3>❤️ TOP LIKE</h3>
+<ul id="topLikes"></ul>
+<h3>🎁 TOP GIFT</h3>
+<ul id="topGifts"></ul>
+</div>
 
-  <div id="popup" class="hidden"></div>
+<div class="center">
+<div class="rules">
+<h2>ŞEŞ QOŞA</h2>
+<p>100 jeton = 1 zər</p>
+<p>1000 like = 1 zər</p>
+<p>6+6 = QALİB (1 MANAT)</p>
+</div>
 
-  <div class="queue" id="queue"></div>
+<div class="dice-area">
+<div id="dice1">🎲</div>
+<div id="dice2">🎲</div>
+<div id="result"></div>
+</div>
+
+<div id="popup"></div>
+</div>
+
+<div class="right">
+<h3>🏆 QALİBLƏR</h3>
+<ul id="winners"></ul>
+</div>
+
 </div>
 
 <script src="app.js"></script>
