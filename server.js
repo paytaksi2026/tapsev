@@ -13,9 +13,6 @@ let likeLevel = {};
 let giftValue = {};
 let giftLevel = {};
 
-// NEW: store real last total from TikTok
-let lastTotalLike = {};
-
 function upsert(arr, name, avatar, value){
   let u = arr.find(x=>x.name===name);
   if(!u){
@@ -53,60 +50,78 @@ app.post('/result',(req,res)=>{
 app.listen(3000, ()=>console.log("SERVER OK"));
 
 const { WebcastPushConnection } = require('tiktok-live-connector');
-const tiktok = new WebcastPushConnection("peleng____sarhan");
 
-// LIKE (FINAL REAL FIX)
-tiktok.on('like', data=>{
-  const user={name:data.uniqueId, avatar:data.profilePictureUrl};
+let tiktok = null;
+const USERNAME = "peleng____sarhan";
 
-  let inc = 1;
+// CONNECT FUNCTION (AUTO RECONNECT)
+async function startConnection(){
+  try{
+    console.log("🔄 TikTok qoşulur...");
+    tiktok = new WebcastPushConnection(USERNAME);
 
-  if(typeof data.likeCount === "number"){
-    inc = data.likeCount;
+    bindEvents();
+
+    await tiktok.connect();
+    console.log("✅ TikTok Qoşuldu");
+  }catch(e){
+    console.log("❌ TikTok ERROR:", e.message);
+    console.log("⏳ 5 saniyədən sonra yenidən cəhd...");
+    setTimeout(startConnection,5000);
   }
+}
 
-  // fallback safe
-  if(!inc || inc < 0) inc = 1;
+function bindEvents(){
+  if(!tiktok) return;
 
-  likeValue[user.name] = (likeValue[user.name] || 0) + inc;
+  tiktok.on('disconnected', ()=>{
+    console.log("⚠️ DISCONNECTED - yenidən qoşulur...");
+    setTimeout(startConnection,3000);
+  });
 
-  let total = likeValue[user.name];
+  // LIKE
+  tiktok.on('like', data=>{
+    const user={name:data.uniqueId, avatar:data.profilePictureUrl};
 
-  upsert(stats.like,user.name,user.avatar,total);
+    let inc = data.likeCount || 1;
+    if(!inc || inc < 0) inc = 1;
 
-  let level = Math.floor(total / 500);
-  let prevLevel = likeLevel[user.name] || 0;
+    likeValue[user.name] = (likeValue[user.name] || 0) + inc;
+    let total = likeValue[user.name];
 
-  if(level > prevLevel){
-    queue.push(user);
-    likeLevel[user.name] = level;
-  }
-});
+    upsert(stats.like,user.name,user.avatar,total);
 
+    let level = Math.floor(total / 500);
+    let prevLevel = likeLevel[user.name] || 0;
 
+    if(level > prevLevel){
+      queue.push(user);
+      likeLevel[user.name] = level;
+    }
+  });
 
-// GIFT (UNCHANGED)
-tiktok.on('gift', data=>{
-  const user={name:data.uniqueId, avatar:data.profilePictureUrl};
+  // GIFT
+  tiktok.on('gift', data=>{
+    const user={name:data.uniqueId, avatar:data.profilePictureUrl};
 
-  if(data.repeatEnd !== true) return;
+    if(data.repeatEnd !== true) return;
 
-  let inc = data.repeatCount || 1;
+    let inc = data.repeatCount || 1;
 
-  giftValue[user.name] = (giftValue[user.name] || 0) + inc;
+    giftValue[user.name] = (giftValue[user.name] || 0) + inc;
+    let total = giftValue[user.name];
 
-  let total = giftValue[user.name];
+    upsert(stats.gift,user.name,user.avatar,total);
 
-  upsert(stats.gift,user.name,user.avatar,total);
+    let level = Math.floor(total / 50);
+    let prevLevel = giftLevel[user.name] || 0;
 
-  let level = Math.floor(total / 50);
-  let prevLevel = giftLevel[user.name] || 0;
-
-  if(level > prevLevel){
-    queue.push(user);
-    giftLevel[user.name] = level;
-  }
-});
+    if(level > prevLevel){
+      queue.push(user);
+      giftLevel[user.name] = level;
+    }
+  });
+}
 
 // SPIN LOOP
 setInterval(()=>{
@@ -115,14 +130,5 @@ setInterval(()=>{
   }
 },2000);
 
-// CONNECT
-async function connectTikTok(){
-  try{
-    await tiktok.connect();
-    console.log("✅ TikTok Qoşuldu");
-  }catch(e){
-    console.log("❌ TikTok ERROR:", e.message);
-  }
-}
-
-connectTikTok();
+// START
+startConnection();
