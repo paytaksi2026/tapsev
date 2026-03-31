@@ -1,7 +1,7 @@
 
 const { WebcastPushConnection } = require('tiktok-live-connector');
 
-const username = "balacaqiz2026";
+const username = "jabbarov.bb";
 const tiktokLive = new WebcastPushConnection(username);
 
 let clients = [];
